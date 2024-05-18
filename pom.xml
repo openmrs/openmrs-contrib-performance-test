@@ -4,17 +4,19 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.openmrs.loadtesting</groupId>
-  <artifactId>gatling-maven-plugin-demo-java</artifactId>
+  <artifactId>openmrs-contrib-load-tests</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
-    <maven.compiler.release>11</maven.compiler.release>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <gatling.version>3.11.2</gatling.version>
     <gatling-maven-plugin.version>4.9.0</gatling-maven-plugin.version>
     <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-jar-plugin.version>3.4.1</maven-jar-plugin.version>
+    <maven.compiler.source>15</maven.compiler.source>
+    <maven.compiler.target>15</maven.compiler.target>
+    <maven.compiler.release>15</maven.compiler.release>
   </properties>
 
   <dependencies>
@@ -24,23 +26,18 @@
       <version>${gatling.version}</version>
       <scope>test</scope>
     </dependency>
-    <dependency>
-      <groupId>io.gatling</groupId>
-      <artifactId>gatling-recorder</artifactId>
-      <version>3.11.2</version>
-    </dependency>
-    <dependency>
-      <groupId>io.gatling</groupId>
-      <artifactId>gatling-recorder</artifactId>
-      <version>3.8.3</version>
-    </dependency>
   </dependencies>
 
   <build>
     <plugins>
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${maven-compiler-plugin.version}</version>
+        <configuration>
+          <source>15</source>
+          <target>15</target>
+        </configuration>
       </plugin>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
