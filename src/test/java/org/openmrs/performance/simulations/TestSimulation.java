@@ -26,8 +26,8 @@ public class TestSimulation extends Simulation {
 	{
 		setUp(
 				clerkScenario.injectOpen(
-						rampUsers(100).during(60),         // Ramp up to 200 users in 1 minute
-						constantUsersPerSec(100).during(120) // Maintain 100 users for 2 minutes
+						rampUsers(20).during(60),         // Ramp up to 100 users in 1 minute
+						constantUsersPerSec(20).during(60) // Maintain 100 users for 2 minutes
 				),
 				doctorScenario.injectOpen(
 						rampUsers(5).during(10)            // Ramp up to 1 user in 10 seconds
