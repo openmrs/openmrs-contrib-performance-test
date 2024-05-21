@@ -1,4 +1,4 @@
-package org.openmrs.loadtests.personas;
+package org.openmrs.performance.http;
 
 import io.gatling.javaapi.core.ChainBuilder;
 
@@ -6,7 +6,7 @@ import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static io.gatling.javaapi.http.HttpDsl.status;
 
-public class Common {
+public class CommonHttpRequests {
 	public static ChainBuilder login = exec(
 			http("Login")
 					.get("/openmrs/ws/rest/v1/session")

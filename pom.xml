@@ -3,8 +3,8 @@
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.openmrs.loadtesting</groupId>
-  <artifactId>openmrs-contrib-load-tests</artifactId>
+  <groupId>org.openmrs.performance</groupId>
+  <artifactId>openmrs-contrib-performance-test</artifactId>
   <version>0.0.1-SNAPSHOT</version>
 
   <properties>
