@@ -7,6 +7,8 @@ on:
   pull_request:
     branches:
       - main
+  schedule:
+    - cron: "0 0 * * *"
 
 jobs:
   build-and-test:
@@ -17,7 +19,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Start an OpenMRS instance
-        run: docker-compose -f src/main/resources/docker-compose.yml up -d
+        run: docker-compose -f src/test/resources/docker-compose.yml up -d
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -42,5 +44,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gatling-results
+          name: report
           path: target/gatling
+          retention-days: 30
