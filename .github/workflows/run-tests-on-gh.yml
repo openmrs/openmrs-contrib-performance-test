@@ -19,12 +19,11 @@ jobs:
       - name: Start an OpenMRS instance
         run: docker-compose -f src/main/resources/docker-compose.yml up -d
 
-      - name: Set up Maven
+      - name: Set up Java
         uses: actions/setup-java@v2
         with:
           distribution: 'adopt'
           java-version: '15'
-          cache: 'maven'
 
       - name: Install dependencies
         run: ./mvnw install -DskipTests
