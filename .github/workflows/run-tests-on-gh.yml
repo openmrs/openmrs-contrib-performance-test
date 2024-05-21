@@ -1,0 +1,52 @@
+name: Run Performance Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Start an OpenMRS instance
+        run: docker-compose -f src/main/resources/docker-compose.yml up -d
+
+      - name: Set up JDK 15
+        uses: actions/setup-java@v2
+        with:
+          java-version: '15'
+
+      - name: Set up Maven
+        uses: actions/setup-java@v2
+        with:
+          distribution: 'adopt'
+          java-version: '15'
+          cache: 'maven'
+
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests
+
+      - name: Wait for the OpenMRS instance to start
+        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
+
+      - name: Run performance tests
+        run: ./mvnw gatling:test
+
+      - name: Stop the OpenMRS instance
+        if: '!cancelled()'
+        run: docker stop $(docker ps -a -q)
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: gatling-results
+          path: target/gatling

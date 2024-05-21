@@ -1,0 +1,20 @@
+# This docker compose file is used to create a test environment for the run-tests-on-gh.yml workflow.
+version: '3.7'
+
+services:
+  gateway:
+    image: openmrs/openmrs-reference-application-3-gateway:${TAG:-nightly}
+    ports:
+      - '8080:80'
+
+  frontend:
+    image: openmrs/openmrs-reference-application-3-frontend:${TAG:-nightly}
+
+  backend:
+    image: openmrs/openmrs-reference-application-3-backend:nightly-with-data
+    depends_on:
+      - db
+
+  # MariaDB
+  db:
+    image: openmrs/openmrs-reference-application-3-db:nightly-with-data
