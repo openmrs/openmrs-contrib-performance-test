@@ -12,7 +12,9 @@ public class Clerk {
 	public static ScenarioBuilder clerkScenario = scenario("Clerk")
 			.exec(login)
 			.exec(openHomePage)
+			.pause(3)
 			.exec(openRegistrationPage)
+			.pause(10)
 			.exec(registerPatient);
 	
 }

@@ -3,8 +3,7 @@ package org.openmrs.performance.simulations;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 
-import static io.gatling.javaapi.core.CoreDsl.constantUsersPerSec;
-import static io.gatling.javaapi.core.CoreDsl.rampUsers;
+import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.personas.Clerk.clerkScenario;
 import static org.openmrs.performance.personas.Doctor.doctorScenario;
@@ -24,10 +23,13 @@ public class TestSimulation extends Simulation {
 					.header("Content-Type", "application/json");
 	
 	{
+		// Ramp users from 0 to 40 in 60 s and keep concurent 40 users for 1 minute
 		setUp(
 				clerkScenario.injectOpen(
-						rampUsers(20).during(60),         // Ramp up to 100 users in 1 minute
-						constantUsersPerSec(20).during(60) // Maintain 100 users for 2 minutes
+						atOnceUsers(10), // 2
+						rampUsers(10).during(5), // 3
+						constantUsersPerSec(20).during(15),
+						stressPeakUsers(30).during(60)
 				),
 				doctorScenario.injectOpen(
 						rampUsers(5).during(10)            // Ramp up to 1 user in 10 seconds
