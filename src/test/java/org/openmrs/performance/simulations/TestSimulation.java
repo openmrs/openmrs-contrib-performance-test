@@ -23,7 +23,7 @@ public class TestSimulation extends Simulation {
 					.header("Content-Type", "application/json");
 	
 	{
-		setUp(clerkScenario.injectOpen(rampUsers(1).during(10)),
+		setUp(clerkScenario.injectOpen(rampUsers(200).during(60)),
 				doctorScenario.injectOpen(rampUsers(1).during(10))
 		).protocols(httpProtocol);
 	}
