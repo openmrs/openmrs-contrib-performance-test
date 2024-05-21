@@ -26,11 +26,11 @@ public class TestSimulation extends Simulation {
 	{
 		setUp(
 				clerkScenario.injectOpen(
-						rampUsers(200).during(60),         // Ramp up to 200 users in 1 minute
-						constantUsersPerSec(200).during(120) // Maintain 100 users for 2 minutes
+						rampUsers(100).during(60),         // Ramp up to 200 users in 1 minute
+						constantUsersPerSec(100).during(120) // Maintain 100 users for 2 minutes
 				),
 				doctorScenario.injectOpen(
-						rampUsers(1).during(10)            // Ramp up to 1 user in 10 seconds
+						rampUsers(5).during(10)            // Ramp up to 1 user in 10 seconds
 				)
 		).protocols(httpProtocol);
 	}
