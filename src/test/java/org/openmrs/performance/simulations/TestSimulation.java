@@ -25,8 +25,8 @@ public class TestSimulation extends Simulation {
 	{
 		setUp(
 				clerkScenario.injectClosed(
-						rampConcurrentUsers(0).to(250).during(20),
-						constantConcurrentUsers(250).during(60)
+						rampConcurrentUsers(0).to(200).during(20),
+						constantConcurrentUsers(200).during(60)
 				),
 				doctorScenario.injectOpen(
 						rampUsers(5).during(10)
