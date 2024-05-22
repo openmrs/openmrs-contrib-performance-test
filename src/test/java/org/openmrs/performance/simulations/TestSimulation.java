@@ -23,16 +23,13 @@ public class TestSimulation extends Simulation {
 					.header("Content-Type", "application/json");
 	
 	{
-		// Ramp users from 0 to 40 in 60 s and keep concurent 40 users for 1 minute
 		setUp(
-				clerkScenario.injectOpen(
-						atOnceUsers(10), // 2
-						rampUsers(10).during(5), // 3
-						constantUsersPerSec(20).during(15),
-						stressPeakUsers(30).during(60)
+				clerkScenario.injectClosed(
+						rampConcurrentUsers(0).to(200).during(20),
+						constantConcurrentUsers(200).during(60)
 				),
 				doctorScenario.injectOpen(
-						rampUsers(5).during(10)            // Ramp up to 1 user in 10 seconds
+						rampUsers(5).during(10)
 				)
 		).protocols(httpProtocol);
 	}
