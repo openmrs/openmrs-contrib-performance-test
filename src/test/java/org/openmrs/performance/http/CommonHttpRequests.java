@@ -1,6 +1,9 @@
 package org.openmrs.performance.http;
 
 import io.gatling.javaapi.core.ChainBuilder;
+import io.gatling.javaapi.http.HttpRequestActionBuilder;
+
+import java.util.Date;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
@@ -61,5 +64,27 @@ public class CommonHttpRequests {
 			http("Get Visits Again with Offset 100")
 					.get("/openmrs/ws/rest/v1/visit?v=custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),location:(uuid,name,display),startDatetime,stopDatetime)&includeInactive=false&totalCount=true&location=ba685651-ed3b-4e63-9b35-78893060758a&startIndex=100")
 	);
+	
+	public static HttpRequestActionBuilder getAddresstemplate = http("Get Address Template")
+			.get("/openmrs/ws/rest/v1/addresstemplate");
+	
+	public static HttpRequestActionBuilder getRelationshipTypes = http("Get Relationship Types")
+			.get("/openmrs/ws/rest/v1/relationshiptype?v=default");
+	
+	public static HttpRequestActionBuilder getAppointmentsForSpecificDate(Date date) {
+		return http("Get Appointments for Specific Date")
+				.get("/openmrs/ws/rest/v1/appointment/all?forDate=" + date);
+	}
+	
+	public static HttpRequestActionBuilder getModuleInformation = http("Get Module Information")
+			.get("/openmrs/ws/rest/v1/module?v=custom:(uuid,version)");
+	
+	public static HttpRequestActionBuilder getPatientIdentifierTypes = http("Get Patient Identifier Types")
+			.get("/openmrs/ws/rest/v1/patientidentifiertype?v=custom:(display,uuid,name,format,required,uniquenessBehavior)");
+	
+	public static HttpRequestActionBuilder getPrimaryIdentifierTermMapping = http("Get Primary Identifier Term Mapping")
+			.get("/openmrs/ws/rest/v1/metadatamapping/termmapping?v=full&code=emr.primaryIdentifierType");
+	
+	
 	
 }
