@@ -90,7 +90,7 @@ public class ClerkHttpRequests {
 	
 	public static HttpRequestActionBuilder getVisitQueueEntry(String patientUuid) {
 		return http("Get Visit Queue Entry")
-				.get("/openmrs/ws/rest/v1/visit-queue-entry?patient="+patientUuid);
+				.get("/openmrs/ws/rest/v1/visit-queue-entry??v=full&patient="+patientUuid);
 	}
 	
 	public static HttpRequestActionBuilder getPatientConditions(String patientUuid) {
@@ -103,63 +103,38 @@ public class ClerkHttpRequests {
 				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
 	
-	public static ChainBuilder openRegistrationPage = exec(
-			http("Get Address Template")
-					.get("/openmrs/ws/rest/v1/addresstemplate"),
-			http("Get Patient Identifier Types")
-					.get("/openmrs/ws/rest/v1/patientidentifiertype?v=custom:(display,uuid,name,format,required,uniquenessBehavior)"),
-			http("Get Primary Identifier Term Mapping")
-					.get("/openmrs/ws/rest/v1/metadatamapping/termmapping?v=full&code=emr.primaryIdentifierType"),
-			http("Get Relationship Types")
-					.get("/openmrs/ws/rest/v1/relationshiptype?v=default"),
-			http("Get Module Information")
-					.get("/openmrs/ws/rest/v1/module?v=custom:(uuid,version)"),
-			http("Get Person Attribute Type")
-					.get("/openmrs/ws/rest/v1/personattributetype/14d4f066-15f5-102d-96e4-000c29c2a5d7"),
-			http("Get Address Template")
-					.get("/openmrs/ws/rest/v1/addresstemplate"),
-			http("Get Patient Identifier Types")
-					.get("/openmrs/ws/rest/v1/patientidentifiertype?v=custom:(display,uuid,name,format,required,uniquenessBehavior)"),
-			http("Get Relationship Types")
-					.get("/openmrs/ws/rest/v1/relationshiptype?v=default"),
-			http("Get Primary Identifier Term Mapping")
-					.get("/openmrs/ws/rest/v1/metadatamapping/termmapping?v=full&code=emr.primaryIdentifierType"),
-			http("Get Auto Generation Options")
-					.get("/openmrs/ws/rest/v1/idgen/autogenerationoption?v=full"),
-			http("Get Identifier Source - OpenMRS ID")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=05a29f94-c0ed-11e2-94be-8c13b969e334"),
-			http("Get Identifier Source - ID Card")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=b4143563-16cd-4439-b288-f83d61670fc8"),
-			http("Get Identifier Source - Legacy ID")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=22348099-3873-459e-a32e-d93b17eda533"),
-			http("Get Identifier Source - Unknown Type")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=8d79403a-c2cc-11de-8d13-0010c6dffd0f"),
-			http("Get Identifier Source - Unknown Type")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=8d79403a-c2cc-11de-8d13-0010c6dffd0f"),
-			http("Get Identifier Source - SSN")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=a71403f3-8584-4289-ab41-2b4e5570bd45"),
-			http("Get Auto Generation Options")
-					.get("/openmrs/ws/rest/v1/idgen/autogenerationoption?v=full"),
-			http("Get Identifier Source - ID Card")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=b4143563-16cd-4439-b288-f83d61670fc8"),
-			http("Get Identifier Source - OpenMRS ID")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=05a29f94-c0ed-11e2-94be-8c13b969e334"),
-			http("Get Identifier Source - Legacy ID")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=22348099-3873-459e-a32e-d93b17eda533"),
-			http("Get Identifier Source - Unknown Type")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=8d79403a-c2cc-11de-8d13-0010c6dffd0f"),
-			http("Get Identifier Source - Unknown Type")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=8d79403a-c2cc-11de-8d13-0010c6dffd0f"),
-			http("Get Identifier Source - SSN")
-					.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=a71403f3-8584-4289-ab41-2b4e5570bd45"),
-			http("Get Ordered Address Hierarchy Levels")
-					.get("/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form")
-	);
+//	public static HttpRequestActionBuilder getPatientIdentifierTypes() {
+//		return http("Get Patient Identifier Types")
+//				.get("/openmrs/ws/rest/v1/patientidentifiertype?v=custom:(display,uuid,name,format,required,uniquenessBehavior)");
+//	}
+//
+//	public static HttpRequestActionBuilder getPrimaryIdentifierTermMapping() {
+//		return http("Get Primary Identifier Term Mapping")
+//				.get("/openmrs/ws/rest/v1/metadatamapping/termmapping?v=full&code=emr.primaryIdentifierType");
+//	}
+//
+//	public static HttpRequestActionBuilder getModuleInformation() {
+//		return http("Get Module Information")
+//				.get("/openmrs/ws/rest/v1/module?v=custom:(uuid,version)");
+//	}
+//
+//	public static HttpRequestActionBuilder getRelationshipTypes() {
+//		return http("Get Relationship Types")
+//				.get("/openmrs/ws/rest/v1/relationshiptype?v=default");
+//	}
 	
+	public static HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
+		return http("Get Person Attribute Type")
+				.get("/openmrs/ws/rest/v1/personattributetype/"+personAttributeTypeUuid);
+	}
 	
+//	public static HttpRequestActionBuilder getAutoGenerationOptions() {
+//		return http("Get Auto Generation Options")
+//				.get("/openmrs/ws/rest/v1/idgen/autogenerationoption?v=full");
+//	}
 	
-	public static ChainBuilder searchForExistingPatient = exec(
-			http("Search for Patient")
-					.get("/openmrs/ws/rest/v1/patient?q=Smith")
-	);
+	public static HttpRequestActionBuilder getOrderedAddressHierarchyLevels() {
+		return http("Get Ordered Address Hierarchy Levels")
+				.get("/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form");
+	}
 }
