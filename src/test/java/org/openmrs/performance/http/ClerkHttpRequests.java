@@ -69,11 +69,6 @@ public class ClerkHttpRequests {
 				.get("/openmrs/ws/fhir2/R4/Patient/"+patientUuid+"?_summary=data");
 	}
 	
-	public static HttpRequestActionBuilder getPatientVisits(String patientUuid) {
-		return http("Get Patient Visits")
-				.get("/openmrs/ws/rest/v1/visit?patient="+patientUuid+"&v=custom:(uuid,encounters:(uuid,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:(uuid,display,provider:(uuid,display,person:(display))),patient:(uuid,uuid),visitType:(uuid,name,display),attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),location:(uuid,name,display),startDatetime,stopDatetime)&includeInactive=false");
-	}
-	
 	public static HttpRequestActionBuilder getPatientObservations(String patientUuid, Set<String> observationTypes) {
 		// Join the observationTypes array into a single string with "%2C" as the delimiter
 		StringJoiner joiner = new StringJoiner("%2C");
@@ -88,10 +83,7 @@ public class ClerkHttpRequests {
 		return http("Get Patient Observations").get(url);
 	}
 	
-	public static HttpRequestActionBuilder getVisitQueueEntry(String patientUuid) {
-		return http("Get Visit Queue Entry")
-				.get("/openmrs/ws/rest/v1/visit-queue-entry??v=full&patient="+patientUuid);
-	}
+
 	
 	public static HttpRequestActionBuilder getPatientConditions(String patientUuid) {
 		return http("Get Patient Conditions")

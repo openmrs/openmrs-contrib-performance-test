@@ -8,4 +8,5 @@ public class Constants {
 	public static final String SSN_SOURCE_UUID = "a71403f3-8584-4289-ab41-2b4e5570bd45";
 	public static final String UNKNOWN_TYPE_2_SOURCE_UUID = "53fdfd34-f046-4b45-99d8-6d921773e05c";
 	public static final String OUTPATIENT_CLINIC_LOCATION_UUID = "44c3efb0-2583-4c80-a79e-1f756a03c0a1";
+	public static final String FACULTY_VISIT_TYPE_UUID = "7b0f5697-27e3-40c4-8bae-f4049abfb4ed";
 }

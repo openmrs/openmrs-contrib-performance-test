@@ -24,12 +24,12 @@ public class TestSimulation extends Simulation {
 	
 	{
 		setUp(
-				clerkScenario.injectClosed(
-						rampConcurrentUsers(0).to(200).during(20),
-						constantConcurrentUsers(200).during(60)
-				),
+//				clerkScenario.injectClosed(
+//						rampConcurrentUsers(0).to(200).during(20),
+//						constantConcurrentUsers(200).during(60)
+//				),
 				doctorScenario.injectOpen(
-						rampUsers(5).during(10)
+						rampUsers(1).during(10)
 				)
 		).protocols(httpProtocol);
 	}
