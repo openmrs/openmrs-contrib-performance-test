@@ -40,42 +40,44 @@ public class CommonRegistry {
 				getIdentifierSources(UNKNOWN_TYPE_2_SOURCE_UUID)
 		);
 	}
+
+	//
 	
 	public static ChainBuilder openPatientChartPage(String patientUuid){
-		Set<String> observationTypesSet1 = Set.of(
-				"5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5092AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5242AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"165095AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"1343AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+		Set<String> unknownObservationSet = Set.of(
+				SYSTOLIC_BLOOD_PRESSURE,
+				DIASTOLIC_BLOOD_PRESSURE,
+				PULSE,
+				TEMPERATURE_C,
+				ARTERIAL_BLOOD_OXYGEN_SATURATION,
+				HEIGHT_CM,
+				WEIGHT_KG,
+				RESPIRATORY_RATE,
+				UNKNOWN_OBSERVATION_TYPE,
+				MID_UPPER_ARM_CIRCUMFERENCE
 		);
 		
-		Set<String> observationTypesSet2 = Set.of(
-				"5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5087AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5088AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5092AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5242AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"165095AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+		Set<String> vitals = Set.of(
+				SYSTOLIC_BLOOD_PRESSURE,
+				DIASTOLIC_BLOOD_PRESSURE,
+				PULSE,
+				TEMPERATURE_C,
+				ARTERIAL_BLOOD_OXYGEN_SATURATION,
+				RESPIRATORY_RATE,
+				UNKNOWN_OBSERVATION_TYPE
 		);
 		
-		Set<String> observationTypesSet3 = Set.of(
-				"5090AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"5089AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-				"1343AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
+		Set<String> biometrics = Set.of(
+				HEIGHT_CM,
+				WEIGHT_KG,
+				MID_UPPER_ARM_CIRCUMFERENCE
 		);
 		return exec(
 				getPatientSummaryData(patientUuid),
 				getCurrentVisit(patientUuid),
-				getPatientObservations(patientUuid, observationTypesSet1),
-				getPatientObservations(patientUuid, observationTypesSet2),
-				getPatientObservations(patientUuid, observationTypesSet3),
+				getPatientObservations(patientUuid, unknownObservationSet),
+				getPatientObservations(patientUuid, vitals),
+				getPatientObservations(patientUuid, biometrics),
 				getVisitQueueEntry(patientUuid),
 				getPatientConditions(patientUuid),
 				getActiveOrders(patientUuid));

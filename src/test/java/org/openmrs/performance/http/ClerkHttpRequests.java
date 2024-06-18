@@ -52,15 +52,13 @@ public class ClerkHttpRequests {
 		return http("Generate OMRS Identifier")
 				.post("/openmrs/ws/rest/v1/idgen/identifiersource/8549f706-7e85-4c1d-9424-217d50a2988b/identifier")
 				.body(StringBody("{}"))
-				.check(jsonPath("$.identifier").saveAs("identifier"))
-				.check(bodyString().saveAs("responseBody"));
+				.check(jsonPath("$.identifier").saveAs("identifier"));
 	}
 	
 	public static HttpRequestActionBuilder sendPatientRegistrationRequest() {
 		return http("Send Patient Registration Request")
 				.post("/openmrs/ws/rest/v1/patient/")
 				.body(StringBody(registrationRequestTemplate))
-				.check(bodyString().saveAs("registrationResponseBody"))
 				.check(jsonPath("$.uuid").saveAs("patientUuid"));
 	}
 	
