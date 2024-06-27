@@ -11,6 +11,8 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
+import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.DRUG_ORDER_TYPE_UUID;
 
 public class DoctorHttpRequests {
 	
@@ -80,6 +82,21 @@ public class DoctorHttpRequests {
 		return http("End Visit")
 				.post("/openmrs/ws/rest/v1/visit/"+visitUuid)
 				.body(StringBody(gson.toJson(requestBodyMap)));
+	}
+	
+	public static HttpRequestActionBuilder getOrderTypes() {
+		return http("Get Order Types")
+				.get("/openmrs/ws/rest/v1/ordertype");
+	}
+	
+	public static HttpRequestActionBuilder getAllActiveOrders(String patientUuid) {
+		return http("Get Active Orders")
+				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting="+CARE_SETTING_UUID+"&status=ACTIVE");
+	}
+	
+	public static HttpRequestActionBuilder getDrugOrders(String patientUuid) {
+		return http("Get Orders")
+				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting="+CARE_SETTING_UUID+"&status=any&orderType="+DRUG_ORDER_TYPE_UUID+"&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
 
 }

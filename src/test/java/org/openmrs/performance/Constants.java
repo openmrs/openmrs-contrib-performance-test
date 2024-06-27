@@ -10,6 +10,9 @@ public class Constants {
 	public static final String OUTPATIENT_CLINIC_LOCATION_UUID = "44c3efb0-2583-4c80-a79e-1f756a03c0a1";
 	public static final String FACULTY_VISIT_TYPE_UUID = "7b0f5697-27e3-40c4-8bae-f4049abfb4ed";
 	
+	public static final String CARE_SETTING_UUID = "6f0c9a92-6f24-11e3-af88-005056821db0";
+	public static final String DRUG_ORDER_TYPE_UUID = "131168f4-15f5-102d-96e4-000c29c2a5d7";
+	
 	// Observation Types
 	public static final String SYSTOLIC_BLOOD_PRESSURE = "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String DIASTOLIC_BLOOD_PRESSURE = "5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

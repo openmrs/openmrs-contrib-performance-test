@@ -58,18 +58,18 @@ public class DoctorRegistry {
 	
 	// Medications,
 	public static ChainBuilder reviewMedications(String patientUuid) {
-		return null;
+		return exec(getDrugOrders(patientUuid));
 	}
 	
 	// orders,
 	public static ChainBuilder reviewOrders(String patientUuid) {
-		return null;
+		return exec(getOrderTypes())
+				.exec(getAllActiveOrders(patientUuid));
 	}
 	// Lab results,
 	public static ChainBuilder reviewLabResults(String patientUuid) {
 		return null;
 	}
-	// visits allergirs,
 	public static ChainBuilder reviewAllergies(String patientUuid) {
 		return null;
 	}
