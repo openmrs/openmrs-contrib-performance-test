@@ -1,7 +1,9 @@
 package org.openmrs.performance.personas;
 
+import io.gatling.javaapi.core.FeederBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 
+import static io.gatling.javaapi.core.CoreDsl.csv;
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 import static org.openmrs.performance.registries.ClerkRegistry.registerPatient;
 import static org.openmrs.performance.registries.CommonRegistry.*;
@@ -9,21 +11,20 @@ import static org.openmrs.performance.registries.DoctorRegistry.*;
 
 public class Doctor {
 	
-	private static final String PATIENT_UUID = "e2783cb2-d3fb-4713-bf87-f55b378759d9";
+	public static FeederBuilder<String> patientUuidFeeder = csv("patient_uuids.csv").circular();
 	public static ScenarioBuilder doctorScenario = scenario("Doctor")
+			.feed(patientUuidFeeder)
 			.exec(login())
-			// Register a patient per doctor, which isn't ideal. should be changed to pre-registered patients
-			.exec(registerPatient())
 			.exec(openHomePage())
-			.exec(openPatientChartPage("#{patientUuid}"))
-			.exec(startVisit("#{patientUuid}"))
-			.exec(reviewVitalsAndBiometrics("#{patientUuid}"))
-			.exec(reviewMedications("#{patientUuid}"))
-			.exec(reviewOrders("#{patientUuid}"))
-//			.exec(reviewLabResults("ddd"))
-//			.exec(reviewAllergies("ddd"))
-//			.exec(reviewConditions("ddd"))
-//			.exec(reviewImmunizations("ddd"))
-//			.exec(reviewAttachments("ddd"))
-			.exec(endVisit("#{patientUuid}"));
+			.exec(openPatientChartPage("#{patient_uuid}"))
+			.exec(startVisit("#{patient_uuid}"))
+			.exec(reviewVitalsAndBiometrics("#{patient_uuid}"))
+			.exec(reviewMedications("#{patient_uuid}"))
+			.exec(reviewOrders("#{patient_uuid}"))
+//			.exec(reviewLabResults("#{patient_uuid}"))
+			.exec(reviewAllergies("#{patient_uuid}"))
+			.exec(reviewConditions("#{patient_uuid}"))
+//			.exec(reviewImmunizations("#{patient_uuid}"))
+			.exec(reviewAttachments("#{patient_uuid}"))
+			.exec(endVisit("#{patient_uuid}"));
 }

@@ -71,11 +71,11 @@ public class DoctorRegistry {
 		return null;
 	}
 	public static ChainBuilder reviewAllergies(String patientUuid) {
-		return null;
+		return exec(getAllergies(patientUuid));
 	}
 	// conditions,
 	public static ChainBuilder reviewConditions(String patientUuid) {
-		return null;
+		return exec(getConditions(patientUuid));
 	}
 	// immunizations,
 	public static ChainBuilder reviewImmunizations(String patientUuid) {
@@ -83,7 +83,7 @@ public class DoctorRegistry {
 	}
 	// attachments
 	public static ChainBuilder reviewAttachments(String patientUuid) {
-		return null;
+		return exec(getAttachments(patientUuid));
 	}
 	
 }

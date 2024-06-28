@@ -98,5 +98,28 @@ public class DoctorHttpRequests {
 		return http("Get Orders")
 				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting="+CARE_SETTING_UUID+"&status=any&orderType="+DRUG_ORDER_TYPE_UUID+"&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
+	
+	public static HttpRequestActionBuilder getAllergies(String patientUuid) {
+		return http("Get Allergies")
+				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient="+patientUuid+"&_summary=data");
+	}
+	
+//	http://localhost/openmrs/ws/fhir2/R4/Condition?patient=64e1497f-afc9-4bf6-9c13-b15addd98c91&_count=100&_summary=data
+	public static HttpRequestActionBuilder getConditions(String patientUuid) {
+		return http("Get Conditions")
+				.get("/openmrs/ws/fhir2/R4/Condition?patient="+patientUuid+"&_count=100&_summary=data");
+	}
+	
+//	http://localhost/openmrs/ws/rest/v1/attachment?patient=64e1497f-afc9-4bf6-9c13-b15addd98c91&includeEncounterless=true
+	public static HttpRequestActionBuilder getAttachments(String patientUuid) {
+		return http("Get Attachments")
+				.get("/openmrs/ws/rest/v1/attachment?patient="+patientUuid+"&includeEncounterless=true");
+	}
+	
+//	http://localhost/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions
+	public static HttpRequestActionBuilder getAllowedFileExtensions() {
+		return http("Get Allowed File Extensions")
+				.get("/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions");
+	}
 
 }
