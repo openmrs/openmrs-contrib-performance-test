@@ -47,3 +47,17 @@ jobs:
           name: report
           path: target/gatling
           retention-days: 30
+      # Publish the report to GH pages
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit the report to the report branch
+        run: |
+          chmod +x update_report.sh
+          ./update_report.sh
+
+      - name: Push changes
+        run: |
+          git push origin report

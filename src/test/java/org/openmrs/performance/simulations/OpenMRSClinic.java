@@ -10,7 +10,7 @@ import static org.openmrs.performance.personas.Doctor.doctorScenario;
 
 
 
-public class TestSimulation extends Simulation {
+public class OpenMRSClinic extends Simulation {
 	
 	HttpProtocolBuilder httpProtocol =
 			http.baseUrl("http://localhost")
