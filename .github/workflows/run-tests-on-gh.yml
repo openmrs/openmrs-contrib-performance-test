@@ -56,7 +56,8 @@ jobs:
 
       - name: Commit the report to the report branch
         run: |
-          sh commit_report.sh
+          chmod +x commit-report.sh
+          ./commit-report.sh
 
       - name: Push changes
         run: |
