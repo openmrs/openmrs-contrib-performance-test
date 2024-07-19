@@ -18,8 +18,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Start an OpenMRS instance
-        run: docker-compose -f src/test/resources/docker-compose.yml up -d
+      #      - name: Start an OpenMRS instance
+      #        run: docker-compose -f src/test/resources/docker-compose.yml up -d
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -30,15 +30,15 @@ jobs:
       - name: Install dependencies
         run: ./mvnw install -DskipTests
 
-      - name: Wait for the OpenMRS instance to start
-        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
+      #      - name: Wait for the OpenMRS instance to start
+      #        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
 
       - name: Run performance tests
         run: ./mvnw gatling:test
 
-      - name: Stop the OpenMRS instance
-        if: '!cancelled()'
-        run: docker stop $(docker ps -a -q)
+      #      - name: Stop the OpenMRS instance
+      #        if: '!cancelled()'
+      #        run: docker stop $(docker ps -a -q)
 
       - name: Upload test results
         if: always()
@@ -50,15 +50,18 @@ jobs:
 
       # Publish the report to GH pages
       - name: Set up Git
+        if: github.event_name == 'push'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit the report to the report branch
+        if: github.event_name == 'push'
         run: |
-          chmod +x commit_report.sh
-          ./commit_report.sh
+          chmod +x commit-report.sh
+          ./commit-report.sh
 
       - name: Push changes
+        if: github.event_name == 'push'
         run: |
-          git push origin report
+          git push origin main:remote -f
