@@ -13,7 +13,7 @@ import static org.openmrs.performance.personas.Doctor.doctorScenario;
 public class OpenMRSClinic extends Simulation {
 	
 	HttpProtocolBuilder httpProtocol =
-			http.baseUrl("http://localhost")
+			http.baseUrl("https://dev3.openmrs.org")
 					.acceptHeader("application/json, text/plain, */*")
 					.acceptLanguageHeader("en-US,en;q=0.5")
 					.userAgentHeader(
@@ -27,11 +27,11 @@ public class OpenMRSClinic extends Simulation {
 				clerkScenario.injectClosed(
 						rampConcurrentUsers(0).to(1).during(20),
 						constantConcurrentUsers(1).during(1)
-				),
-				doctorScenario.injectClosed(
-						rampConcurrentUsers(0).to(1).during(20),
-						constantConcurrentUsers(1).during(1)
 				)
+//				doctorScenario.injectClosed(
+//						rampConcurrentUsers(0).to(1).during(20),
+//						constantConcurrentUsers(1).during(1)
+//				)
 		).protocols(httpProtocol);
 	}
 }
