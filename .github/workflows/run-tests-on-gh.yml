@@ -36,9 +36,9 @@ jobs:
       - name: Run performance tests
         run: ./mvnw gatling:test
 
-      - name: Stop the OpenMRS instance
-        if: '!cancelled()'
-        run: docker stop $(docker ps -a -q)
+#      - name: Stop the OpenMRS instance
+#        if: '!cancelled()'
+#        run: docker stop $(docker ps -a -q)
 
       - name: Upload test results
         if: always()
