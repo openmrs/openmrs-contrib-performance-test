@@ -25,4 +25,5 @@ if [ -d "$report" ]; then
   git commit -m "Update report: $timestamp"
 else
   echo "No directory found starting with 'openmrsclinic-' in target/gatling/"
+  exit 1
 fi
