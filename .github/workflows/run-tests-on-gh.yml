@@ -47,6 +47,7 @@ jobs:
           name: report
           path: target/gatling
           retention-days: 30
+
       # Publish the report to GH pages
       - name: Set up Git
         run: |
@@ -55,8 +56,8 @@ jobs:
 
       - name: Commit the report to the report branch
         run: |
-          chmod +x update_report.sh
-          ./update_report.sh
+          chmod +x commit_report.sh
+          ./commit_report.sh
 
       - name: Push changes
         run: |
