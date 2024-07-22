@@ -33,8 +33,25 @@ jobs:
       - name: Wait for the OpenMRS instance to start
         run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
 
+      - name: Get System Information
+        run: |
+          # Get RAM information
+          total_ram=$(free -h | grep Mem | awk '{print $2}')
+          
+          # Get number of CPUs
+          num_cpus=$(nproc)
+          
+          # Get disk space information
+          total_disk=$(df -h / | grep / | awk '{print $2}')
+          
+          # Format the description
+          description="Executed on a GitHub Actions runner with ${total_ram} RAM, ${num_cpus}CPUs, and ${total_disk} disk space."
+          
+          # Set the description as an environment variable
+          echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
+
       - name: Run performance tests
-        run: ./mvnw gatling:test
+        run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
