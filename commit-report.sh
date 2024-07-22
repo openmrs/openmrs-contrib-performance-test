@@ -17,6 +17,9 @@ if [ -d "$report" ]; then
   # Delete the target directory
   rm -rf target
 
+  # Create a CNAME file (for GitHub Pages)
+  echo "o3-performance.openmrs.org" > CNAME
+
   # Add all changes to git
   git add --all
 
