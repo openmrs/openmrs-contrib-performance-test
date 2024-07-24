@@ -24,13 +24,13 @@ public class OpenMRSClinic extends Simulation {
 	
 	{
 		setUp(
-//				clerkScenario.injectClosed(
-//						rampConcurrentUsers(0).to(100).during(20),
-//						constantConcurrentUsers(100).during(60*60)
-//				),
+				clerkScenario.injectClosed(
+						rampConcurrentUsers(0).to(100).during(20),
+						constantConcurrentUsers(100).during(60*60)
+				),
 				doctorScenario.injectClosed(
-//						rampConcurrentUsers(0).to(100).during(20),
-						constantConcurrentUsers(5).during(10)
+						rampConcurrentUsers(0).to(100).during(20),
+						constantConcurrentUsers(100).during(60*60)
 				)
 		).protocols(httpProtocol);
 	}
