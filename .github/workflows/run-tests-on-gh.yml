@@ -56,6 +56,10 @@ jobs:
           LOAD_SIMULATION_TYPE: dev
           GLOBAL_VAR: overridden_in_step
         run: |
+          echo active users: ${PR_ACTIVE_USERS}
+          echo dm: ${PR_DURATION_MINUTES}
+          echo active users: ${env.PR_ACTIVE_USERS}
+          echo dm: ${env.PR_DURATION_MINUTES}
           echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
           echo "ACTIVE_USERS=${PR_ACTIVE_USERS}" >> $GITHUB_ENV
           echo "DURATION_MINUTES=${PR_DURATION_MINUTES}" >> $GITHUB_ENV
