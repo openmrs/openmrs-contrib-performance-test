@@ -39,7 +39,6 @@ To run the performance tests locally, follow these steps:
     **Peak** `export LOAD_SIMULATION_TYPE='peak' && ./mvnw gatling:test` \
     **dev**  `export LOAD_SIMULATION_TYPE=dev ACTIVE_USERS=20 DURATION_MINUTES=10 && ./mvnw gatling:test`
 
-
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
 ### Simulations

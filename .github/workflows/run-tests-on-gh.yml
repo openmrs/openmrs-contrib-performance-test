@@ -18,8 +18,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Start an OpenMRS instance
-        run: docker-compose -f src/test/resources/docker-compose.yml up -d
+#      - name: Start an OpenMRS instance
+#        run: docker-compose -f src/test/resources/docker-compose.yml up -d
 
       - name: Set up Java
         uses: actions/setup-java@v4
@@ -30,8 +30,8 @@ jobs:
       - name: Install dependencies
         run: ./mvnw install -DskipTests
 
-      - name: Wait for the OpenMRS instance to start
-        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
+#      - name: Wait for the OpenMRS instance to start
+#        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
 
       - name: Get System Information
         run: |
