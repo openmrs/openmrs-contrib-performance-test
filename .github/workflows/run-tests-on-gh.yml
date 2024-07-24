@@ -56,6 +56,7 @@ jobs:
           LOAD_SIMULATION_TYPE: dev
           GLOBAL_VAR: overridden_in_step
         run: |
+          echo ff ${LOAD_SIMULATION_TYPE}
           echo active users: ${PR_ACTIVE_USERS}
           echo dm: ${PR_DURATION_MINUTES}
           echo active users: ${env.PR_ACTIVE_USERS}
