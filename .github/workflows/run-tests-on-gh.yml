@@ -50,6 +50,16 @@ jobs:
           # Set the description as an environment variable
           echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
 
+      - name: Update load configuration for PRS
+        if: github.event_name == 'pull_request'
+        env:
+          LOAD_SIMULATION_TYPE: dev
+          GLOBAL_VAR: overridden_in_step
+        run: |
+          echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
+          echo "ACTIVE_USERS=${env.PR_ACTIVE_USERS}" >> $GITHUB_ENV
+          echo "DURATION_MINUTES=${env.PR_DURATION_MINUTES}" >> $GITHUB_ENV
+
       - name: Run performance tests
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 

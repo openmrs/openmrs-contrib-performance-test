@@ -2,8 +2,6 @@ package org.openmrs.performance.registries;
 
 import io.gatling.javaapi.core.ChainBuilder;
 
-import java.time.ZonedDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -14,10 +12,6 @@ import static org.openmrs.performance.http.CommonHttpRequests.getCurrentVisit;
 import static org.openmrs.performance.http.CommonHttpRequests.getVisitQueueEntry;
 import static org.openmrs.performance.http.DoctorHttpRequests.*;
 import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
-
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class DoctorRegistry {
 	
@@ -77,7 +71,6 @@ public class DoctorRegistry {
 					// Extract concept IDs from the lab results response
 					String response = session.getString("labResultsResponse");
 					List<String> conceptIds = extractConceptIds(response);
-					System.out.println("Concept IDs: " + conceptIds);
 					// Save concept IDs in the session
 					return session.set("labResultConceptIds", conceptIds);
 				})
