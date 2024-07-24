@@ -60,15 +60,6 @@ public class DoctorHttpRequests {
 				.check(jsonPath("$.uuid").saveAs("visitUuid"));
 	}
 	
-//	end visit
-//	https://dev3.openmrs.org/openmrs/ws/rest/v1/visit/a5e9e59b-8b14-428a-ab64-35d66684cb9c
-//	{
-	//  "location": "44c3efb0-2583-4c80-a79e-1f756a03c0a1",
-	//  "startDatetime": "2024-06-18T08:19:00.000Z",
-	//  "visitType": "7b0f5697-27e3-40c4-8bae-f4049abfb4ed",
-	//  "stopDatetime": "2024-06-18T08:51:43.108Z"
-	//}
-	
 	public static HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
 		Gson gson = new Gson();
 		ZonedDateTime now = ZonedDateTime.now();
@@ -104,22 +95,29 @@ public class DoctorHttpRequests {
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient="+patientUuid+"&_summary=data");
 	}
 	
-//	http://localhost/openmrs/ws/fhir2/R4/Condition?patient=64e1497f-afc9-4bf6-9c13-b15addd98c91&_count=100&_summary=data
 	public static HttpRequestActionBuilder getConditions(String patientUuid) {
 		return http("Get Conditions")
 				.get("/openmrs/ws/fhir2/R4/Condition?patient="+patientUuid+"&_count=100&_summary=data");
 	}
 	
-//	http://localhost/openmrs/ws/rest/v1/attachment?patient=64e1497f-afc9-4bf6-9c13-b15addd98c91&includeEncounterless=true
 	public static HttpRequestActionBuilder getAttachments(String patientUuid) {
 		return http("Get Attachments")
 				.get("/openmrs/ws/rest/v1/attachment?patient="+patientUuid+"&includeEncounterless=true");
 	}
 	
-//	http://localhost/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions
 	public static HttpRequestActionBuilder getAllowedFileExtensions() {
 		return http("Get Allowed File Extensions")
 				.get("/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions");
 	}
-
+	
+	public static HttpRequestActionBuilder getLabResults(String patientUuid) {
+		return http("Get Lab Results")
+				.get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient="+patientUuid+"&_count=100&_summary=data")
+				.check(bodyString().saveAs("labResultsResponse"));
+	}
+	
+	public static HttpRequestActionBuilder getConcept(String conceptUuid) {
+		return http("Get Concept")
+				.get("/openmrs/ws/rest/v1/concept/"+conceptUuid+"?v=full");
+	}
 }

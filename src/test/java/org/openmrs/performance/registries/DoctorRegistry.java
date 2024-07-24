@@ -1,7 +1,10 @@
 package org.openmrs.performance.registries;
+
 import io.gatling.javaapi.core.ChainBuilder;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
@@ -10,9 +13,13 @@ import static org.openmrs.performance.http.ClerkHttpRequests.getPatientObservati
 import static org.openmrs.performance.http.CommonHttpRequests.getCurrentVisit;
 import static org.openmrs.performance.http.CommonHttpRequests.getVisitQueueEntry;
 import static org.openmrs.performance.http.DoctorHttpRequests.*;
+import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class DoctorRegistry {
-	
 	
 	public static ChainBuilder startVisit(String patientUuid) {
 		
@@ -34,7 +41,6 @@ public class DoctorRegistry {
 				.exec(getVisits(patientUuid));
 	}
 	
-	// Review Vitals and Biometrics
 	public static ChainBuilder reviewVitalsAndBiometrics(String patientUuid) {
 		
 		Set<String> vitals = Set.of(
@@ -56,34 +62,44 @@ public class DoctorRegistry {
 				.exec(getPatientObservations(patientUuid, biometrics));
 	}
 	
-	// Medications,
 	public static ChainBuilder reviewMedications(String patientUuid) {
 		return exec(getDrugOrders(patientUuid));
 	}
 	
-	// orders,
 	public static ChainBuilder reviewOrders(String patientUuid) {
 		return exec(getOrderTypes())
 				.exec(getAllActiveOrders(patientUuid));
 	}
-	// Lab results,
+	
 	public static ChainBuilder reviewLabResults(String patientUuid) {
-		return null;
+		return exec(getLabResults(patientUuid))
+				.exec(session -> {
+					// Extract concept IDs from the lab results response
+					String response = session.getString("labResultsResponse");
+					List<String> conceptIds = extractConceptIds(response);
+					System.out.println("Concept IDs: " + conceptIds);
+					// Save concept IDs in the session
+					return session.set("labResultConceptIds", conceptIds);
+				})
+				.foreach("#{labResultConceptIds}", "conceptId").on(
+						exec(getConcept("#{conceptId}"))
+				);
 	}
+	
 	public static ChainBuilder reviewAllergies(String patientUuid) {
 		return exec(getAllergies(patientUuid));
 	}
-	// conditions,
+	
 	public static ChainBuilder reviewConditions(String patientUuid) {
 		return exec(getConditions(patientUuid));
 	}
-	// immunizations,
+	
 	public static ChainBuilder reviewImmunizations(String patientUuid) {
 		return null;
 	}
-	// attachments
-	public static ChainBuilder reviewAttachments(String patientUuid) {
-		return exec(getAttachments(patientUuid));
-	}
 	
+	public static ChainBuilder reviewAttachments(String patientUuid) {
+		return exec(getAttachments(patientUuid))
+				.exec(getAllowedFileExtensions());
+	}
 }

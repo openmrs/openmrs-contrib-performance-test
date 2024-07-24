@@ -21,7 +21,7 @@ public class Doctor {
 			.exec(reviewVitalsAndBiometrics("#{patient_uuid}"))
 			.exec(reviewMedications("#{patient_uuid}"))
 			.exec(reviewOrders("#{patient_uuid}"))
-//			.exec(reviewLabResults("#{patient_uuid}"))
+			.exec(reviewLabResults("#{patient_uuid}"))
 			.exec(reviewAllergies("#{patient_uuid}"))
 			.exec(reviewConditions("#{patient_uuid}"))
 //			.exec(reviewImmunizations("#{patient_uuid}"))
