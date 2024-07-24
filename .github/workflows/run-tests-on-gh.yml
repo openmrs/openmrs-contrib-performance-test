@@ -57,8 +57,8 @@ jobs:
           GLOBAL_VAR: overridden_in_step
         run: |
           echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
-          echo "ACTIVE_USERS=${env.PR_ACTIVE_USERS}" >> $GITHUB_ENV
-          echo "DURATION_MINUTES=${env.PR_DURATION_MINUTES}" >> $GITHUB_ENV
+          echo "ACTIVE_USERS=${PR_ACTIVE_USERS}" >> $GITHUB_ENV
+          echo "DURATION_MINUTES=${PR_DURATION_MINUTES}" >> $GITHUB_ENV
 
       - name: Run performance tests
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
