@@ -13,10 +13,19 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      LOAD_SIMULATION_TYPE: peak
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Update load configuration for PRS
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
+          echo "ACTIVE_USERS=20" >> $GITHUB_ENV
+          echo "DURATION_MINUTES=2" >> $GITHUB_ENV
 
       - name: Start an OpenMRS instance
         run: docker-compose -f src/test/resources/docker-compose.yml up -d
