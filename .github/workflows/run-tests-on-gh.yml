@@ -14,11 +14,18 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
-      LOAD_SIMULATION_TYPE: ${{ vars.LOAD_SIMULATION_TYPE }}
+      LOAD_SIMULATION_TYPE: peak
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Update load configuration for PRS
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
+          echo "ACTIVE_USERS=20" >> $GITHUB_ENV
+          echo "DURATION_MINUTES=2" >> $GITHUB_ENV
 
 #      - name: Start an OpenMRS instance
 #        run: docker-compose -f src/test/resources/docker-compose.yml up -d
@@ -28,18 +35,6 @@ jobs:
         with:
           distribution: 'adopt'
           java-version: '15'
-
-      - name: Update load configuration for PRS
-        if: github.event_name == 'pull_request'
-        run: |
-          echo "$ACTIVE_USERS $DURATION_MINUTES $LOAD_SIMULATION_TYPE"
-          echo ff ${{ vars.LOAD_SIMULATION_TYPE }}
-          echo active users: ${{ vars.PR_ACTIVE_USERS }}
-          echo dm: ${{ vars.PR_DURATION_MINUTES }}
-          echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
-          echo "ACTIVE_USERS=${{ vars.PR_ACTIVE_USERS }}" >> $GITHUB_ENV
-          echo "DURATION_MINUTES=${{ vars.PR_DURATION_MINUTES }}" >> $GITHUB_ENV
-          echo "$ACTIVE_USERS $DURATION_MINUTES $LOAD_SIMULATION_TYPE"
 
       - name: Install dependencies
         run: ./mvnw install
