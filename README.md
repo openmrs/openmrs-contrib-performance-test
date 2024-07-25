@@ -53,6 +53,11 @@ This command will initiate the performance tests using Gatling and generate a re
 | peak      | 70                 | 1 hour             | 60 seconds            |
 | dev       | env `ACTIVE_USERS` | env `ACTIVE_USERS` | 60 seconds            |
 
+Currently, the workload is divided between the following roles:
+
+Doctor: 50% of the active users
+Clerk: 50% of the active users
+
 
 ## Debugging
 
