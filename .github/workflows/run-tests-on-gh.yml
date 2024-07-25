@@ -13,6 +13,8 @@ on:
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
+    env:
+      LOAD_SIMULATION_TYPE: ${{ vars.LOAD_SIMULATION_TYPE }}
 
     steps:
       - name: Checkout repository
@@ -27,8 +29,20 @@ jobs:
           distribution: 'adopt'
           java-version: '15'
 
+      - name: Update load configuration for PRS
+        if: github.event_name == 'pull_request'
+        run: |
+          echo "$ACTIVE_USERS $DURATION_MINUTES $LOAD_SIMULATION_TYPE"
+          echo ff ${{ vars.LOAD_SIMULATION_TYPE }}
+          echo active users: ${{ vars.PR_ACTIVE_USERS }}
+          echo dm: ${{ vars.PR_DURATION_MINUTES }}
+          echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
+          echo "ACTIVE_USERS=${PR_ACTIVE_USERS}" >> $GITHUB_ENV
+          echo "DURATION_MINUTES=${PR_DURATION_MINUTES}" >> $GITHUB_ENV
+          echo "$ACTIVE_USERS $DURATION_MINUTES $LOAD_SIMULATION_TYPE"
+
       - name: Install dependencies
-        run: ./mvnw install -DskipTests
+        run: ./mvnw install
 
 #      - name: Wait for the OpenMRS instance to start
 #        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
@@ -50,20 +64,7 @@ jobs:
           # Set the description as an environment variable
           echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
 
-      - name: Update load configuration for PRS
-        if: github.event_name == 'pull_request'
-        env:
-          LOAD_SIMULATION_TYPE: dev
-          GLOBAL_VAR: overridden_in_step
-        run: |
-          echo ff ${LOAD_SIMULATION_TYPE}
-          echo active users: ${PR_ACTIVE_USERS}
-          echo dm: ${PR_DURATION_MINUTES}
-          echo active users: ${env.PR_ACTIVE_USERS}
-          echo dm: ${env.PR_DURATION_MINUTES}
-          echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
-          echo "ACTIVE_USERS=${PR_ACTIVE_USERS}" >> $GITHUB_ENV
-          echo "DURATION_MINUTES=${PR_DURATION_MINUTES}" >> $GITHUB_ENV
+      
 
       - name: Run performance tests
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
