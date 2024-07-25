@@ -35,7 +35,7 @@ public class DoctorRegistry {
 				.exec(getVisits(patientUuid));
 	}
 	
-	public static ChainBuilder reviewVitalsAndBiometrics(String patientUuid) {
+	public static ChainBuilder openVitalsAndBiometricsTab(String patientUuid) {
 		
 		Set<String> vitals = Set.of(
 				SYSTOLIC_BLOOD_PRESSURE,
@@ -56,16 +56,16 @@ public class DoctorRegistry {
 				.exec(getPatientObservations(patientUuid, biometrics));
 	}
 	
-	public static ChainBuilder reviewMedications(String patientUuid) {
+	public static ChainBuilder openMedicationsTab(String patientUuid) {
 		return exec(getDrugOrders(patientUuid));
 	}
 	
-	public static ChainBuilder reviewOrders(String patientUuid) {
+	public static ChainBuilder openOrdersTab(String patientUuid) {
 		return exec(getOrderTypes())
 				.exec(getAllActiveOrders(patientUuid));
 	}
 	
-	public static ChainBuilder reviewLabResults(String patientUuid) {
+	public static ChainBuilder openLabResultsTab(String patientUuid) {
 		return exec(getLabResults(patientUuid))
 				.exec(session -> {
 					// Extract concept IDs from the lab results response
@@ -79,20 +79,24 @@ public class DoctorRegistry {
 				);
 	}
 	
-	public static ChainBuilder reviewAllergies(String patientUuid) {
+	public static ChainBuilder openAllergiesTab(String patientUuid) {
 		return exec(getAllergies(patientUuid));
 	}
 	
-	public static ChainBuilder reviewConditions(String patientUuid) {
+	public static ChainBuilder openConditionsTab(String patientUuid) {
 		return exec(getConditions(patientUuid));
 	}
 	
-	public static ChainBuilder reviewImmunizations(String patientUuid) {
-		return null;
+	public static ChainBuilder openImmunizationsTab(String patientUuid) {
+		return exec(getImmunizations(patientUuid));
 	}
 	
-	public static ChainBuilder reviewAttachments(String patientUuid) {
+	public static ChainBuilder openAttachmentsTab(String patientUuid) {
 		return exec(getAttachments(patientUuid))
 				.exec(getAllowedFileExtensions());
+	}
+	
+	public static ChainBuilder openVisitsTab(String patientUuid) {
+		return exec(getVisits(patientUuid));
 	}
 }

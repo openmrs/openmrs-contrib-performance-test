@@ -9,6 +9,7 @@ on:
       - main
   schedule:
     - cron: "0 0 * * *"
+  workflow_dispatch:
 
 jobs:
   build-and-test:
@@ -20,8 +21,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Update load configuration for PRS
-        if: github.event_name == 'pull_request'
+      - name: Update the load configuration for PRS and commits
+        if: github.event_name != 'schedule' && github.event_name != 'workflow_dispatch'
         run: |
           echo "LOAD_SIMULATION_TYPE=dev" >> $GITHUB_ENV
           echo "ACTIVE_USERS=20" >> $GITHUB_ENV
@@ -76,18 +77,18 @@ jobs:
 
       # Publish the report to GH pages
       - name: Set up Git
-        if: github.event_name == 'push'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit the report to the report branch
-        if: github.event_name == 'push'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           chmod +x commit-report.sh
           ./commit-report.sh
 
       - name: Push changes
-        if: github.event_name == 'push'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           git push origin main:report -f

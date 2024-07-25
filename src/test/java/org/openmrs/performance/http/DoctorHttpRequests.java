@@ -120,4 +120,9 @@ public class DoctorHttpRequests {
 		return http("Get Concept")
 				.get("/openmrs/ws/rest/v1/concept/"+conceptUuid+"?v=full");
 	}
+	
+	public static HttpRequestActionBuilder getImmunizations(String patientUuid) {
+		return http("Get Immunizations")
+				.get("/openmrs/ws/fhir2/R4/Immunization?patient="+patientUuid+"&_summary=data");
+	}
 }
