@@ -46,12 +46,12 @@ This command will initiate the performance tests using Gatling and generate a re
 
 > Note: Simulations on git actions are run with `peak` load simulation type. You can change the simulation type by setting the `LOAD_SIMULATION_TYPE` repository environment variable.
 
-| Load Type | Concurrent Users   | Duration           | Initial Ramp Duration |
-|-----------|--------------------|--------------------|-----------------------|
-| standard  | 70                 | 1 hour             | 60 seconds            |
-| high      | 100                | 1 hour             | 60 seconds            |
-| peak      | 200                | 1 hour             | 60 seconds            |
-| dev       | env `ACTIVE_USERS` | env `ACTIVE_USERS` | 60 seconds            |
+| Load Type | Concurrent Users   | Duration       | Initial Ramp Duration |
+|-----------|--------------------|----------------|-----------------------|
+| standard  | 70                 | 1 hour         | 60 seconds            |
+| high      | 100                | 1 hour         | 60 seconds            |
+| peak      | 200                | 1 hour         | 60 seconds            |
+| dev       | env `ACTIVE_USERS` | env `DURATION` | 60 seconds            |
 
 Currently, the workload is divided between the following roles:
 
