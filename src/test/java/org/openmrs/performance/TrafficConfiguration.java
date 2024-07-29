@@ -50,11 +50,20 @@ public class TrafficConfiguration {
 	
 	private void setUserCountAndDurationBasedOnType(String loadSimulationType) {
 		int totalActiveUserCount;
-		int duration = DEFAULT_DURATION;
+		int duration;
 		switch (LoadSimulationType.fromString(loadSimulationType)) {
-			case STANDARD -> totalActiveUserCount = 70;
-			case HIGH -> totalActiveUserCount = 100;
-			case PEAK -> totalActiveUserCount = 200;
+			case STANDARD -> {
+				totalActiveUserCount = 70;
+				duration = DEFAULT_DURATION;
+			}
+			case HIGH -> {
+				totalActiveUserCount = 100;
+				duration = DEFAULT_DURATION;
+			}
+			case PEAK -> {
+				totalActiveUserCount = 200;
+				duration = DEFAULT_DURATION;
+			}
 			case DEV -> {
 				String userCountEnv = System.getenv("ACTIVE_USERS");
 				String durationMinutesEnv = System.getenv("DURATION_MINUTES");
@@ -82,6 +91,10 @@ public class TrafficConfiguration {
 	
 	public int getActiveClerkCount() {
 		return activeClerkCount;
+	}
+	
+	public int getTotalActiveUserCount() {
+		return totalActiveUserCount;
 	}
 	
 	private enum LoadSimulationType {

@@ -1,15 +1,18 @@
 package org.openmrs.performance.simulations;
 
+import io.gatling.javaapi.core.PopulationBuilder;
 import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import org.openmrs.performance.TrafficConfiguration;
+import org.openmrs.performance.personas.ClerkPersona;
+import org.openmrs.performance.personas.DoctorPersona;
+import org.openmrs.performance.personas.Persona;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static io.gatling.javaapi.core.CoreDsl.*;
 import static io.gatling.javaapi.http.HttpDsl.http;
-import static org.openmrs.performance.personas.Clerk.clerkScenario;
-import static org.openmrs.performance.personas.Doctor.doctorScenario;
-
-
 
 public class OpenMRSClinic extends Simulation {
 	
@@ -26,19 +29,34 @@ public class OpenMRSClinic extends Simulation {
 					.header("Content-Type", "application/json");
 	
 	{
-		setUp(
-				clerkScenario.injectClosed(
-						rampConcurrentUsers(0).to(trafficConfiguration.getActiveDoctorCount())
+		
+		Persona clerkPersona = new ClerkPersona(0.5);
+		Persona doctorPersona = new DoctorPersona(0.5);
+		
+		int clerkCount = (int) Math.ceil(trafficConfiguration.getTotalActiveUserCount() * clerkPersona.loadShare);
+		int doctorCount = trafficConfiguration.getTotalActiveUserCount() - clerkCount;
+		
+		List<PopulationBuilder> populations = new ArrayList<>();
+		
+		clerkPersona.scenarios().forEach(
+				scenario -> populations.add(scenario.injectClosed(
+						rampConcurrentUsers(0).to(clerkCount)
 								.during(60),
-						constantConcurrentUsers(trafficConfiguration.getActiveDoctorCount())
+						constantConcurrentUsers(clerkCount)
 								.during(trafficConfiguration.getDuration())
-				),
-				doctorScenario.injectClosed(
-						rampConcurrentUsers(0).to(trafficConfiguration.getActiveDoctorCount())
+				))
+		);
+		
+		doctorPersona.scenarios().forEach(
+				scenario -> populations.add(scenario.injectClosed(
+						rampConcurrentUsers(0).to(doctorCount)
 								.during(60),
-						constantConcurrentUsers(trafficConfiguration.getActiveClerkCount())
+						constantConcurrentUsers(doctorCount)
 								.during(trafficConfiguration.getDuration())
-				)
-		).protocols(httpProtocol);
+				))
+		);
+		
+		setUp(populations).protocols(httpProtocol);
+		
 	}
 }
