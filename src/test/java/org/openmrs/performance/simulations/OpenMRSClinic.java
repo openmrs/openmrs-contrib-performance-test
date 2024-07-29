@@ -18,10 +18,8 @@ public class OpenMRSClinic extends Simulation {
 	
 	private static final TrafficConfiguration trafficConfiguration = TrafficConfiguration.getInstance();
 	
-	private static final int duration = trafficConfiguration.getDuration();
-	
 	HttpProtocolBuilder httpProtocol =
-			http.baseUrl("https://dev3.openmrs.org")
+			http.baseUrl("http://localhost")
 					.acceptHeader("application/json, text/plain, */*")
 					.acceptLanguageHeader("en-US,en;q=0.5")
 					.userAgentHeader(
