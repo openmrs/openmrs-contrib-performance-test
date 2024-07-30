@@ -1,6 +1,12 @@
 package org.openmrs.performance;
 
 public class Constants {
+	public static final String BASE_URL = "http://localhost";
+	public static final String ENV_SIMULATION_PRESET = "SIMULATION_PRESET";
+	public static final String ENV_USER_INCREMENT_PER_TIER = "USER_INCREMENT_PER_TIER";
+	public static final String ENV_TIER_DURATION = "TIER_DURATION_MINUTES";
+	public static final String ENV_TIER_COUNT = "TIER_COUNT";
+	
 	public static final String ID_CARD_SOURCE_UUID = "8d79403a-c2cc-11de-8d13-0010c6dffd0f";
 	public static final String OPENMRS_ID_SOURCE_UUID = "05a29f94-c0ed-11e2-94be-8c13b969e334";
 	public static final String LEGACY_ID_SOURCE_UUID = "22348099-3873-459e-a32e-d93b17eda533";

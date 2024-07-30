@@ -16,4 +16,6 @@
 		<appender-ref ref="CONSOLE" />
 	</root>
 
+	<logger name="org.openmrs.performance.simulations" level="INFO"/>
+
 </configuration>

@@ -1,7 +1,6 @@
 package org.openmrs.performance.personas;
 
-import io.gatling.javaapi.core.PopulationBuilder;
-import io.gatling.javaapi.core.ScenarioBuilder;
+import org.openmrs.performance.scenarios.Scenario;
 
 import java.util.List;
 
@@ -12,5 +11,5 @@ public abstract class Persona {
 		this.loadShare = loadShare;
 	}
 	
-	public abstract List<ScenarioBuilder> scenarios();
+	public abstract List<Scenario> getScenarios();
 }
