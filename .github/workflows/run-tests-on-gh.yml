@@ -12,7 +12,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    outputs:
+      test-changes: ${{ steps.changes.outputs.test-sources }}
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Check if any source code has changed
+        id: changes
+        uses: dorny/paths-filter@v3
+        with:
+          filters: |
+            test-sources:
+              - 'src/**/*' 
+              - '.github/workflows/run-tests-on-gh.yml'
+              - 'pom.xml'
+              - 'commit-report.sh'
+
   build-and-test:
+    needs: changes
+    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.test-changes == 'true' }}
+
     runs-on: ubuntu-latest
     env:
       SIMULATION_PRESET: standard

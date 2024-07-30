@@ -42,21 +42,22 @@ To run the performance tests locally, follow these steps:
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
-### Simulations
+### Simulation Presets
 
-> Note: Simulations on git actions are run with `peak` load simulation type. You can change the simulation type by setting the `LOAD_SIMULATION_TYPE` repository environment variable.
 
-| Load Type | Concurrent Users   | Duration       | Initial Ramp Duration |
-|-----------|--------------------|----------------|-----------------------|
-| standard  | 70                 | 1 hour         | 60 seconds            |
-| high      | 100                | 1 hour         | 60 seconds            |
-| peak      | 200                | 1 hour         | 60 seconds            |
-| dev       | env `ACTIVE_USERS` | env `DURATION` | 60 seconds            |
 
-Currently, the workload is divided between the following roles:
 
-Doctor: 50% of the active users
-Clerk: 50% of the active users
+| Preset       | Tier Count        | Tier Duration               | User increment per tier       | Ramp duration |
+|--------------|-------------------|-----------------------------|-------------------------------|---------------|
+| standard     | 6                 | 30 min                      | 32                            | 60 seconds    |
+| commit       | 1                 | 1 min                       | 20                            | 60 seconds    |
+| pull_request | 1                 | 1 min                       | 20                            | 60 seconds    |
+| dev          | env `TIER_COUNT`  | env `TIER_DURATION_MINUTES` | env `USER_INCREMENT_PER_TIER` | 60 seconds    |
+
+Currently, the workload is divided between the following Personas:
+
+- Doctor: 50% of the active users
+- Clerk: 50% of the active users
 
 
 ## Debugging
