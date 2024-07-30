@@ -7,6 +7,7 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 import org.openmrs.performance.personas.ClerkPersona;
 import org.openmrs.performance.personas.DoctorPersona;
 import org.openmrs.performance.personas.Persona;
+import org.openmrs.performance.scenarios.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,8 @@ public class OpenMRSClinic extends Simulation {
 				"dev", Map.of(
 						"tierCount", Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_COUNT, "1")),
 						"tierDurationMinutes", Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_DURATION, "1")),
-						"userIncrementPerTier", Integer.parseInt(System.getenv().getOrDefault(ENV_USER_INCREMENT_PER_TIER, "10"))
+						"userIncrementPerTier",
+						Integer.parseInt(System.getenv().getOrDefault(ENV_USER_INCREMENT_PER_TIER, "10"))
 				)
 		);
 		
@@ -59,7 +61,8 @@ public class OpenMRSClinic extends Simulation {
 		
 		List<Persona> personas = List.of(new ClerkPersona(0.5), new DoctorPersona(0.5));
 		
-		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes, tierCount);
+		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
+				tierCount);
 		
 		setUp(populations).protocols(httpProtocol);
 		
@@ -80,55 +83,53 @@ public class OpenMRSClinic extends Simulation {
 			tierDurationMinutes = loadSimulationType.get("tierDurationMinutes");
 			tierCount = loadSimulationType.get("tierCount");
 		} else {
-			throw new IllegalArgumentException("Invalid value for environment variable " + ENV_SIMULATION_PRESET + ": " + preset);
+			throw new IllegalArgumentException(
+					"Invalid value for environment variable " + ENV_SIMULATION_PRESET + ": " + preset);
 		}
 		
 		return new int[] { userIncrementPerTier, tierDurationMinutes, tierCount };
 	}
 	
-	private List<PopulationBuilder> buildPopulations(List<Persona> personas, int userIncrementPerTier, int tierDurationMinutes,
+	private List<PopulationBuilder> buildPopulations(List<Persona> personas, int userIncrementPerTier,
+			int tierDurationMinutes,
 			int tierCount) {
 		List<PopulationBuilder> populations = new ArrayList<>();
 		int rampDurationMinutes = 1;
 		
-		personas.forEach(
-				persona -> {
-					int personaUserIncrementPerTier = (int) Math.ceil(userIncrementPerTier * persona.loadShare);
-					logger.info("building persona: {}, user increment per tier: {}", persona.getClass().getSimpleName(),
-							personaUserIncrementPerTier);
+		for (Persona persona : personas) {
+			int personaUserIncrementPerTier = (int) Math.ceil(userIncrementPerTier * persona.loadShare);
+			logger.info("building persona: {}, user increment per tier: {}", persona.getClass().getSimpleName(),
+					personaUserIncrementPerTier);
+			
+			for (Scenario scenario : persona.getScenarios()) {
+				logger.info("\t building scenario: {}", scenario.getClass().getSimpleName());
+				
+				int userCount = 0;
+				List<ClosedInjectionStep> steps = new ArrayList<>();
+				
+				for (int i = 0; i < tierCount; i++) {
+					int startUserCount = userCount;
+					int endUserCount = userCount + personaUserIncrementPerTier;
 					
-					persona.getScenarios().forEach(
-							scenario -> {
-								logger.info("\t building scenario: {}", scenario.getClass().getSimpleName());
-								
-								int userCount = 0;
-								List<ClosedInjectionStep> steps = new ArrayList<>();
-								
-								for (int i = 0; i < tierCount; i++) {
-									int startUserCount = userCount;
-									int endUserCount = userCount + personaUserIncrementPerTier;
-									
-									ClosedInjectionStep rampPhase = rampConcurrentUsers(startUserCount).to(endUserCount)
-											.during(rampDurationMinutes * 60L);
-									ClosedInjectionStep constantPhase = constantConcurrentUsers(endUserCount).during(
-											tierDurationMinutes * 60L);
-									// Inject both phases into the scenario
-									steps.add(rampPhase);
-									steps.add(constantPhase);
-									
-									logger.info(
-											"\t\t Tier: {}, Start Users: {}, End Users: {}, Ramp Duration: {} minutes, Constant Duration: {} minutes",
-											i + 1, startUserCount, endUserCount, rampDurationMinutes, tierDurationMinutes
-									);
-									
-									// Update the user count for the next tier
-									userCount = endUserCount;
-								}
-								populations.add(scenario.getScenarioBuilder().injectClosed(steps));
-							}
+					ClosedInjectionStep rampPhase = rampConcurrentUsers(startUserCount).to(endUserCount)
+							.during(rampDurationMinutes * 60L);
+					ClosedInjectionStep constantPhase = constantConcurrentUsers(endUserCount).during(
+							tierDurationMinutes * 60L);
+					// Inject both phases into the scenario
+					steps.add(rampPhase);
+					steps.add(constantPhase);
+					
+					logger.info(
+							"\t\t Tier: {}, Start Users: {}, End Users: {}, Ramp Duration: {} minutes, Constant Duration: {} minutes",
+							i + 1, startUserCount, endUserCount, rampDurationMinutes, tierDurationMinutes
 					);
+					
+					// Update the user count for the next tier
+					userCount = endUserCount;
 				}
-		);
+				populations.add(scenario.getScenarioBuilder().injectClosed(steps));
+			}
+		}
 		
 		return populations;
 	}

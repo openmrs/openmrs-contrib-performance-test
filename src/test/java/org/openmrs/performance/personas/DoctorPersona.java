@@ -1,6 +1,5 @@
 package org.openmrs.performance.personas;
 
-import io.gatling.javaapi.core.ScenarioBuilder;
 import org.openmrs.performance.scenarios.Scenario;
 import org.openmrs.performance.scenarios.VisitPatientScenario;
 
