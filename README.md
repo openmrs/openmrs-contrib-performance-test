@@ -2,9 +2,11 @@
 
 This repository contains performance testing scripts and configurations for OpenMRS using Gatling.
 
-The latest report can be found at [openmrs.github.io/openmrs-contrib-performance-test](https://openmrs.github.io/openmrs-contrib-performance-test/)
+The latest report can be found
+at [openmrs.github.io/openmrs-contrib-performance-test](https://openmrs.github.io/openmrs-contrib-performance-test/)
 
 ## Table of Contents
+
 - [Introduction](#introduction)
 - [Getting Started](#getting-started)
     - [Prerequisites](#prerequisites)
@@ -14,7 +16,8 @@ The latest report can be found at [openmrs.github.io/openmrs-contrib-performance
 
 ## Introduction
 
-This project aims to facilitate performance testing for the OpenMRS platform. By using Gatling, it provides a scalable and easy-to-use framework for simulating user load and measuring system performance.
+This project aims to facilitate performance testing for the OpenMRS platform. By using Gatling, it provides a scalable
+and easy-to-use framework for simulating user load and measuring system performance.
 
 ## Getting Started
 
@@ -31,41 +34,43 @@ To run the performance tests locally, follow these steps:
 1. Start OpenMRS on port 80.
 2. Execute the following command in your terminal:
 
-    > Note: By default the simulation would run for Standard traffic. Please set `LOAD_SIMULATION_TYPE` env variable to `high` or `peak` to simulate other traffic conditions and to `dev` to run with dynamic load conditions
-    
-    **Standard**
-    `export LOAD_SIMULATION_TYPE='standard' && ./mvnw gatling:test` \
-    **High** `export LOAD_SIMULATION_TYPE='high' && ./mvnw gatling:test` \
-    **Peak** `export LOAD_SIMULATION_TYPE='peak' && ./mvnw gatling:test` \
-    **dev**  `export LOAD_SIMULATION_TYPE=dev ACTIVE_USERS=20 DURATION_MINUTES=10 && ./mvnw gatling:test`
-
+   **Standard** `export SIMULATION_PRESET='standard' && ./mvnw gatling:test` \
+   **dev
+   **  `export SIMULATION_PRESET=dev TIER_COUNT=2 TIER_DURATION_MINUTES=1 USER_INCREMENT_PER_TIER=10 && ./mvnw gatling:test`
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
 ### Simulation Presets
 
+Simulation presets are configured within the OpenMRSClinic class. Below are the available presets. To add a new
+simulation, define it in the OpenMRSClinic class.
 
+During test runs, each simulation begins with 0 users and gradually increases by the specified user increment per tier
+for one minute. It then runs with a constant number of users for the tier duration before ramping up again for one
+minute to the next tier. This process continues until the final tier is reached.
 
+| Preset       | Tier Count       | Tier Duration               | User increment per tier       | Ramp duration |
+|--------------|------------------|-----------------------------|-------------------------------|---------------|
+| standard     | 6                | 30 min                      | 32                            | 1 min         |
+| commit       | 1                | 1 min                       | 20                            | 1 min         |
+| pull_request | 1                | 1 min                       | 20                            | 1 min         |
+| dev          | env `TIER_COUNT` | env `TIER_DURATION_MINUTES` | env `USER_INCREMENT_PER_TIER` | 1 min         |
 
-| Preset       | Tier Count        | Tier Duration               | User increment per tier       | Ramp duration |
-|--------------|-------------------|-----------------------------|-------------------------------|---------------|
-| standard     | 6                 | 30 min                      | 32                            | 60 seconds    |
-| commit       | 1                 | 1 min                       | 20                            | 60 seconds    |
-| pull_request | 1                 | 1 min                       | 20                            | 60 seconds    |
-| dev          | env `TIER_COUNT`  | env `TIER_DURATION_MINUTES` | env `USER_INCREMENT_PER_TIER` | 60 seconds    |
+In GitHub Actions, the commit and pull_request presets are used for commits and pull requests, respectively. The
+standard preset is used for scheduled runs, which occur daily, updating the report at [o3-performance.openmrs.org](https://o3-performance.openmrs.org).
 
 Currently, the workload is divided between the following Personas:
 
 - Doctor: 50% of the active users
 - Clerk: 50% of the active users
 
-
 ## Debugging
 
 Add the following line to the `logback.xml` file in the `src/test/resources` directory to enable debug logging:
 
 ```xml
-<logger name="io.gatling.http.engine.response" level="DEBUG" />
+
+<logger name="io.gatling.http.engine.response" level="DEBUG"/>
 ```
 
 ## Additional Resources
