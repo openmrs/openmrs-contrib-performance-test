@@ -7,7 +7,15 @@ import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 
 public class ClerkHttpService extends HttpService {
-	private static final String registrationRequestTemplate = """
+	public HttpRequestActionBuilder generateOMRSIdentifier() {
+		return http("Generate OMRS Identifier")
+				.post("/openmrs/ws/rest/v1/idgen/identifiersource/8549f706-7e85-4c1d-9424-217d50a2988b/identifier")
+				.body(StringBody("{}"))
+				.check(jsonPath("$.identifier").saveAs("identifier"));
+	}
+	
+	public HttpRequestActionBuilder sendPatientRegistrationRequest() {
+		String registrationRequestTemplate = """
 					{
 					   "identifiers":[
 					      {
@@ -43,14 +51,7 @@ public class ClerkHttpService extends HttpService {
 					}
 					
 			""";
-	public HttpRequestActionBuilder generateOMRSIdentifier() {
-		return http("Generate OMRS Identifier")
-				.post("/openmrs/ws/rest/v1/idgen/identifiersource/8549f706-7e85-4c1d-9424-217d50a2988b/identifier")
-				.body(StringBody("{}"))
-				.check(jsonPath("$.identifier").saveAs("identifier"));
-	}
-	
-	public HttpRequestActionBuilder sendPatientRegistrationRequest() {
+		
 		return http("Send Patient Registration Request")
 				.post("/openmrs/ws/rest/v1/patient/")
 				.body(StringBody(registrationRequestTemplate))

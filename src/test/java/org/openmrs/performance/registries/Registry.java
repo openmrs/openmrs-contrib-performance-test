@@ -9,10 +9,10 @@ import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.*;
 
-public abstract class Registry<T extends HttpService> {
-	public T httpService;
+public abstract class Registry<H extends HttpService> {
+	public H httpService;
 	
-	public Registry(T httpService) {
+	public Registry(H httpService) {
 		this.httpService = httpService;
 	}
 	

@@ -9,8 +9,8 @@ import static io.gatling.javaapi.core.CoreDsl.scenario;
 
 public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 	
-	public VisitPatientScenario(float loadShare) {
-		super(loadShare, new DoctorRegistry());
+	public VisitPatientScenario(float scenarioLoadShare) {
+		super(scenarioLoadShare, new DoctorRegistry());
 	}
 	
 	@Override

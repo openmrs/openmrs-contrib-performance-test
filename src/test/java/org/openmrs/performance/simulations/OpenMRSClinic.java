@@ -7,6 +7,7 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 import org.openmrs.performance.personas.ClerkPersona;
 import org.openmrs.performance.personas.DoctorPersona;
 import org.openmrs.performance.personas.Persona;
+import org.openmrs.performance.registries.Registry;
 import org.openmrs.performance.scenarios.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +60,10 @@ public class OpenMRSClinic extends Simulation {
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
 				preset, userIncrementPerTier, tierDurationMinutes, tierCount);
 		
-		List<Persona> personas = List.of(new ClerkPersona(0.5), new DoctorPersona(0.5));
+		List<Persona<?>> personas = List.of(
+				new ClerkPersona(0.5),
+				new DoctorPersona(0.5)
+		);
 		
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 				tierCount);
@@ -90,18 +94,18 @@ public class OpenMRSClinic extends Simulation {
 		return new int[] { userIncrementPerTier, tierDurationMinutes, tierCount };
 	}
 	
-	private List<PopulationBuilder> buildPopulations(List<Persona> personas, int userIncrementPerTier,
+	private List<PopulationBuilder> buildPopulations(List<Persona<?>> personas, int userIncrementPerTier,
 			int tierDurationMinutes,
 			int tierCount) {
 		List<PopulationBuilder> populations = new ArrayList<>();
 		int rampDurationMinutes = 1;
 		
-		for (Persona persona : personas) {
+		for (Persona<?> persona : personas) {
 			int personaUserIncrementPerTier = (int) Math.ceil(userIncrementPerTier * persona.loadShare);
 			logger.info("building persona: {}, user increment per tier: {}", persona.getClass().getSimpleName(),
 					personaUserIncrementPerTier);
 			
-			for (Scenario scenario : persona.getScenarios()) {
+			for (Scenario<?> scenario : persona.getScenarios()) {
 				logger.info("\t building scenario: {}", scenario.getClass().getSimpleName());
 				
 				int userCount = 0;

@@ -64,6 +64,110 @@ Currently, the workload is divided between the following Personas:
 - Doctor: 50% of the active users
 - Clerk: 50% of the active users
 
+## Development
+
+
+### Persona
+A persona represents a role similar to a real-world individual, such as a Doctor, Nurse, Clerk, Junior Doctor, etc.
+
+To create a new persona, extend the Persona class. Each persona should have its own registry [link to the section]. Below is an example implementation. A persona contains a list of scenarios [link to the section] that share the same registry.
+
+java
+Copy code
+public class DoctorPersona extends Persona<ClerkRegistry> {
+
+    public DoctorPersona(double loadShare) {
+        super(loadShare);
+    }
+
+    @Override
+    public List<Scenario<ClerkRegistry>> getScenarios() {
+        return List.of(
+            new PatientRegistrationScenario(0.4),
+            new AppointmentBookingScenario(0.3),
+            new LabResultsEntryScenario(0.3)
+        );
+    }
+}
+Personas are instantiated in a simulation class. You can provide the load share value to the constructor when instantiating the Persona. For example, if you want to allocate 75% of the population to the Clerk persona:
+
+```java
+new ClerkPersona(0.75);
+```
+
+The population for this persona is calculated as `Population * Persona load share`. \
+For example, if there are 1000 users:\
+`1000 * 0.75 = 750 clerks`
+
+### Scenario
+A scenario represents an activity a persona would perform in real life, such as a Clerk registering a patient, booking an appointment, entering lab results, etc.
+
+To create a new scenario, extend the Scenario class. Like personas, scenarios are tied to a registry [link to the section]. You should override the getScenarioBuilder abstract method and write the scenario with Gatling. You can learn about registries in the registries section.
+
+Here's an example:
+
+```java
+public class PatientRegistrationScenario extends Scenario<ClerkRegistry> {
+
+    public PatientRegistrationScenario(float loadShare) {
+        super(loadShare, new ClerkRegistry());
+    }
+
+    @Override
+    public ScenarioBuilder getScenarioBuilder() {
+        return scenario("Clerk")
+            .exec(registry.login())
+            .exec(registry.openHomePage())
+            .exec(registry.openRegistrationPage())
+            .exec(registry.registerPatient())
+            // redirect to patient chart page
+            .exec(registry.openPatientChartPage("#{patientUuid}"));
+    }
+}
+```
+
+Scenarios are instantiated in a Persona. When doing so, you can provide the scenario load share value to the specific scenario. For example, to distribute 40% of the Persona population to the Patient Registration Scenario:
+
+```java
+new PatientRegistrationScenario(0.4)
+```
+
+This is calculated as `Population * Persona load share * Scenario load share`.\ 
+For example, if there are 1000 users and the load share for the Clerk persona is 0.75:\
+
+`1000 * 0.75 * 0.4 = 300 clerks performing Patient Registration`.
+
+### Registry
+A registry is a set of actions performed in one or more scenarios, such as logging in, opening a page, filling out a form, etc. A single registry can be shared between multiple scenarios.
+
+To create a new registry, extend the Registry class. A registry is tied to an HttpService. Common actions should be written in the registry class so that all inherited registries have access to them.
+
+```java
+public class ClerkRegistry extends Registry<ClerkHttpService> {
+
+    public ClerkRegistry() {
+        super(new ClerkHttpService());
+    }
+
+    public ChainBuilder openRegistrationPage() {
+        return exec(
+            httpService.getAddressTemplate(),
+            httpService.getPatientIdentifierTypes(),
+            httpService.getRelationshipTypes(),
+            httpService.getModuleInformation(),
+            httpService.getAutoGenerationOptions());
+    }
+
+    public ChainBuilder registerPatient() {
+        return exec(
+            httpService.generateOMRSIdentifier(),
+            httpService.sendPatientRegistrationRequest());
+    }
+}
+```
+
+You can also create sub-registries by extending the classes. For example: JuniorDoctorRegistry extends DoctorRegistry.
+
 ## Debugging
 
 Add the following line to the `logback.xml` file in the `src/test/resources` directory to enable debug logging:

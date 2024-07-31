@@ -3,11 +3,11 @@ package org.openmrs.performance.scenarios;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import org.openmrs.performance.registries.Registry;
 
-public abstract class Scenario<T extends Registry<?>> {
-	public float loadShare;
-	public T registry;
-	public Scenario(float loadShare, T registry) {
-		this.loadShare = loadShare;
+public abstract class Scenario<R extends Registry<?>> {
+	public float scenarioLoadShare;
+	public R registry;
+	public Scenario(float scenarioLoadShare, R registry) {
+		this.scenarioLoadShare = scenarioLoadShare;
 		this.registry = registry;
 	}
 	
