@@ -72,8 +72,7 @@ A persona represents a role similar to a real-world individual, such as a Doctor
 
 To create a new persona, extend the Persona class. Each persona should have its own registry [link to the section]. Below is an example implementation. A persona contains a list of scenarios [link to the section] that share the same registry.
 
-java
-Copy code
+```java
 public class DoctorPersona extends Persona<ClerkRegistry> {
 
     public DoctorPersona(double loadShare) {
@@ -89,6 +88,7 @@ public class DoctorPersona extends Persona<ClerkRegistry> {
         );
     }
 }
+```
 Personas are instantiated in a simulation class. You can provide the load share value to the constructor when instantiating the Persona. For example, if you want to allocate 75% of the population to the Clerk persona:
 
 ```java
@@ -96,7 +96,7 @@ new ClerkPersona(0.75);
 ```
 
 The population for this persona is calculated as `Population * Persona load share`. \
-For example, if there are 1000 users:\
+For example, if there are 1000 users: \
 `1000 * 0.75 = 750 clerks`
 
 ### Scenario
