@@ -14,8 +14,6 @@ on:
 jobs:
   changes:
     runs-on: ubuntu-latest
-    permissions:
-      pull-requests: read
     outputs:
       test-changes: ${{ steps.changes.outputs.test-sources }}
 
