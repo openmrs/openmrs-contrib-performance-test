@@ -35,8 +35,7 @@ To run the performance tests locally, follow these steps:
 2. Execute the following command in your terminal:
 
    **Standard** `export SIMULATION_PRESET='standard' && ./mvnw gatling:test` \
-   **dev
-   **  `export SIMULATION_PRESET=dev TIER_COUNT=2 TIER_DURATION_MINUTES=1 USER_INCREMENT_PER_TIER=10 && ./mvnw gatling:test`
+   **dev**  `export SIMULATION_PRESET=dev TIER_COUNT=2 TIER_DURATION_MINUTES=1 USER_INCREMENT_PER_TIER=10 && ./mvnw gatling:test`
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
@@ -132,8 +131,9 @@ Scenarios are instantiated in a Persona. When doing so, you can provide the scen
 new PatientRegistrationScenario(0.4)
 ```
 
-This is calculated as `Population * Persona load share * Scenario load share`.\ 
-For example, if there are 1000 users and the load share for the Clerk persona is 0.75:\
+This is calculated as `Population * Persona load share * Scenario load share`.
+
+For example, if there are 1000 users and the load share for the Clerk persona is 0.75:
 
 `1000 * 0.75 * 0.4 = 300 clerks performing Patient Registration`.
 

@@ -55,7 +55,7 @@ jobs:
           echo "SIMULATION_PRESET=commit" >> $GITHUB_ENV
 
       - name: Start an OpenMRS instance
-        run: docker-compose -f src/test/resources/docker-compose.yml up -d
+        run: docker compose -f src/test/resources/docker-compose.yml up -d
 
       - name: Set up Java
         uses: actions/setup-java@v4
