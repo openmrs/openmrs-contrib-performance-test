@@ -64,9 +64,9 @@ public abstract class HttpService {
 				.get("/openmrs/ws/rest/v1/visit?v=custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),location:(uuid,name,display),startDatetime,stopDatetime)&includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
 	
-	public HttpRequestActionBuilder getIdentifierSources(String identifierSourceUuid) {
+	public HttpRequestActionBuilder getIdentifierSources() {
 		return http("Get Identifier Source")
-				.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default&identifierType=" + identifierSourceUuid);
+				.get("https://dev3.openmrs.org/openmrs/ws/rest/v1/idgen/identifiersource?v=default");
 	}
 	
 	public HttpRequestActionBuilder getAutoGenerationOptions() {

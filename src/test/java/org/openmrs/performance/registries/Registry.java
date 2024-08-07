@@ -35,12 +35,7 @@ public abstract class Registry<H extends HttpService> {
 				httpService.getPrimaryIdentifierTermMapping(),
 				httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
 				httpService.getAutoGenerationOptions(),
-				httpService.getIdentifierSources(ID_CARD_SOURCE_UUID),
-				httpService.getIdentifierSources(OPENMRS_ID_SOURCE_UUID),
-				httpService.getIdentifierSources(UNKNOWN_TYPE_SOURCE_UUID),
-				httpService.getIdentifierSources(LEGACY_ID_SOURCE_UUID),
-				httpService.getIdentifierSources(SSN_SOURCE_UUID),
-				httpService.getIdentifierSources(UNKNOWN_TYPE_2_SOURCE_UUID)
+				httpService.getIdentifierSources()
 		);
 	}
 	

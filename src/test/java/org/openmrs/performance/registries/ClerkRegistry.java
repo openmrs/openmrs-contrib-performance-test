@@ -20,15 +20,10 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 				httpService.getPrimaryIdentifierTermMapping(),
 				httpService.getRelationshipTypes(),
 				httpService.getModuleInformation(),
-				httpService.getPersonAttributeType("14d4f066-15f5-102d-96e4-000c29c2a5d7"),
+				httpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
 				httpService.getAutoGenerationOptions(),
 				httpService.getOrderedAddressHierarchyLevels(),
-				httpService.getIdentifierSources(ID_CARD_SOURCE_UUID),
-				httpService.getIdentifierSources(OPENMRS_ID_SOURCE_UUID),
-				httpService.getIdentifierSources(UNKNOWN_TYPE_SOURCE_UUID),
-				httpService.getIdentifierSources(LEGACY_ID_SOURCE_UUID),
-				httpService.getIdentifierSources(SSN_SOURCE_UUID),
-				httpService.getIdentifierSources(UNKNOWN_TYPE_2_SOURCE_UUID));
+				httpService.getIdentifierSources());
 	}
 	
 	public ChainBuilder registerPatient() {
