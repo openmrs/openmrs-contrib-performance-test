@@ -1,0 +1,69 @@
+name: Run Performance Tests on Single User
+
+on:
+  push:
+    branches:
+      - main
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      SIMULATION_PRESET: dev
+      TIER_DURATION_MINUTES: 30
+      USER_INCREMENT_PER_TIER: 2
+      TIER_COUNT: 1
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start an OpenMRS instance
+        run: docker compose -f src/test/resources/docker-compose.yml up -d
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '15'
+
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests
+
+      - name: Wait for the OpenMRS instance to start
+        run: while [[ "$(curl -s -o /dev/null -w ''%{http_code}'' http://localhost/openmrs/login.htm)" != "200" ]]; do sleep 10; done
+
+      - name: Get System Information
+        run: |
+          # Get RAM information
+          total_ram=$(free -h | grep Mem | awk '{print $2}')
+          
+          # Get number of CPUs
+          num_cpus=$(nproc)
+          
+          # Get disk space information
+          total_disk=$(df -h / | grep / | awk '{print $2}')
+          
+          # Format the description
+          description="Executed on a GitHub Actions runner with ${total_ram} RAM, ${num_cpus}CPUs, and ${total_disk} disk space."
+          
+          # Set the description as an environment variable
+          echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
+
+      - name: Run performance tests
+        run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
+
+      - name: Stop the OpenMRS instance
+        if: '!cancelled()'
+        run: docker stop $(docker ps -a -q)
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report
+          path: target/gatling
+          retention-days: 30
