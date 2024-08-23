@@ -7,7 +7,17 @@ import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
-import static org.openmrs.performance.Constants.*;
+import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
+import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.HEIGHT_CM;
+import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
+import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.PULSE;
+import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
+import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.TEMPERATURE_C;
+import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
+import static org.openmrs.performance.Constants.WEIGHT_KG;
 
 public abstract class Registry<H extends HttpService> {
 	public H httpService;

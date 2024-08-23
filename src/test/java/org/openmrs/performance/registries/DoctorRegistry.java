@@ -7,8 +7,18 @@ import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
-import static org.openmrs.performance.Constants.*;
+import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
+import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
+import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
+import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.PULSE;
+import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
+import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.TEMPERATURE_C;
+import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
+import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
 
 public class DoctorRegistry extends Registry<DoctorHttpService>{
@@ -100,5 +110,17 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 	
 	public ChainBuilder openVisitsTab(String patientUuid) {
 		return exec(httpService.getVisitsOfPatient(patientUuid));
+	}
+	
+	public ChainBuilder addDrugOrder(String patientUuid, String visitUuid, String currentUserUuid) {
+		String asprin_162_5mg = "a722710f-403b-451f-804b-09f8624b0838";
+		String asprinConcept = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		return exec(
+				httpService.getActiveVisitOfPatient(patientUuid),
+				httpService.searchForDrug("asprin"),
+				httpService.searchForDrug("Tylenol"),
+				httpService.saveOrder(patientUuid, visitUuid,  currentUserUuid, asprin_162_5mg, asprinConcept)
+		);
+	
 	}
 }

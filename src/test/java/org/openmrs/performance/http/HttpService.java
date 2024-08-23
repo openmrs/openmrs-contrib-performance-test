@@ -15,7 +15,8 @@ public abstract class HttpService {
 		return http("Login")
 				.get("/openmrs/ws/rest/v1/session")
 				.header("Authorization", "Basic YWRtaW46QWRtaW4xMjM=")
-				.check(jsonPath("$.authenticated").is("true"));
+				.check(jsonPath("$.authenticated").is("true"))
+				.check(jsonPath("$.currentProvider.uuid").saveAs("currentUserUuid"));
 	}
 	
 	public HttpRequestActionBuilder getLocations() {
