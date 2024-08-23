@@ -7,7 +7,6 @@ import io.gatling.javaapi.http.HttpProtocolBuilder;
 import org.openmrs.performance.personas.ClerkPersona;
 import org.openmrs.performance.personas.DoctorPersona;
 import org.openmrs.performance.personas.Persona;
-import org.openmrs.performance.registries.Registry;
 import org.openmrs.performance.scenarios.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +18,11 @@ import java.util.Map;
 import static io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers;
 import static io.gatling.javaapi.core.CoreDsl.rampConcurrentUsers;
 import static io.gatling.javaapi.http.HttpDsl.http;
-import static org.openmrs.performance.Constants.*;
+import static org.openmrs.performance.Constants.BASE_URL;
+import static org.openmrs.performance.Constants.ENV_SIMULATION_PRESET;
+import static org.openmrs.performance.Constants.ENV_TIER_COUNT;
+import static org.openmrs.performance.Constants.ENV_TIER_DURATION;
+import static org.openmrs.performance.Constants.ENV_USER_INCREMENT_PER_TIER;
 
 public class OpenMRSClinic extends Simulation {
 	

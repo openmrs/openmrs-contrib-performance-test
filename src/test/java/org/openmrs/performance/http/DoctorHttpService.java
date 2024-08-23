@@ -8,10 +8,19 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
-import static io.gatling.javaapi.core.CoreDsl.*;
+import static io.gatling.javaapi.core.CoreDsl.StringBody;
+import static io.gatling.javaapi.core.CoreDsl.bodyString;
+import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
-import static org.openmrs.performance.Constants.DRUG_ORDER_TYPE_UUID;
+import static org.openmrs.performance.Constants.DAYS;
+import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
+import static org.openmrs.performance.Constants.DRUG_ORDER;
+import static org.openmrs.performance.Constants.ONCE_DAILY;
+import static org.openmrs.performance.Constants.ORAL;
+import static org.openmrs.performance.Constants.ORDER;
+import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.TABLET;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -21,13 +30,44 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
-		return http("Get Patient Visits")
-				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)");
+		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),"
+				+ "form:(uuid,display),encounterDatetime,orders:full,"
+				+ "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,"
+				+ "groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),"
+				+ "value,obsDatetime),encounterType:(uuid,display,viewPrivilege,editPrivilege),"
+				+ "encounterProviders:(uuid,display,encounterRole:(uuid,display),"
+				+ "provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),"
+				+ "startDatetime,stopDatetime,patient,"
+				+ "attributes:(attributeType:ref,display,uuid,value))";
+		
+		return http("Get Visits of Patient")
+				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation);
+	}
+	
+	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
+				+ "encounters:(uuid,display,encounterDatetime,"
+				+ "form:(uuid,name),location:ref,"
+				+ "encounterType:ref,"
+				+ "encounterProviders:(uuid,display,"
+				+ "provider:(uuid,display))),"
+				+ "patient:(uuid,display),"
+				+ "visitType:(uuid,name,display),"
+				+ "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
+				+ "location:(uuid,name,display))";
+		
+		return http("Get Active Visits of Patient")
+				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
 	}
 	
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
-		return http("Get Patient Program Enrollments")
-				.get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=custom:(uuid,display,program,dateEnrolled,dateCompleted,location:(uuid,display))");
+		String customRepresentation = """
+				custom:(uuid,display,program,dateEnrolled,dateCompleted,
+				location:(uuid,display))
+				""";
+		
+		return http("Get Program Enrollments of Patient")
+				.get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
 	}
 	
 	public HttpRequestActionBuilder getAppointments(String patientUuid) {
@@ -35,7 +75,7 @@ public class DoctorHttpService extends HttpService {
 		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
 		
-		return http("Get Patient Appointments")
+		return http("Get Appointments of Patient")
 				.post("/openmrs/ws/rest/v1/appointments/search")
 				.body(StringBody(requestBody));
 	}
@@ -83,22 +123,39 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getDrugOrders(String patientUuid) {
+		String customRepresentation = """
+				custom:(uuid,dosingType,orderNumber,accessionNumber,
+					patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,
+					orderType:ref,encounter:ref,
+					orderer:(uuid,display,person:(display)),
+					orderReason,orderReasonNonCoded,orderType,urgency,instructions,
+					commentToFulfiller,
+					drug:(uuid,display,strength,
+						dosageForm:(display,uuid),concept),
+						dose,doseUnits:ref,
+					frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,
+					duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
+				""";
 		return http("Get Orders")
-				.get("/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER_TYPE_UUID + "&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
+				.get("/openmrs/ws/rest/v1/order" +
+						"?patient=" + patientUuid +
+						"&careSetting=" + CARE_SETTING_UUID +
+						"&status=any&orderType=" + DRUG_ORDER +
+						"&v=" + customRepresentation);
 	}
 	
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
-		return http("Get Allergies")
+		return http("Get Allergies of Patient")
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
 	}
 	
 	public HttpRequestActionBuilder getConditions(String patientUuid) {
-		return http("Get Conditions")
+		return http("Get Conditions of Patient")
 				.get("/openmrs/ws/fhir2/R4/Condition?patient=" + patientUuid + "&_count=100&_summary=data");
 	}
 	
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
-		return http("Get Attachments")
+		return http("Get Attachments of Patient")
 				.get("/openmrs/ws/rest/v1/attachment?patient=" + patientUuid + "&includeEncounterless=true");
 	}
 	
@@ -108,7 +165,7 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
-		return http("Get Lab Results")
+		return http("Get Lab Results of Patient")
 				.get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid + "&_count=100&_summary=data")
 				.check(bodyString().saveAs("labResultsResponse"));
 	}
@@ -119,9 +176,62 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getImmunizations(String patientUuid) {
-		return http("Get Immunizations")
+		return http("Get Immunizations of Patient")
 				.get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
 	}
 	
+	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
+		String customRepresentation = """
+				custom:(uuid,display,name,strength,
+					dosageForm:(display,uuid),
+					concept:(display,uuid))
+				""";
+		return http("Search for Drug")
+				.get("/openmrs/ws/rest/v1/drug?name=" + searchQuery + "&v=" + customRepresentation);
+	}
 	
+	public HttpRequestActionBuilder saveOrder(String patientUuid, String visitUuid, String currentUserUuid, String drugUuid,
+			String drugConceptUuid) {
+		Map<String, Object> order = new HashMap<>();
+		order.put("action", "NEW");
+		order.put("asNeeded", false);
+		order.put("asNeededCondition", null);
+		order.put("careSetting", CARE_SETTING_UUID);
+		order.put("concept", drugConceptUuid);
+		order.put("dose", 1);
+		order.put("doseUnits", TABLET);
+		order.put("dosingInstructions", "");
+		order.put("dosingType", DEFAULT_DOSING_TYPE);
+		order.put("drug", drugUuid);
+		order.put("duration", null);
+		order.put("durationUnits", DAYS);
+		order.put("encounter", visitUuid);
+		order.put("frequency", ONCE_DAILY);
+		order.put("numRefills", 0);
+		order.put("orderReasonNonCoded", "reason");
+		order.put("orderer", currentUserUuid);
+		order.put("patient", patientUuid);
+		order.put("quantity", 1);
+		order.put("quantityUnits", TABLET);
+		order.put("route", ORAL);
+		order.put("type", "drugorder");
+		
+		Map<String, Object> encounter = new HashMap<>();
+		
+		encounter.put("encounterDatetime",
+				ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")));
+		encounter.put("encounterType", ORDER);
+		encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+		encounter.put("patient", patientUuid);
+		encounter.put("visit", visitUuid);
+		encounter.put("obs", new Object[0]);
+		encounter.put("orders", new Object[] { order });
+		
+		Gson gson = new Gson();
+		String body = gson.toJson(encounter);
+		
+		return http("Save Drug Order")
+				.post("/openmrs/ws/rest/v1/encounter")
+				.body(StringBody(body));
+	}
 }
