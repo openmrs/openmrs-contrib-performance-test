@@ -61,10 +61,8 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
-		String customRepresentation = """
-				custom:(uuid,display,program,dateEnrolled,dateCompleted,
-				location:(uuid,display))
-				""";
+		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted," +
+									  "location:(uuid,display))";
 		
 		return http("Get Program Enrollments of Patient")
 				.get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
