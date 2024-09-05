@@ -41,7 +41,7 @@ public class DoctorHttpService extends HttpService {
 				+ "attributes:(attributeType:ref,display,uuid,value))";
 		
 		return http("Get Visits of Patient")
-				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation);
+				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation+"&limit=1");
 	}
 	
 	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
