@@ -30,6 +30,13 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
+		String customRepresentation = "custom:(uuid,voided,indication,startDatetime,stopDatetime)";
+		
+		return http("Get Visits of Patient")
+				.get("/openmrs/ws/rest/v1/visit/?patient=" + patientUuid + "&v=" + customRepresentation+"&limit=5");
+	}
+	
+	public HttpRequestActionBuilder getVisit(String visitUuid) {
 		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),"
 				+ "form:(uuid,display),encounterDatetime,orders:full,"
 				+ "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,"
@@ -40,8 +47,8 @@ public class DoctorHttpService extends HttpService {
 				+ "startDatetime,stopDatetime,patient,"
 				+ "attributes:(attributeType:ref,display,uuid,value))";
 		
-		return http("Get Visits of Patient")
-				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation);
+		return http("Get Visit")
+				.get("/openmrs/ws/rest/v1/visit/" + visitUuid + "&v=" + customRepresentation);
 	}
 	
 	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {

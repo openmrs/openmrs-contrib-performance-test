@@ -61,7 +61,7 @@ public abstract class HttpService {
 	}
 	
 	public HttpRequestActionBuilder getVisitsOfLocation(String locationUuid) {
-		return http("Get Visits")
+		return http("Get Visits of a Location")
 				.get("/openmrs/ws/rest/v1/visit?v=custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),location:(uuid,name,display),startDatetime,stopDatetime)&includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
 	
