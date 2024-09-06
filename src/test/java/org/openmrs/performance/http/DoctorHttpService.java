@@ -47,7 +47,7 @@ public class DoctorHttpService extends HttpService {
 				+ "startDatetime,stopDatetime,patient,"
 				+ "attributes:(attributeType:ref,display,uuid,value))";
 		
-		return http("Get Visits of Patient")
+		return http("Get Visit")
 				.get("/openmrs/ws/rest/v1/visit/" + visitUuid + "&v=" + customRepresentation);
 	}
 	
