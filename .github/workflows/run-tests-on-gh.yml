@@ -47,7 +47,7 @@ jobs:
       - name: Update the load configuration for PRS
         if: github.event_name == 'pull_request'
         run: |
-          echo "SIMULATION_PRESET=pull_request" >> $GITHUB_ENV
+          echo "SIMULATION_PRESET=standard" >> $GITHUB_ENV
 
       - name: Update the load configuration for commits
         if: github.event_name == 'push'
