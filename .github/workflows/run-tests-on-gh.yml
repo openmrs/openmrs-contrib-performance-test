@@ -47,7 +47,10 @@ jobs:
       - name: Update the load configuration for PRS
         if: github.event_name == 'pull_request'
         run: |
-          echo "SIMULATION_PRESET=standard" >> $GITHUB_ENV
+          echo "SIMULATION_PRESET=dev" >> $GITHUB_ENV
+          echo "TIER_COUNT=1" >> $GITHUB_ENV
+          echo "TIER_DURATION_MINUTES=30" >> $GITHUB_ENV
+          echo "USER_INCREMENT_PER_TIER=200" >> $GITHUB_ENV
 
       - name: Update the load configuration for commits
         if: github.event_name == 'push'
