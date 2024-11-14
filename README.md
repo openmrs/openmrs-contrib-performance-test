@@ -63,6 +63,8 @@ Currently, the workload is divided between the following Personas:
 - Doctor: 50% of the active users
 - Clerk: 50% of the active users
 
+![](./docs/images/load_distribution.jpeg)
+
 ## Development
 
 
