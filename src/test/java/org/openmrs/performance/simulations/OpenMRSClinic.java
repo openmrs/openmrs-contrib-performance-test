@@ -16,9 +16,9 @@ import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers;
+import static io.gatling.javaapi.core.CoreDsl.global;
 import static io.gatling.javaapi.core.CoreDsl.rampConcurrentUsers;
 import static io.gatling.javaapi.http.HttpDsl.http;
-import static org.openmrs.performance.Constants.BASE_URL;
 import static org.openmrs.performance.Constants.ENV_SIMULATION_PRESET;
 import static org.openmrs.performance.Constants.ENV_TIER_COUNT;
 import static org.openmrs.performance.Constants.ENV_TIER_DURATION;
@@ -58,7 +58,7 @@ public class OpenMRSClinic extends Simulation {
 		int tierDurationMinutes = loadParams[1];
 		int tierCount = loadParams[2];
 		
-		HttpProtocolBuilder httpProtocol = getHttpProtocol(BASE_URL);
+		HttpProtocolBuilder httpProtocol = getHttpProtocol();
 		
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
 				preset, userIncrementPerTier, tierDurationMinutes, tierCount);
@@ -71,7 +71,11 @@ public class OpenMRSClinic extends Simulation {
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 				tierCount);
 		
-		setUp(populations).protocols(httpProtocol);
+		setUp(populations)
+				.protocols(httpProtocol)
+				.assertions(
+						global().successfulRequests().percent().gt(100.0)
+				);
 		
 	}
 	
@@ -141,8 +145,8 @@ public class OpenMRSClinic extends Simulation {
 		return populations;
 	}
 	
-	private HttpProtocolBuilder getHttpProtocol(String baseUrl) {
-		return http.baseUrl(baseUrl)
+	private HttpProtocolBuilder getHttpProtocol() {
+		return http.baseUrl(org.openmrs.performance.Constants.BASE_URL)
 				.acceptHeader("application/json, text/plain, */*")
 				.acceptLanguageHeader("en-US,en;q=0.5")
 				.userAgentHeader(
