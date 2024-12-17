@@ -67,7 +67,7 @@ public abstract class HttpService {
 	
 	public HttpRequestActionBuilder getIdentifierSources() {
 		return http("Get Identifier Source")
-				.get("https://dev3.openmrs.org/openmrs/ws/rest/v1/idgen/identifiersource?v=default");
+				.get("/openmrs/ws/rest/v1/idgen/identifiersource?v=default");
 	}
 	
 	public HttpRequestActionBuilder getAutoGenerationOptions() {

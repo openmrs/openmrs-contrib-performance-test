@@ -31,7 +31,7 @@ and easy-to-use framework for simulating user load and measuring system performa
 
 To run the performance tests locally, follow these steps:
 
-1. Start OpenMRS on port 80.
+1. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test.)
 2. Execute the following command in your terminal:
 
    **Standard** `export SIMULATION_PRESET='standard' && ./mvnw gatling:test` \
