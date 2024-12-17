@@ -74,7 +74,7 @@ public class OpenMRSClinic extends Simulation {
 		setUp(populations)
 				.protocols(httpProtocol)
 				.assertions(
-						global().successfulRequests().percent().gt(100.0)
+						global().successfulRequests().percent().shouldBe(100.0)
 				);
 		
 	}
