@@ -17,7 +17,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 	public ScenarioBuilder getScenarioBuilder() {
 		FeederBuilder<String> patientUuidFeeder = csv("patient_uuids.csv").circular();
 		
-		return scenario("Doctor")
+		return scenario("Doctor - Visit Patient")
 				.feed(patientUuidFeeder)
 				.exec(registry.login())
 				.exec(registry.openHomePage())

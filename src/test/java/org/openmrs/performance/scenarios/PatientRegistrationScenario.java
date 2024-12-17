@@ -13,7 +13,7 @@ public class PatientRegistrationScenario extends Scenario<ClerkRegistry>{
 	
 	@Override
 	public ScenarioBuilder getScenarioBuilder() {
-		return scenario("Clerk")
+		return scenario("Clerk - Patient Registration")
 				.exec(registry.login())
 				.exec(registry.openHomePage())
 				.pause(3)
