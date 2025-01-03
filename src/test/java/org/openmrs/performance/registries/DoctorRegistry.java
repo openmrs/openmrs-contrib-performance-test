@@ -121,6 +121,20 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 				httpService.searchForDrug("Tylenol"),
 				httpService.saveOrder(patientUuid, visitUuid,  currentUserUuid, asprin_162_5mg, asprinConcept)
 		);
-	
+	}
+
+	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
+		String visitNoteText = "Patient visit note";
+		String diabeticKetosisConcept = "119441AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String diabeticFootUlcerConcept = "142451AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String fatigueConcept = "140501AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String certainty = "PROVISIONAL";
+		String encounterUuid = "#{encounter_uuid}";
+        return exec(
+				httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
+				httpService.saveDiagnosis(patientUuid, encounterUuid, diabeticKetosisConcept, certainty, 1),
+				httpService.saveDiagnosis(patientUuid, encounterUuid, diabeticFootUlcerConcept, certainty, 1),
+				httpService.saveDiagnosis(patientUuid, encounterUuid, fatigueConcept, certainty, 2)
+		);
 	}
 }

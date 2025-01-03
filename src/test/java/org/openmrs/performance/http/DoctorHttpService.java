@@ -1,18 +1,23 @@
 package org.openmrs.performance.http;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
+import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
@@ -21,6 +26,9 @@ import static org.openmrs.performance.Constants.ORAL;
 import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.TABLET;
+import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -232,4 +240,65 @@ public class DoctorHttpService extends HttpService {
 				.post("/openmrs/ws/rest/v1/encounter")
 				.body(StringBody(body));
 	}
+
+	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
+		Map<String, Object> visitNote = new HashMap<>();
+		visitNote.put("form", VISIT_NOTE_FORM_UUID);
+		visitNote.put("patient", patientUuid);
+		visitNote.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+		visitNote.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
+
+		Map<String, Object> encounterProvider = new HashMap<>();
+		encounterProvider.put("encounterRole", CLINICIAN_ENCOUNTER_ROLE);
+		encounterProvider.put("provider", currentUser);
+
+		visitNote.put("encounterProviders", List.of(encounterProvider));
+
+		Map<String, Object> concept = new HashMap<>();
+		concept.put("uuid", VISIT_NOTE_CONCEPT_UUID);
+
+
+		Map<String, Object> obs = new HashMap<>();
+		obs.put("concept", concept);
+		obs.put("value", value);
+		visitNote.put("obs", List.of(obs));
+
+		Gson gson = new Gson();
+		String body = gson.toJson(visitNote);
+
+		exec(session -> {
+			System.out.println(body);
+			return session;
+		});
+
+		return http("Save Visit Note").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body))
+				.check(jsonPath("$.uuid").saveAs("encounter_uuid"));
+	}
+
+	public HttpRequestActionBuilder saveDiagnosis(String patientUuid, String encounterUuid, String diagnosisUuid,
+												  String certainty, int rank) {
+		Map<String, Object> patientDiagnosis = new HashMap<>();
+		patientDiagnosis.put("patient", patientUuid);
+		patientDiagnosis.put("encounter", encounterUuid);
+		patientDiagnosis.put("certainty", certainty);
+		patientDiagnosis.put("rank", rank);
+		patientDiagnosis.put("condition", null);
+
+		Map<String, Object> diagnosis = new HashMap<>();
+		diagnosis.put("coded", diagnosisUuid);
+		patientDiagnosis.put("diagnosis", diagnosis);
+
+		Gson gson = new GsonBuilder().serializeNulls().create();
+		String body = gson.toJson(patientDiagnosis);
+
+		exec(seassion -> {
+			System.out.println(body);
+			return seassion;
+		});
+
+		return http("Save Patient Diagnosis")
+				.post("/openmrs/ws/rest/v1/patientdiagnoses")
+				.body(StringBody(body));
+	}
+
 }
