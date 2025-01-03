@@ -12,6 +12,9 @@ public class Constants {
 	
 	public static final String CARE_SETTING_UUID = "6f0c9a92-6f24-11e3-af88-005056821db0";
 	public static final String DRUG_ORDER = "131168f4-15f5-102d-96e4-000c29c2a5d7";
+
+	public static final String VISIT_NOTE_FORM_UUID = "c75f120a-04ec-11e3-8780-2b40bef9a44b";
+	public static final String CLINICIAN_ENCOUNTER_ROLE = "240b26f9-dd88-4172-823d-4a8bfeb7841f";
 	
 	// Observation Types
 	public static final String SYSTOLIC_BLOOD_PRESSURE = "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -32,6 +35,8 @@ public class Constants {
 	public static final String ONCE_DAILY = "136ebdb7-e989-47cf-8ec2-4e8b2ffe0ab3";
 	public static final String DAYS = "1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String ORDER = "39da3525-afe4-45ff-8977-c53b7b359158";
+	public static final String VISIT_NOTE_ENCOUNTER_TYPE_UUID = "d7151f82-c1f3-4152-a605-2f9ea7414a79";
+	public static final String VISIT_NOTE_CONCEPT_UUID = "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 	public static final String DEFAULT_DOSING_TYPE = "org.openmrs.SimpleDosingInstructions";
 	
