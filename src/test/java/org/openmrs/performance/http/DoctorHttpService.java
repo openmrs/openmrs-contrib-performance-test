@@ -1,6 +1,7 @@
 package org.openmrs.performance.http;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import java.time.ZonedDateTime;
@@ -79,7 +80,6 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
-		Gson gson = new Gson();
 		ZonedDateTime now = ZonedDateTime.now();
 		String startDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 		
@@ -88,15 +88,18 @@ public class DoctorHttpService extends HttpService {
 		requestBodyMap.put("startDatetime", startDateTime);
 		requestBodyMap.put("visitType", visitTypeUuid);
 		requestBodyMap.put("location", locationUuid);
-		
-		return http("Submit Visit Form")
-				.post("/openmrs/ws/rest/v1/visit")
-				.body(StringBody(gson.toJson(requestBodyMap)))
-				.check(jsonPath("$.uuid").saveAs("visitUuid"));
-	}
+
+        try {
+            return http("Submit Visit Form")
+                    .post("/openmrs/ws/rest/v1/visit")
+                    .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)))
+                    .check(jsonPath("$.uuid").saveAs("visitUuid"));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 	
 	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
-		Gson gson = new Gson();
 		ZonedDateTime now = ZonedDateTime.now();
 		String formattedStopDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 		
@@ -104,11 +107,15 @@ public class DoctorHttpService extends HttpService {
 		requestBodyMap.put("location", locationUuid);
 		requestBodyMap.put("visitType", visitTypeUuid);
 		requestBodyMap.put("stopDatetime", formattedStopDateTime);
-		
-		return http("End Visit")
-				.post("/openmrs/ws/rest/v1/visit/" + visitUuid)
-				.body(StringBody(gson.toJson(requestBodyMap)));
-	}
+
+        try {
+            return http("End Visit")
+                    .post("/openmrs/ws/rest/v1/visit/" + visitUuid)
+                    .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 	
 	public HttpRequestActionBuilder getOrderTypes() {
 		return http("Get Order Types")
@@ -224,12 +231,13 @@ public class DoctorHttpService extends HttpService {
 		encounter.put("visit", visitUuid);
 		encounter.put("obs", new Object[0]);
 		encounter.put("orders", new Object[] { order });
-		
-		Gson gson = new Gson();
-		String body = gson.toJson(encounter);
-		
-		return http("Save Drug Order")
-				.post("/openmrs/ws/rest/v1/encounter")
-				.body(StringBody(body));
-	}
+
+        try {
+            return http("Save Drug Order")
+                    .post("/openmrs/ws/rest/v1/encounter")
+                    .body(StringBody(new ObjectMapper().writeValueAsString(encounter)));
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
 }
