@@ -13,9 +13,9 @@ public class CommonUtils {
 	
 	public static List<String> extractConceptIds(String response) {
 		List<String> conceptIds = new ArrayList<>();
-		ObjectMapper objectMapper = new ObjectMapper();
-
+		
 		try {
+			ObjectMapper objectMapper = new ObjectMapper();
 			JsonNode jsonObject = objectMapper.readTree(response);
 			JsonNode entries = jsonObject.get("entry");
 
