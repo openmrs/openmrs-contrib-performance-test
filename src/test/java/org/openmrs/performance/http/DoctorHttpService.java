@@ -60,6 +60,8 @@ public class DoctorHttpService extends HttpService {
 		return http("Get Active Visits of Patient")
 				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
 	}
+
+
 	
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted," +
@@ -148,10 +150,51 @@ public class DoctorHttpService extends HttpService {
 						"&status=any&orderType=" + DRUG_ORDER +
 						"&v=" + customRepresentation);
 	}
+
+	public HttpRequestActionBuilder searchPatient(String searchQuery) {
+		String customRepresentation = """
+				custom:(patientId,uuid,identifiers,display,patientIdentifier:(uuid,identifier),person:(gender,age,birthdate,birthdateEstimated,personName,addresses,display,dead,deathDate),attributes:(value,attributeType:(uuid,display)))
+				""";
+		return http("Get Orders")
+				.get("/openmrs/ws/rest/v1/patient" +
+						"?q=" + searchQuery +
+						"&v=" + customRepresentation +
+						"&includeDead=" + true +
+						"&limit=" + 10);
+	}
+						
 	
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
 		return http("Get Allergies of Patient")
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
+	}
+
+	public HttpRequestActionBuilder saveAllergies(String patientUuid) {
+		String payload = "{\n" +
+        "    \"allergen\": {\n" +
+        "        \"allergenType\": \"DRUG\",\n" +
+        "        \"codedAllergen\": {\n" +
+        "            \"uuid\": \"71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+        "        }\n" +
+        "    },\n" +
+        "    \"severity\": {\n" +
+        "        \"uuid\": \"1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+        "    },\n" +
+        "    \"comment\": \"test\",\n" +
+        "    \"reactions\": [\n" +
+        "        {\n" +
+        "            \"reaction\": {\n" +
+        "                \"uuid\": \"121677AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
+        "            }\n" +
+        "        }\n" +
+        "    ]\n" +
+        "}";
+		
+			return http("Save Allergies of Patient")
+				.get("/openmrs/ws/rest/v1/patient/"+ patientUuid +"/allergy")
+				.body(StringBody(payload));
+		
+		
 	}
 	
 	public HttpRequestActionBuilder getConditions(String patientUuid) {
