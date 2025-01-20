@@ -95,10 +95,22 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 		return exec(httpService.getAllergies(patientUuid));
 	}
 
-	public ChainBuilder addAllergies(String patientUuid) {
+	public ChainBuilder OpenAllergiesForm(){
+		String drugAllergenUuid = "162555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String environmentalAllergenUuid = "162552AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String foodAllergenUuid = "162554AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String allergyReactionUuid = "162553AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		
 		return exec(
-			httpService.searchPatient("test location test"),
-			httpService.getAllergies(patientUuid),
+			httpService.GetDrugAllergens(drugAllergenUuid),
+			httpService.GetEnvironmentAllergens(environmentalAllergenUuid),
+			httpService.GetFoodAllergens(foodAllergenUuid),
+			httpService.GetAllergicReactions(allergyReactionUuid)
+		);
+	}
+
+	public ChainBuilder addAllergies(String patientUuid) {	
+		return exec(
 			httpService.saveAllergies(patientUuid)
 		);
 	}

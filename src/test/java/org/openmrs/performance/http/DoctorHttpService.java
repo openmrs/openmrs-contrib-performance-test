@@ -6,7 +6,9 @@ import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
@@ -162,37 +164,63 @@ public class DoctorHttpService extends HttpService {
 						"&includeDead=" + true +
 						"&limit=" + 10);
 	}
-						
+		
+	
 	
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
 		return http("Get Allergies of Patient")
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
 	}
 
+	public HttpRequestActionBuilder GetDrugAllergens(String drugAllergenUuid) {
+		return http("Get Drug Allergens")
+				.get("/openmrs/ws/rest/v1/concept/" + drugAllergenUuid + "?v=full");
+	}
+
+	public HttpRequestActionBuilder GetEnvironmentAllergens(String environmentalAllergenUuid) {
+		return http("Get Environment Allergens")
+				.get("/openmrs/ws/rest/v1/concept/" + environmentalAllergenUuid + "?v=full");
+	}
+
+	public HttpRequestActionBuilder GetFoodAllergens(String foodAllergenUuid) {
+		return http("Get Food Allergens")
+				.get("/openmrs/ws/rest/v1/concept/" + foodAllergenUuid + "?v=full");
+	}
+
+	public HttpRequestActionBuilder GetAllergicReactions(String allergyReactionUuid) {
+		return http("Get Allergic Reactions")
+				.get("/openmrs/ws/rest/v1/concept/" + allergyReactionUuid + "?v=full");
+	}
+
 	public HttpRequestActionBuilder saveAllergies(String patientUuid) {
-		String payload = "{\n" +
-        "    \"allergen\": {\n" +
-        "        \"allergenType\": \"DRUG\",\n" +
-        "        \"codedAllergen\": {\n" +
-        "            \"uuid\": \"71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-        "        }\n" +
-        "    },\n" +
-        "    \"severity\": {\n" +
-        "        \"uuid\": \"1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-        "    },\n" +
-        "    \"comment\": \"test\",\n" +
-        "    \"reactions\": [\n" +
-        "        {\n" +
-        "            \"reaction\": {\n" +
-        "                \"uuid\": \"121677AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\"\n" +
-        "            }\n" +
-        "        }\n" +
-        "    ]\n" +
-        "}";
+		Map<String, Object> payload = new HashMap<>();
+
+		Map<String,String> codedAllergen = new HashMap<>();
+		codedAllergen.put("uuid", "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+		Map<String,Object>allergen = new HashMap<>();
+		allergen.put("allergenType", "DRUG");
+		allergen.put("codedAllergen", codedAllergen);
+
+		Map<String,String>severity = new HashMap<>();
+		severity.put("uuid", "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+		Map<String, String> reactionUuid = new HashMap<>();
+		reactionUuid.put("uuid", "121677AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+
+		Map<String, Object> reaction = new HashMap<>();
+		reaction.put("reaction", reactionUuid);
+		List<Map<String, Object>> reactions = Collections.singletonList(reaction);
+
+		payload.put("allergen", allergen);
+		payload.put("severity", severity);
+		payload.put("comment", "test");
+		payload.put("reactions", reactions);
+		
 		
 			return http("Save Allergies of Patient")
 				.get("/openmrs/ws/rest/v1/patient/"+ patientUuid +"/allergy")
-				.body(StringBody(payload));
+				.body(StringBody(payload.toString()));
 		
 		
 	}
