@@ -94,6 +94,14 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 	public ChainBuilder openAllergiesTab(String patientUuid) {
 		return exec(httpService.getAllergies(patientUuid));
 	}
+
+	public ChainBuilder addAllergies(String patientUuid) {
+		return exec(
+			httpService.searchPatient("test location test"),
+			httpService.getAllergies(patientUuid),
+			httpService.saveAllergies(patientUuid)
+		);
+	}
 	
 	public ChainBuilder openConditionsTab(String patientUuid) {
 		return exec(httpService.getConditions(patientUuid));
