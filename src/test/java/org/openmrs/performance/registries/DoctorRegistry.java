@@ -103,10 +103,10 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 
 	public ChainBuilder OpenAllergiesForm(){
 		return exec(
-			httpService.GetDrugAllergens(DRUG_ALLERGEN_UUID),
-			httpService.GetEnvironmentAllergens(ENVIRONMENTAL_ALLERGEN_UUID),
-			httpService.GetFoodAllergens(FOOD_ALLERGEN_UUID),
-			httpService.GetAllergicReactions(ALLERGY_REACTION_UUID)
+			httpService.getAllergen("Drug",DRUG_ALLERGEN_UUID),
+			httpService.getAllergen("Environment",ENVIRONMENTAL_ALLERGEN_UUID),
+			httpService.getAllergen("Food",FOOD_ALLERGEN_UUID),
+			httpService.getAllergen("Allergic Reactions",ALLERGY_REACTION_UUID)
 		);
 	}
 

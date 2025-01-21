@@ -161,25 +161,11 @@ public class DoctorHttpService extends HttpService {
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
 	}
 
-	public HttpRequestActionBuilder GetDrugAllergens(String drugAllergenUuid) {
-		return http("Get Drug Allergens")
-				.get("/openmrs/ws/rest/v1/concept/" + drugAllergenUuid + "?v=full");
+	public HttpRequestActionBuilder getAllergen(String allergenType, String allergenUuid) {
+		return http("Get " + allergenType + " Allergens")
+				.get("/openmrs/ws/rest/v1/concept/" + allergenUuid + "?v=full");
 	}
 
-	public HttpRequestActionBuilder GetEnvironmentAllergens(String environmentalAllergenUuid) {
-		return http("Get Environment Allergens")
-				.get("/openmrs/ws/rest/v1/concept/" + environmentalAllergenUuid + "?v=full");
-	}
-
-	public HttpRequestActionBuilder GetFoodAllergens(String foodAllergenUuid) {
-		return http("Get Food Allergens")
-				.get("/openmrs/ws/rest/v1/concept/" + foodAllergenUuid + "?v=full");
-	}
-
-	public HttpRequestActionBuilder GetAllergicReactions(String allergyReactionUuid) {
-		return http("Get Allergic Reactions")
-				.get("/openmrs/ws/rest/v1/concept/" + allergyReactionUuid + "?v=full");
-	}
 
 	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
 		Map<String, Object> payload = new HashMap<>();
