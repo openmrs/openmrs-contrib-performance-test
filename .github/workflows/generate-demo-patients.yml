@@ -1,0 +1,106 @@
+name: Generate Demo Patients
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    env:
+      SIMULATION_PRESET: commit
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Delete existing dump
+        working-directory: src/test/resources
+        run: |
+          rm dump/dump.sql
+
+      - name: Start an OpenMRS instance
+        run: docker compose -f src/test/resources/docker-compose.yml up -d
+
+      # Setting up dependencies until the server starts to save time
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'adopt'
+          java-version: '15'
+
+      - name: Install dependencies
+        run: ./mvnw install -DskipTests
+
+      - name: Wait for the OpenMRS instance to start
+        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/login.htm))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/login.htm)"; sleep 10; done
+
+      - name: Set the demo patient count
+        working-directory: src/test/resources
+        run: |
+          chmod +x set_demo_patient_count.sh
+          ./set_demo_patient_count.sh
+
+      - name: Restart the OpenMRS instance
+        run: docker compose -f src/test/resources/docker-compose.yml restart
+
+      - name: Wait for the OpenMRS instance to start and patients to be generated
+        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/login.htm))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/login.htm)"; sleep 10; done
+
+      - name: Export a DB dump
+        working-directory: src/test/resources
+        run: |
+          chmod +x export_db_dump.sh
+          ./export_db_dump.sh
+
+      - name: Export Patient UUIDs
+        working-directory: src/test/resources
+        run: |
+          chmod +x export_patient_uuids.sh
+          ./export_patient_uuids.sh 
+
+      - name: Run performance tests
+        run: ./mvnw gatling:test
+
+      - name: Stop the OpenMRS instance
+        if: '!cancelled()'
+        run: docker stop $(docker ps -a -q)
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report
+          path: target/gatling
+          retention-days: 30
+
+      # Publish the report to GH pages
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit the report to the report branch
+        working-directory: src/test/resources
+        run: |
+          git add dump
+          git add patient_uuids.csv
+          git commit -m "Regenerate demo patients"
+
+      - name: Push changes
+        run: |
+          git push origin main
+
+      - name: Capture Server Logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: './logs'
+
+      - name: Upload Logs as Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: server-logs
+          path: './logs'
+          retention-days: 2
+          overwrite: true
