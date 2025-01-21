@@ -118,3 +118,18 @@ jobs:
         if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: |
           git push origin main:report -f
+
+      - name: Capture Server Logs
+        if: always()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          dest: './logs'
+
+      - name: Upload Logs as Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: server-logs
+          path: './logs'
+          retention-days: 2
+          overwrite: true
