@@ -7,9 +7,13 @@ import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
+import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.DRUG_ALLERGEN_UUID;
+import static org.openmrs.performance.Constants.ENVIRONMENTAL_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
+import static org.openmrs.performance.Constants.FOOD_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
@@ -20,6 +24,8 @@ import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
+
+
 
 public class DoctorRegistry extends Registry<DoctorHttpService>{
 	
@@ -92,26 +98,21 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 	}
 	
 	public ChainBuilder openAllergiesTab(String patientUuid) {
-		return exec(httpService.getAllergies(patientUuid));
+		return exec(httpService.GetAllergies(patientUuid));
 	}
 
 	public ChainBuilder OpenAllergiesForm(){
-		String drugAllergenUuid = "162555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		String environmentalAllergenUuid = "162552AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		String foodAllergenUuid = "162554AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		String allergyReactionUuid = "162553AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		
 		return exec(
-			httpService.GetDrugAllergens(drugAllergenUuid),
-			httpService.GetEnvironmentAllergens(environmentalAllergenUuid),
-			httpService.GetFoodAllergens(foodAllergenUuid),
-			httpService.GetAllergicReactions(allergyReactionUuid)
+			httpService.GetDrugAllergens(DRUG_ALLERGEN_UUID),
+			httpService.GetEnvironmentAllergens(ENVIRONMENTAL_ALLERGEN_UUID),
+			httpService.GetFoodAllergens(FOOD_ALLERGEN_UUID),
+			httpService.GetAllergicReactions(ALLERGY_REACTION_UUID)
 		);
 	}
 
-	public ChainBuilder addAllergies(String patientUuid) {	
+	public ChainBuilder recordAllergy(String patientUuid) {	
 		return exec(
-			httpService.saveAllergies(patientUuid)
+			httpService.saveAllergy(patientUuid)
 		);
 	}
 	

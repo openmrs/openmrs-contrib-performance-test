@@ -15,7 +15,9 @@ import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
+import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
@@ -23,6 +25,7 @@ import static org.openmrs.performance.Constants.ONCE_DAILY;
 import static org.openmrs.performance.Constants.ORAL;
 import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.SEVERITY_UUID;
 import static org.openmrs.performance.Constants.TABLET;
 
 public class DoctorHttpService extends HttpService {
@@ -151,23 +154,9 @@ public class DoctorHttpService extends HttpService {
 						"&careSetting=" + CARE_SETTING_UUID +
 						"&status=any&orderType=" + DRUG_ORDER +
 						"&v=" + customRepresentation);
-	}
-
-	public HttpRequestActionBuilder searchPatient(String searchQuery) {
-		String customRepresentation = """
-				custom:(patientId,uuid,identifiers,display,patientIdentifier:(uuid,identifier),person:(gender,age,birthdate,birthdateEstimated,personName,addresses,display,dead,deathDate),attributes:(value,attributeType:(uuid,display)))
-				""";
-		return http("Get Orders")
-				.get("/openmrs/ws/rest/v1/patient" +
-						"?q=" + searchQuery +
-						"&v=" + customRepresentation +
-						"&includeDead=" + true +
-						"&limit=" + 10);
-	}
-		
+	}	
 	
-	
-	public HttpRequestActionBuilder getAllergies(String patientUuid) {
+	public HttpRequestActionBuilder GetAllergies(String patientUuid) {
 		return http("Get Allergies of Patient")
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
 	}
@@ -192,21 +181,21 @@ public class DoctorHttpService extends HttpService {
 				.get("/openmrs/ws/rest/v1/concept/" + allergyReactionUuid + "?v=full");
 	}
 
-	public HttpRequestActionBuilder saveAllergies(String patientUuid) {
+	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
 		Map<String, Object> payload = new HashMap<>();
 
 		Map<String,String> codedAllergen = new HashMap<>();
-		codedAllergen.put("uuid", "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		codedAllergen.put("uuid", CODED_ALLERGEN_UUID);
 
 		Map<String,Object>allergen = new HashMap<>();
 		allergen.put("allergenType", "DRUG");
 		allergen.put("codedAllergen", codedAllergen);
 
 		Map<String,String>severity = new HashMap<>();
-		severity.put("uuid", "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		severity.put("uuid", SEVERITY_UUID);
 
 		Map<String, String> reactionUuid = new HashMap<>();
-		reactionUuid.put("uuid", "121677AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
 
 		Map<String, Object> reaction = new HashMap<>();
 		reaction.put("reaction", reactionUuid);
@@ -218,8 +207,8 @@ public class DoctorHttpService extends HttpService {
 		payload.put("reactions", reactions);
 		
 		
-			return http("Save Allergies of Patient")
-				.get("/openmrs/ws/rest/v1/patient/"+ patientUuid +"/allergy")
+			return http("Save an Allergies")
+				.post("/openmrs/ws/rest/v1/patient/"+ patientUuid +"/allergy")
 				.body(StringBody(payload.toString()));
 		
 		

@@ -34,5 +34,13 @@ public class Constants {
 	public static final String ORDER = "39da3525-afe4-45ff-8977-c53b7b359158";
 	
 	public static final String DEFAULT_DOSING_TYPE = "org.openmrs.SimpleDosingInstructions";
+
+	// Allergies
+	public static final String DRUG_ALLERGEN_UUID = "162555AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final	String ENVIRONMENTAL_ALLERGEN_UUID = "162552AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final	String FOOD_ALLERGEN_UUID = "162554AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final	String ALLERGY_REACTION_UUID = "162553AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final	String CODED_ALLERGEN_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final	String SEVERITY_UUID = "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	
 }
