@@ -98,7 +98,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 	}
 	
 	public ChainBuilder openAllergiesTab(String patientUuid) {
-		return exec(httpService.GetAllergies(patientUuid));
+		return exec(httpService.getAllergies(patientUuid));
 	}
 
 	public ChainBuilder OpenAllergiesForm(){
