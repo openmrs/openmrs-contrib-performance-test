@@ -29,7 +29,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.exec(registry.openOrdersTab("#{patient_uuid}"))
 				.exec(registry.openLabResultsTab("#{patient_uuid}"))
 				.exec(registry.openAllergiesTab("#{patient_uuid}"))
-				.exec(registry.OpenAllergiesForm())
+				.exec(registry.openAllergiesForm())
 				.exec(registry.recordAllergy("#{patient_uuid}"))
 				.exec(registry.openConditionsTab("#{patient_uuid}"))
 				.exec(registry.openImmunizationsTab("#{patient_uuid}"))

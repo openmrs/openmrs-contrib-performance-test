@@ -101,12 +101,12 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 		return exec(httpService.getAllergies(patientUuid));
 	}
 
-	public ChainBuilder OpenAllergiesForm(){
+	public ChainBuilder openAllergiesForm(){
 		return exec(
-			httpService.getAllergen("Drug",DRUG_ALLERGEN_UUID),
-			httpService.getAllergen("Environment",ENVIRONMENTAL_ALLERGEN_UUID),
-			httpService.getAllergen("Food",FOOD_ALLERGEN_UUID),
-			httpService.getAllergen("Allergic Reactions",ALLERGY_REACTION_UUID)
+			httpService.getAllergens("Drug",DRUG_ALLERGEN_UUID),
+			httpService.getAllergens("Environment",ENVIRONMENTAL_ALLERGEN_UUID),
+			httpService.getAllergens("Food",FOOD_ALLERGEN_UUID),
+			httpService.getAllergens("Allergic Reactions",ALLERGY_REACTION_UUID)
 		);
 	}
 

@@ -161,7 +161,7 @@ public class DoctorHttpService extends HttpService {
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
 	}
 
-	public HttpRequestActionBuilder getAllergen(String allergenType, String allergenUuid) {
+	public HttpRequestActionBuilder getAllergens(String allergenType, String allergenUuid) {
 		return http("Get " + allergenType + " Allergens")
 				.get("/openmrs/ws/rest/v1/concept/" + allergenUuid + "?v=full");
 	}
@@ -192,16 +192,13 @@ public class DoctorHttpService extends HttpService {
 		payload.put("comment", "test");
 		payload.put("reactions", reactions);
 		
-		try{
+		try {
 			return http("Save an Allergy")
-				.post("/openmrs/ws/rest/v1/patient/"+ patientUuid +"/allergy")
-				.body(StringBody(new ObjectMapper().writeValueAsString(payload)));
-		}catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
-        }
-			
-		
-		
+					.post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
+					.body(StringBody(new ObjectMapper().writeValueAsString(payload)));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public HttpRequestActionBuilder getConditions(String patientUuid) {
