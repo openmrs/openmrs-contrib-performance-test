@@ -192,10 +192,14 @@ public class DoctorHttpService extends HttpService {
 		payload.put("comment", "test");
 		payload.put("reactions", reactions);
 		
-		
+		try{
 			return http("Save an Allergies")
 				.post("/openmrs/ws/rest/v1/patient/"+ patientUuid +"/allergy")
-				.body(StringBody(payload.toString()));
+				.body(StringBody(new ObjectMapper().writeValueAsString(payload)));
+		}catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+			
 		
 		
 	}
