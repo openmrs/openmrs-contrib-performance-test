@@ -7,7 +7,10 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
-      SIMULATION_PRESET: commit
+      SIMULATION_PRESET: dev
+      TIER_DURATION_MINUTES: 5
+      USER_INCREMENT_PER_TIER: 32
+      TIER_COUNT: 6
 
     steps:
       - name: Checkout repository
