@@ -6,14 +6,18 @@ import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
+import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
@@ -21,6 +25,7 @@ import static org.openmrs.performance.Constants.ONCE_DAILY;
 import static org.openmrs.performance.Constants.ORAL;
 import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.SEVERITY_UUID;
 import static org.openmrs.performance.Constants.TABLET;
 
 public class DoctorHttpService extends HttpService {
@@ -60,6 +65,8 @@ public class DoctorHttpService extends HttpService {
 		return http("Get Active Visits of Patient")
 				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
 	}
+
+
 	
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted," +
@@ -152,6 +159,46 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
 		return http("Get Allergies of Patient")
 				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
+	}
+
+	public HttpRequestActionBuilder getAllergens(String allergenType, String allergenUuid) {
+		return http("Get " + allergenType + " Allergens")
+				.get("/openmrs/ws/rest/v1/concept/" + allergenUuid + "?v=full");
+	}
+
+
+	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
+		Map<String, Object> payload = new HashMap<>();
+
+		Map<String,String> codedAllergen = new HashMap<>();
+		codedAllergen.put("uuid", CODED_ALLERGEN_UUID);
+
+		Map<String,Object>allergen = new HashMap<>();
+		allergen.put("allergenType", "DRUG");
+		allergen.put("codedAllergen", codedAllergen);
+
+		Map<String,String>severity = new HashMap<>();
+		severity.put("uuid", SEVERITY_UUID);
+
+		Map<String, String> reactionUuid = new HashMap<>();
+		reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
+
+		Map<String, Object> reaction = new HashMap<>();
+		reaction.put("reaction", reactionUuid);
+		List<Map<String, Object>> reactions = Collections.singletonList(reaction);
+
+		payload.put("allergen", allergen);
+		payload.put("severity", severity);
+		payload.put("comment", "test");
+		payload.put("reactions", reactions);
+		
+		try {
+			return http("Save an Allergy")
+					.post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
+					.body(StringBody(new ObjectMapper().writeValueAsString(payload)));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 	
 	public HttpRequestActionBuilder getConditions(String patientUuid) {
