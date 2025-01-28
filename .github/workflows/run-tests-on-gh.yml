@@ -43,6 +43,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Update the load configuration for PRS
         if: github.event_name == 'pull_request'
@@ -103,19 +105,19 @@ jobs:
 
       # Publish the report to GH pages
       - name: Set up Git
-        if: always()
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit the report to the report branch
-        if: always()
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           chmod +x commit-report.sh
           ./commit-report.sh
 
       - name: Push changes
-        if: github.event_name == 'push' || github.event_name == 'pull_request'
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           git push origin main:report -f
 
