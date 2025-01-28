@@ -103,19 +103,19 @@ jobs:
 
       # Publish the report to GH pages
       - name: Set up Git
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: always()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit the report to the report branch
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: always()
         run: |
           chmod +x commit-report.sh
           ./commit-report.sh
 
       - name: Push changes
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: always()
         run: |
           git push origin main:report -f
 
