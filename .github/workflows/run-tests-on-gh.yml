@@ -115,7 +115,7 @@ jobs:
           ./commit-report.sh
 
       - name: Push changes
-        if: always()
+        if: github.event_name == 'push' || github.event_name == 'pull_request'
         run: |
           git push origin main:report -f
 
