@@ -1,0 +1,5 @@
+<testsuite name="org.openmrs.performance.simulations.OpenMRSClinic" tests="1" errors="0" failures="1" time="0">
+  <testcase name="Global: percentage of successful events is 100.0" status="false" time="0">
+  <failure type="Global: percentage of successful events is 100.0">Actual value: 98.13350470085135</failure>
+</testcase>
+</testsuite>
