@@ -13,10 +13,12 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
+import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
@@ -27,6 +29,9 @@ import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.SEVERITY_UUID;
 import static org.openmrs.performance.Constants.TABLET;
+import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -287,4 +292,65 @@ public class DoctorHttpService extends HttpService {
             throw new RuntimeException(e);
         }
     }
+
+	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
+		Map<String, Object> visitNote = new HashMap<>();
+		visitNote.put("form", VISIT_NOTE_FORM_UUID);
+		visitNote.put("patient", patientUuid);
+		visitNote.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+		visitNote.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
+	
+		Map<String, Object> encounterProvider = new HashMap<>();
+		encounterProvider.put("encounterRole", CLINICIAN_ENCOUNTER_ROLE);
+		encounterProvider.put("provider", currentUser);
+	
+		Map<String, Object> obs = new HashMap<>();
+		obs.put("concept", Map.of("uuid", VISIT_NOTE_CONCEPT_UUID));
+		obs.put("value", value);
+	
+		visitNote.put("encounterProviders", List.of(encounterProvider));
+		visitNote.put("obs", List.of(obs));
+	
+		try {
+			String body = new ObjectMapper().writeValueAsString(visitNote); // Convert Map to JSON
+			
+			return http("Save Visit Note")
+				.post("/openmrs/ws/rest/v1/encounter")
+				.body(StringBody(body))
+				.check(jsonPath("$.uuid").saveAs("encounterUuid")); // Store encounter UUID
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException("Error converting visitNote to JSON", e);
+		}
+	}
+	
+
+	public HttpRequestActionBuilder saveDiagnosis(String patientUuid, String encounterUuid, String diagnosisUuid,String certainty, int rank) {
+		try {
+			Map<String, Object> patientDiagnosis = new HashMap<>();
+			patientDiagnosis.put("patient", patientUuid);
+			patientDiagnosis.put("encounter", encounterUuid);
+			patientDiagnosis.put("certainty", certainty);
+			patientDiagnosis.put("rank", rank);
+			patientDiagnosis.put("condition", null);
+
+			Map<String, Object> diagnosis = new HashMap<>();
+			diagnosis.put("coded", diagnosisUuid);
+			patientDiagnosis.put("diagnosis", diagnosis);
+
+			ObjectMapper objectMapper = new ObjectMapper();
+			String body = objectMapper.writeValueAsString(patientDiagnosis);
+
+			exec(seassion -> {
+				System.out.println(body);
+				return seassion;
+			});
+
+			return http("Save Patient Diagnosis")
+					.post("/openmrs/ws/rest/v1/patientdiagnoses")
+					.body(StringBody(body));
+
+		} catch (Exception e) {
+			throw new RuntimeException("Error while serializing diagnosis data", e);
+		}
+}
 }
