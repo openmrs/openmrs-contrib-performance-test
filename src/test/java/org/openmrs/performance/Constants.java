@@ -43,7 +43,7 @@ public class Constants {
 	public static final String CODED_ALLERGEN_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String SEVERITY_UUID = "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-	//Save Visits
+	//Visit Notes
 	public static final String VISIT_NOTE_FORM_UUID = "c75f120a-04ec-11e3-8780-2b40bef9a44b";
 	public static final String CLINICIAN_ENCOUNTER_ROLE = "240b26f9-dd88-4172-823d-4a8bfeb7841f";
 	public static final String VISIT_NOTE_ENCOUNTER_TYPE_UUID = "d7151f82-c1f3-4152-a605-2f9ea7414a79";
