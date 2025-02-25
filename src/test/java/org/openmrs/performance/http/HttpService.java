@@ -82,7 +82,7 @@ public abstract class HttpService {
 	
 	public HttpRequestActionBuilder getCurrentVisit(String patientUuid) {
 		return http("Get Patient's current visit")
-				.get("/openmrs/ws/rest/v1/visit?patient="+patientUuid+"&v=custom:(uuid,encounters:(uuid,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:(uuid,display,provider:(uuid,display,person:(display))),patient:(uuid,uuid),visitType:(uuid,name,display),attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),location:(uuid,name,display),startDatetime,stopDatetime)&includeInactive=false");
+				.get("/openmrs/ws/rest/v1/visit?patient="+patientUuid+"&v=custom:(uuid,encounters:(uuid,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:(uuid,display,provider:(uuid,display,person:(display)))),patient:(uuid,uuid),visitType:(uuid,name,display),attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),location:(uuid,name,display),startDatetime,stopDatetime)))");
 	}
 	
 	public HttpRequestActionBuilder getPatientSummaryData(String patientUuid) {
