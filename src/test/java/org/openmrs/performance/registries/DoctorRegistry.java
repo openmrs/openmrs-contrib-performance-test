@@ -144,4 +144,9 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 		);
 	
 	}
+
+	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
+		String visitNoteText = "Patient visit note";
+		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText));
+	}
 }

@@ -13,10 +13,12 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
+import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
@@ -27,6 +29,9 @@ import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.SEVERITY_UUID;
 import static org.openmrs.performance.Constants.TABLET;
+import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -36,15 +41,11 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),"
-				+ "form:(uuid,display),encounterDatetime,orders:full,"
-				+ "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,"
-				+ "groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),"
-				+ "value,obsDatetime),encounterType:(uuid,display,viewPrivilege,editPrivilege),"
-				+ "encounterProviders:(uuid,display,encounterRole:(uuid,display),"
-				+ "provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),"
-				+ "startDatetime,stopDatetime,patient,"
-				+ "attributes:(attributeType:ref,display,uuid,value))";
+		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
+		        + "encounters:(uuid,display,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:(uuid,display,provider:(uuid,display))),"
+		        + "patient:(uuid,display)," + "visitType:(uuid,name,display),"
+		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
+		        + "location:(uuid,name,display))";
 		
 		return http("Get Visits of Patient")
 				.get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation);
@@ -287,4 +288,37 @@ public class DoctorHttpService extends HttpService {
             throw new RuntimeException(e);
         }
     }
+
+	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
+		ZonedDateTime now = ZonedDateTime.now();
+		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+
+		Map<String, Object> visitNote = new HashMap<>();
+		visitNote.put("form", VISIT_NOTE_FORM_UUID);
+		visitNote.put("patient", patientUuid);
+		visitNote.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+		visitNote.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
+		visitNote.put("encounterDatetime", encounterDatetime);
+		
+		Map<String, Object> encounterProvider = new HashMap<>();
+		encounterProvider.put("encounterRole", CLINICIAN_ENCOUNTER_ROLE);
+		encounterProvider.put("provider", currentUser);
+		
+		Map<String, Object> obs = new HashMap<>();
+		obs.put("concept", Map.of("uuid", VISIT_NOTE_CONCEPT_UUID));
+		obs.put("value", value);
+		
+		visitNote.put("encounterProviders", List.of(encounterProvider));
+		visitNote.put("obs", List.of(obs));
+		
+		try {
+			String body = new ObjectMapper().writeValueAsString(visitNote); // Convert Map to JSON
+			
+			return http("Save Visit Note").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body))
+			        .check(jsonPath("$.uuid").saveAs("encounterUuid")); // Store encounter UUID
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException("Error converting visitNote to JSON", e);
+		}
+	}
 }
