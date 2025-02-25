@@ -115,4 +115,12 @@ public abstract class HttpService {
 		return http("Get Active Orders")
 				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
-}
+	    // Add the logoutRequest method
+		public HttpRequestActionBuilder logoutRequest() {
+			return http("Logout")
+				.post("/openmrs/ws/rest/v1/session")
+				.header("Authorization", "Basic YWRtaW46QWRtaW4xMjM=")
+				.body(StringBody("{\"action\":\"logout\"}"))
+				.check(jsonPath("$.authenticated").is("false"));
+		}
+	}
