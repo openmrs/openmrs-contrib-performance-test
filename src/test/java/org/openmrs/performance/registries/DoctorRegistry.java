@@ -147,6 +147,13 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
 		String visitNoteText = "Patient visit note";
-		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText));
+		String diabeticKetosisConcept = "123107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String diabeticFootUlcerConcept = "149069AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+		String certainty = "PROVISIONAL";
+		String encounterUuid = "#{encounterUuid}";
+		
+		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
+		    httpService.saveDiagnosis(patientUuid, encounterUuid, diabeticKetosisConcept, certainty, 1),
+		    httpService.saveDiagnosis(patientUuid, encounterUuid, diabeticFootUlcerConcept, certainty, 1));
 	}
 }
