@@ -340,11 +340,6 @@ public class DoctorHttpService extends HttpService {
 			String body = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.ALWAYS)
 			        .writeValueAsString(patientDiagnosis);
 			
-			exec(session -> {
-				System.out.println(body);
-				return session;
-			});
-			
 			return http("Save Patient Diagnosis").post("/openmrs/ws/rest/v1/patientdiagnoses").body(StringBody(body));
 		}
 		catch (JsonProcessingException e) {
