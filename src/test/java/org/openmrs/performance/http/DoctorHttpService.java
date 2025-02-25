@@ -290,11 +290,15 @@ public class DoctorHttpService extends HttpService {
     }
 
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
+		ZonedDateTime now = ZonedDateTime.now();
+		String formattedStopDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+
 		Map<String, Object> visitNote = new HashMap<>();
 		visitNote.put("form", VISIT_NOTE_FORM_UUID);
 		visitNote.put("patient", patientUuid);
 		visitNote.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
 		visitNote.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
+		visitNote.put("encounterDatetime", formattedStopDateTime);
 		
 		Map<String, Object> encounterProvider = new HashMap<>();
 		encounterProvider.put("encounterRole", CLINICIAN_ENCOUNTER_ROLE);
