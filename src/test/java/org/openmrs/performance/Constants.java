@@ -43,13 +43,13 @@ public class Constants {
 	public static final String CODED_ALLERGEN_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String SEVERITY_UUID = "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-	//Visit Notes
+	// Visit Notes
 	public static final String VISIT_NOTE_FORM_UUID = "c75f120a-04ec-11e3-8780-2b40bef9a44b";
 	public static final String CLINICIAN_ENCOUNTER_ROLE = "240b26f9-dd88-4172-823d-4a8bfeb7841f";
 	public static final String VISIT_NOTE_ENCOUNTER_TYPE_UUID = "d7151f82-c1f3-4152-a605-2f9ea7414a79";
 	public static final String VISIT_NOTE_CONCEPT_UUID = "162169AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-	// diagnosis 
+	// Diagnosis 
 	public static final String DIABETIC_KETOSIS_CONCEPT = "123107AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String DIABETIC_FOOT_ULCER_CONCEPT = "149069AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 

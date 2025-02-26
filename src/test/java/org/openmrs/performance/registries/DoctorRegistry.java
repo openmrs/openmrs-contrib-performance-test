@@ -153,8 +153,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 		String encounterUuid = "#{encounterUuid}";
 		
 		return exec(
-			httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
+		    httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
-		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 1));
+		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
 }
