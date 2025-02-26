@@ -1,5 +1,6 @@
 package org.openmrs.performance.http;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
@@ -321,4 +322,29 @@ public class DoctorHttpService extends HttpService {
 			throw new RuntimeException("Error converting visitNote to JSON", e);
 		}
 	}
+
+	public HttpRequestActionBuilder saveDiagnosis(String patientUuid, String encounterUuid, String diagnosisUuid,
+	        String certainty, int rank) {
+		Map<String, Object> patientDiagnosis = new HashMap<>();
+		patientDiagnosis.put("patient", patientUuid);
+		patientDiagnosis.put("encounter", encounterUuid);
+		patientDiagnosis.put("certainty", certainty);
+		patientDiagnosis.put("rank", rank);
+		patientDiagnosis.put("condition", null);
+		
+		Map<String, Object> diagnosis = new HashMap<>();
+		diagnosis.put("coded", diagnosisUuid);
+		patientDiagnosis.put("diagnosis", diagnosis);
+		
+		try {
+			String body = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.ALWAYS)
+			        .writeValueAsString(patientDiagnosis);
+			
+			return http("Save Patient Diagnosis").post("/openmrs/ws/rest/v1/patientdiagnoses").body(StringBody(body));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException("Error converting patientDiagnosis to JSON", e);
+		}
+	}
+
 }

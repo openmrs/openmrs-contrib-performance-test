@@ -9,6 +9,8 @@ import java.util.Set;
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
+import static org.openmrs.performance.Constants.DIABETIC_FOOT_ULCER_CONCEPT;
+import static org.openmrs.performance.Constants.DIABETIC_KETOSIS_CONCEPT;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DRUG_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.ENVIRONMENTAL_ALLERGEN_UUID;
@@ -147,6 +149,12 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
 		String visitNoteText = "Patient visit note";
-		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText));
+		String certainty = "PROVISIONAL";
+		String encounterUuid = "#{encounterUuid}";
+		
+		return exec(
+		    httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
+		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
+		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
 }
