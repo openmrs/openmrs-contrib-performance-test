@@ -33,7 +33,6 @@ To run the performance tests locally, follow these steps:
 
 1. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test. [Learn more](#generating-demo-patient-data))
 
-
 For using the docker file, run the following command:
 ```bash
    docker compose -f src/test/resources/docker-compose.yml up
