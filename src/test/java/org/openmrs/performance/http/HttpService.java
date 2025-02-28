@@ -15,9 +15,10 @@ import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
-import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
-import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
 import static org.openmrs.performance.Constants.VITALS_CONCEPT;
+import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
+import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
 
 public abstract class HttpService {
 	public HttpRequestActionBuilder loginRequest() {
@@ -127,10 +128,10 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder saveVitalsData(String patientUuid, int value) {
 		Map<String, Object> saveVitals = new HashMap<>();
-		saveVitals.put("form", VISIT_NOTE_FORM_UUID);
+		saveVitals.put("form", VITALS_FORM_UUID);
 		saveVitals.put("patient", patientUuid);
-		saveVitals.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
-		saveVitals.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
+		saveVitals.put("location", VITALS_LOCATION_UUID);
+		saveVitals.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
 		
 		Map<String, Object> obs = new HashMap<>();
 		obs.put("concept", Map.of("uuid", VITALS_CONCEPT));
