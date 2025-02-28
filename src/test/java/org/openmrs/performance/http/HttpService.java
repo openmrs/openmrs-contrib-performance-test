@@ -2,13 +2,22 @@ package org.openmrs.performance.http;
 
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
+import static org.openmrs.performance.Constants.VITALS_CONCEPT;
 
 public abstract class HttpService {
 	public HttpRequestActionBuilder loginRequest() {
@@ -114,5 +123,29 @@ public abstract class HttpService {
 	public HttpRequestActionBuilder getActiveOrders(String patientUuid) {
 		return http("Get Active Orders")
 				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
+	}
+
+	public HttpRequestActionBuilder saveVitalsData(String patientUuid, int value) {
+		Map<String, Object> saveVitals = new HashMap<>();
+		saveVitals.put("form", VISIT_NOTE_FORM_UUID);
+		saveVitals.put("patient", patientUuid);
+		saveVitals.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+		saveVitals.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
+		
+		Map<String, Object> obs = new HashMap<>();
+		obs.put("concept", Map.of("uuid", VITALS_CONCEPT));
+		obs.put("value", value);
+		
+		saveVitals.put("obs", List.of(obs));
+		
+		try {
+			String body = new ObjectMapper().writeValueAsString(saveVitals); // Convert Map to JSON
+			
+			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
+			
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException("Error converting visitNote to JSON", e);
+		}
 	}
 }
