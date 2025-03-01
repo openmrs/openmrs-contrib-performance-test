@@ -55,7 +55,4 @@ public class Constants {
 
 	// Vitals
 	public static final String VITALS_CONCEPT = "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-	public static final String VITALS_ENCOUNTER_TYPE_UUID = "67a71486-1a54-468f-ac3e-7091a9a79584";
-	public static final String VITALS_LOCATION_UUID = "44c3efb0-2583-4c80-a79e-1f756a03c0a1";
-	public static final String VITALS_FORM_UUID = "9f26aad4-244a-46ca-be49-1196df1a8c9a";
 }

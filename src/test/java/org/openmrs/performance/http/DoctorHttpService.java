@@ -14,7 +14,6 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
-import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
