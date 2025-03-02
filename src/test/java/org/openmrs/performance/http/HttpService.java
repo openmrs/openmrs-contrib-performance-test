@@ -160,7 +160,7 @@ public abstract class HttpService {
         obs.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
 		
 		
-		vitals.put("obs", List.of(obs));
+		vitals.put("obs", obs);
 		
 		try {
 			String body = new ObjectMapper().writeValueAsString(vitals); // Convert Map to JSON
