@@ -159,7 +159,6 @@ public abstract class HttpService {
         obs.add(Map.of("concept", HEIGHT_CM, "value", 121));
         obs.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
 		
-		
 		vitals.put("obs", obs);
 		
 		try {
