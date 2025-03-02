@@ -54,5 +54,7 @@ public class Constants {
 	public static final String DIABETIC_FOOT_ULCER_CONCEPT = "149069AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	// Vitals
-	public static final String VITALS_CONCEPT = "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final String VITALS_FORM_UUID = "9f26aad4-244a-46ca-be49-1196df1a8c9a";
+	public static final String VITALS_LOCATION_UUID = "ba685651-ed3b-4e63-9b35-78893060758a";
+	public static final String VITALS_ENCOUNTER_TYPE_UUID = "67a71486-1a54-468f-ac3e-7091a9a79584";
 }
