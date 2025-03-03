@@ -7,6 +7,7 @@ import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -17,21 +18,33 @@ import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
+import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
+import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
+import static org.openmrs.performance.Constants.HEIGHT_CM;
+import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.ONCE_DAILY;
 import static org.openmrs.performance.Constants.ORAL;
 import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.PULSE;
+import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SEVERITY_UUID;
+import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TABLET;
+import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
+import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
+import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
+import static org.openmrs.performance.Constants.WEIGHT_KG;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -343,6 +356,39 @@ public class DoctorHttpService extends HttpService {
 		}
 		catch (JsonProcessingException e) {
 			throw new RuntimeException("Error converting patientDiagnosis to JSON", e);
+		}
+	}
+
+	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
+		ZonedDateTime now = ZonedDateTime.now();
+		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		
+		Map<String, Object> vitals = new HashMap<>();
+		vitals.put("form", VITALS_FORM_UUID);
+		vitals.put("patient", patientUuid);
+		vitals.put("location", VITALS_LOCATION_UUID);
+		vitals.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
+		vitals.put("encounterDatetime", encounterDatetime);
+		
+		List<Map<String, Object>> obs = new ArrayList<>();
+		obs.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
+		obs.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
+		obs.add(Map.of("concept", RESPIRATORY_RATE, "value", 100));
+		obs.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
+		obs.add(Map.of("concept", PULSE, "value", 120));
+		obs.add(Map.of("concept", TEMPERATURE_C, "value", 28));
+		obs.add(Map.of("concept", WEIGHT_KG, "value", 60));
+		obs.add(Map.of("concept", HEIGHT_CM, "value", 121));
+		obs.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
+		
+		vitals.put("obs", obs);
+		
+		try {
+			String body = new ObjectMapper().writeValueAsString(vitals); // Convert Map to JSON
+			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException("Error converting visitNote to JSON", e);
 		}
 	}
 

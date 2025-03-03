@@ -74,7 +74,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 		);
 		return exec(httpService.getPatientObservations(patientUuid, vitals))
 				.exec(httpService.getPatientObservations(patientUuid, biometrics))
-				.exec(httpService.saveVitalsData(patientUuid, 34));
+				.exec(httpService.saveVitalsData(patientUuid));
 	}
 	
 	public ChainBuilder openMedicationsTab(String patientUuid) {

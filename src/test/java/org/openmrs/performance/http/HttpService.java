@@ -1,35 +1,13 @@
 package org.openmrs.performance.http;
 
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
-
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
-import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
-import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.HEIGHT_CM;
-import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
-import static org.openmrs.performance.Constants.PULSE;
-import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
-import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.TEMPERATURE_C;
-import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
-import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
-import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
-import static org.openmrs.performance.Constants.WEIGHT_KG;
 
 public abstract class HttpService {
 	public HttpRequestActionBuilder loginRequest() {
@@ -137,38 +115,5 @@ public abstract class HttpService {
 				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
 
-	public HttpRequestActionBuilder saveVitalsData(String patientUuid, int value) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-
-		Map<String, Object> vitals = new HashMap<>();
-		vitals.put("form", VITALS_FORM_UUID);
-		vitals.put("patient", patientUuid);
-		vitals.put("location", VITALS_LOCATION_UUID);
-		vitals.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
-		vitals.put("encounterDatetime", encounterDatetime);
-		
-		List<Map<String, Object>> obs = new ArrayList<>();
-        obs.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
-        obs.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
-        obs.add(Map.of("concept", RESPIRATORY_RATE, "value", 100));
-        obs.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
-        obs.add(Map.of("concept", PULSE, "value", 120));
-        obs.add(Map.of("concept", TEMPERATURE_C, "value", 28));
-        obs.add(Map.of("concept", WEIGHT_KG, "value", 60));
-        obs.add(Map.of("concept", HEIGHT_CM, "value", 121));
-        obs.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
-		
-		vitals.put("obs", obs);
-		
-		try {
-			String body = new ObjectMapper().writeValueAsString(vitals); // Convert Map to JSON
-			
-			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
-			
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException("Error converting visitNote to JSON", e);
-		}
-	}
+	
 }
