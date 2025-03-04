@@ -32,14 +32,13 @@ and easy-to-use framework for simulating user load and measuring system performa
 To run the performance tests locally, follow these steps:
 
 1. Install dependencies (and compile)
-```suggestion
    ```bash
-      ./mvnw install -DskipTests
-
-For using the docker file, run the following command:
-```bash
+   ./mvnw install -DskipTests
+   ```
+2. For using the docker file, run the following command:
+   ```bash
    docker compose -f src/test/resources/docker-compose.yml up
-```
+   ```
 3. Execute the following command in your terminal:
 
    **Standard** `export SIMULATION_PRESET='standard' && ./mvnw gatling:test` \
