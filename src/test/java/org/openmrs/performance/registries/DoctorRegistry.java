@@ -73,7 +73,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 				MID_UPPER_ARM_CIRCUMFERENCE
 		);
 		return exec(httpService.getPatientObservations(patientUuid, vitals))
-				.exec(httpService.getPatientObservations(patientUuid, biometrics));
+				.exec(httpService.getPatientObservations(patientUuid, biometrics))
+				.exec(httpService.saveVitalsData(patientUuid));
 	}
 	
 	public ChainBuilder openMedicationsTab(String patientUuid) {
