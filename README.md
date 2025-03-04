@@ -44,6 +44,11 @@ For using the docker file, run the following command:
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
+**Before starting the server, make sure to build the project using Maven:**
+
+```bash
+mvn install
+```
 ### Simulation Presets
 
 Simulation presets are configured within the OpenMRSClinic class. Below are the available presets. To add a new
