@@ -31,11 +31,10 @@ and easy-to-use framework for simulating user load and measuring system performa
 
 To run the performance tests locally, follow these steps:
 
-1. Before starting the server, Install dependencies (and compile)
-```bash
-./mvnw install -DskipTests
-```
-2. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test. [Learn more](#generating-demo-patient-data))
+1. Install dependencies (and compile)
+```suggestion
+   ```bash
+      ./mvnw install -DskipTests
 
 For using the docker file, run the following command:
 ```bash
