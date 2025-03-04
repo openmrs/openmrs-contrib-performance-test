@@ -363,12 +363,12 @@ public class DoctorHttpService extends HttpService {
 		ZonedDateTime now = ZonedDateTime.now();
 		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 		
-		Map<String, Object> vitals = new HashMap<>();
-		vitals.put("form", VITALS_FORM_UUID);
-		vitals.put("patient", patientUuid);
-		vitals.put("location", VITALS_LOCATION_UUID);
-		vitals.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
-		vitals.put("encounterDatetime", encounterDatetime);
+		Map<String, Object> encounter = new HashMap<>();
+		encounter.put("form", VITALS_FORM_UUID);
+		encounter.put("patient", patientUuid);
+		encounter.put("location", VITALS_LOCATION_UUID);
+		encounter.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
+		encounter.put("encounterDatetime", encounterDatetime);
 		
 		List<Map<String, Object>> obs = new ArrayList<>();
 		obs.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
@@ -381,10 +381,10 @@ public class DoctorHttpService extends HttpService {
 		obs.add(Map.of("concept", HEIGHT_CM, "value", 121));
 		obs.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
 		
-		vitals.put("obs", obs);
+		encounter.put("obs", obs);
 		
 		try {
-			String body = new ObjectMapper().writeValueAsString(vitals); // Convert Map to JSON
+			String body = new ObjectMapper().writeValueAsString(encounter); // Convert Map to JSON
 			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
 		}
 		catch (JsonProcessingException e) {
