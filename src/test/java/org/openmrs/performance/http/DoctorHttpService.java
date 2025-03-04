@@ -370,18 +370,18 @@ public class DoctorHttpService extends HttpService {
 		encounter.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
 		encounter.put("encounterDatetime", encounterDatetime);
 		
-		List<Map<String, Object>> obs = new ArrayList<>();
-		obs.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
-		obs.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
-		obs.add(Map.of("concept", RESPIRATORY_RATE, "value", 100));
-		obs.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
-		obs.add(Map.of("concept", PULSE, "value", 120));
-		obs.add(Map.of("concept", TEMPERATURE_C, "value", 28));
-		obs.add(Map.of("concept", WEIGHT_KG, "value", 60));
-		obs.add(Map.of("concept", HEIGHT_CM, "value", 121));
-		obs.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
+		List<Map<String, Object>> observations = new ArrayList<>();
+		observations.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
+		observations.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
+		observations.add(Map.of("concept", RESPIRATORY_RATE, "value", 100));
+		observations.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
+		observations.add(Map.of("concept", PULSE, "value", 120));
+		observations.add(Map.of("concept", TEMPERATURE_C, "value", 28));
+		observations.add(Map.of("concept", WEIGHT_KG, "value", 60));
+		observations.add(Map.of("concept", HEIGHT_CM, "value", 121));
+		observations.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
 		
-		encounter.put("obs", obs);
+		encounter.put("obs", observations);
 		
 		try {
 			String body = new ObjectMapper().writeValueAsString(encounter); // Convert Map to JSON
