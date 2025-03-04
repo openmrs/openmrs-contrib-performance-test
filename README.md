@@ -31,24 +31,23 @@ and easy-to-use framework for simulating user load and measuring system performa
 
 To run the performance tests locally, follow these steps:
 
-1. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test. [Learn more](#generating-demo-patient-data))
+1. Before starting the server, Install dependencies (and compile)
+```bash
+./mvnw install -DskipTests
+```
+2. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test. [Learn more](#generating-demo-patient-data))
 
 For using the docker file, run the following command:
 ```bash
    docker compose -f src/test/resources/docker-compose.yml up
 ```
-2. Execute the following command in your terminal:
+3. Execute the following command in your terminal:
 
    **Standard** `export SIMULATION_PRESET='standard' && ./mvnw gatling:test` \
    **dev**  `export SIMULATION_PRESET=dev TIER_COUNT=2 TIER_DURATION_MINUTES=1 USER_INCREMENT_PER_TIER=10 && ./mvnw gatling:test`
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
-**Before starting the server, make sure to build the project using Maven:**
-
-```bash
-mvn install
-```
 ### Simulation Presets
 
 Simulation presets are configured within the OpenMRSClinic class. Below are the available presets. To add a new
