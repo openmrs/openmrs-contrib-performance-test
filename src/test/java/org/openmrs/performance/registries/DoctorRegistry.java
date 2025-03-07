@@ -132,6 +132,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 				.exec(httpService.getAllowedFileExtensions());
 	}
 	
+	public ChainBuilder openProgramsTab(String patientUuid) {return exec(httpService.getPrograms(patientUuid));}
+	
 	public ChainBuilder openVisitsTab(String patientUuid) {
 		return exec(httpService.getVisitsOfPatient(patientUuid));
 	}
