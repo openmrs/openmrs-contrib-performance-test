@@ -246,6 +246,11 @@ public class DoctorHttpService extends HttpService {
 				.get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
 	}
 	
+	public HttpRequestActionBuilder getPrograms(String patientUuid) {
+		return http("Get Programs of Patient")
+				.get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
+	}
+	
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
 		String customRepresentation = """
 				custom:(uuid,display,name,strength,
