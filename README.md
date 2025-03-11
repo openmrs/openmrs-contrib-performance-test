@@ -3,7 +3,7 @@
 This repository contains performance testing scripts and configurations for OpenMRS using Gatling.
 
 The latest report can be found
-at [openmrs.github.io/openmrs-contrib-performance-test](https://openmrs.github.io/openmrs-contrib-performance-test/)
+at [here](https://o3-performance.openmrs.org/)
 
 ## Table of Contents
 
