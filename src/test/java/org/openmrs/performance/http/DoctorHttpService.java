@@ -17,6 +17,8 @@ import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
+import static io.gatling.javaapi.http.HttpDsl.RawFileBodyPart;
+import static io.gatling.javaapi.http.HttpDsl.StringBodyPart;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
@@ -230,6 +232,19 @@ public class DoctorHttpService extends HttpService {
 				.get("/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions");
 	}
 	
+	public HttpRequestActionBuilder uploadAttachment(String patientUuid) {
+		return http("Upload Attachment Request")
+				.post("/openmrs/ws/rest/v1/attachment")
+				.bodyPart(StringBodyPart("fileCaption", "openmrs image"))
+				.bodyPart(StringBodyPart("patient", patientUuid))
+				.asMultipartForm()
+				.bodyPart(
+						RawFileBodyPart("file", "openmrs.png")
+								.contentType("image/png")
+								.fileName("openmrs.png")
+				);
+	}
+	
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
 		return http("Get Lab Results of Patient")
 				.get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid + "&_count=100&_summary=data")
@@ -391,5 +406,4 @@ public class DoctorHttpService extends HttpService {
 			throw new RuntimeException("Error converting visitNote to JSON", e);
 		}
 	}
-
 }
