@@ -30,7 +30,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(2)
 				.exec(registry.openVitalsAndBiometricsTab("#{patient_uuid}"))
 				.pause(5)
-				.exec(registry.saveVitals("#{patient_uuid}"))
+				.exec(registry.recordVitals("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.openMedicationsTab("#{patient_uuid}"))
 				.pause(5)

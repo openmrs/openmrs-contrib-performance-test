@@ -76,7 +76,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 				.exec(httpService.getPatientObservations(patientUuid, biometrics));
 	}
 
-	public ChainBuilder saveVitals(String patientUuid){
+	public ChainBuilder recordVitals(String patientUuid){
 		return exec(httpService.saveVitalsData(patientUuid));
 	}
 	
