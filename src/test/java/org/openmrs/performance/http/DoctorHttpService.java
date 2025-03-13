@@ -241,8 +241,7 @@ public class DoctorHttpService extends HttpService {
 				.bodyPart(
 						RawFileBodyPart("file", "openmrs.png")
 								.contentType("image/png")
-								.fileName("openmrs.png")
-				);
+								.fileName("openmrs.png"));
 	}
 	
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
