@@ -235,13 +235,13 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder uploadAttachment(String patientUuid) {
 		return http("Upload an Attachment")
 				.post("/openmrs/ws/rest/v1/attachment")
-				.bodyPart(StringBodyPart("fileCaption", "openmrs image"))
+				.bodyPart(StringBodyPart("fileCaption", "sample image"))
 				.bodyPart(StringBodyPart("patient", patientUuid))
 				.asMultipartForm()
 				.bodyPart(
-						RawFileBodyPart("file", "openmrs.png")
+						RawFileBodyPart("file", "Sample_1MB_image.png")
 								.contentType("image/png")
-								.fileName("openmrs.png"));
+								.fileName("Sample_1MB_image.png"));
 	}
 	
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
