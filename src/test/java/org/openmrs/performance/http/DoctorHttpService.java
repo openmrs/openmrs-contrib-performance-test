@@ -239,9 +239,9 @@ public class DoctorHttpService extends HttpService {
 				.bodyPart(StringBodyPart("patient", patientUuid))
 				.asMultipartForm()
 				.bodyPart(
-						RawFileBodyPart("file", "Sample_1MB_image.png")
-								.contentType("image/png")
-								.fileName("Sample_1MB_image.png"));
+						RawFileBodyPart("file", "Sample_1MB_image.jpg")
+								.contentType("image/jpeg")
+								.fileName("Sample_1MB_image.jpg"));
 	}
 	
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
