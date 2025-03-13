@@ -3,7 +3,7 @@
 This repository contains performance testing scripts and configurations for OpenMRS using Gatling.
 
 The latest report can be found
-at [openmrs.github.io/openmrs-contrib-performance-test](https://openmrs.github.io/openmrs-contrib-performance-test/)
+at [here](https://o3-performance.openmrs.org/)
 
 ## Table of Contents
 
@@ -31,8 +31,15 @@ and easy-to-use framework for simulating user load and measuring system performa
 
 To run the performance tests locally, follow these steps:
 
-1. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test. [Learn more](#generating-demo-patient-data))
-2. Execute the following command in your terminal:
+1. Install dependencies (and compile)
+   ```bash
+   ./mvnw install -DskipTests
+   ```
+2. Start OpenMRS on port 80. (Use the docker file: [src/test/resources/docker-compose.yml](src/test/resources/docker-compose.yml) It contains demo patients for the test. [Learn more](#generating-demo-patient-data))
+   ```bash
+   docker compose -f src/test/resources/docker-compose.yml up
+   ```
+3. Execute the following command in your terminal:
 
    **Standard** `export SIMULATION_PRESET='standard' && ./mvnw gatling:test` \
    **dev**  `export SIMULATION_PRESET=dev TIER_COUNT=2 TIER_DURATION_MINUTES=1 USER_INCREMENT_PER_TIER=10 && ./mvnw gatling:test`
