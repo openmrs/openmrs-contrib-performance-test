@@ -115,4 +115,65 @@ public abstract class HttpService {
 		return http("Get Active Orders")
 				.get("/openmrs/ws/rest/v1/order?patient="+patientUuid+"&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
+	// Additional methods for AppointmentBookingScenario
+    public HttpRequestActionBuilder getAppointments() {
+        return http("Fetch Appointments")
+            .get("/openmrs/ws/rest/v1/appointmentscheduling/appointment")
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder getAppointmentTypes() {
+        return http("Fetch Appointment Types")
+            .get("/openmrs/ws/rest/v1/appointmentscheduling/appointmenttype")
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder getProviders() {
+        return http("Fetch Providers")
+            .get("/openmrs/ws/rest/v1/provider")
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder getTimeSlots() {
+        return http("Fetch Time Slots")
+            .get("/openmrs/ws/rest/v1/appointmentscheduling/timeslot")
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder getAppointmentTags() {
+        return http("Fetch Appointment Tags")
+            .get("/openmrs/ws/rest/v1/appointmentscheduling/appointmenttag")
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder getForm(String formUuid) {
+        return http("Open the Form")
+            .get("/openmrs/ws/rest/v1/form/" + formUuid)
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder searchPatient(String patientName) {
+        return http("Search for a Patient")
+            .get("/openmrs/ws/rest/v1/patient?q=" + patientName)
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder selectPatient(String patientUuid) {
+        return http("Select a Patient")
+            .get("/openmrs/ws/rest/v1/patient/" + patientUuid)
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder getPatientIdentifiers(String patientUuid) {
+        return http("Fetch Patient Identifiers")
+            .get("/openmrs/ws/rest/v1/patient/" + patientUuid + "/identifier")
+            .header("Authorization", "#{authToken}");
+    }
+
+    public HttpRequestActionBuilder bookAppointment(String patientUuid, String appointmentTypeUuid, String locationUuid, String startDatetime, String endDatetime) {
+        return http("Book an Appointment")
+            .post("/openmrs/ws/rest/v1/appointment")
+            .header("Authorization", "#{authToken}")
+            .body(StringBody("{\"patient\": \"" + patientUuid + "\", \"appointmentType\": \"" + appointmentTypeUuid + "\", \"location\": \"" + locationUuid + "\", \"startDatetime\": \"" + startDatetime + "\", \"endDatetime\": \"" + endDatetime + "\"}"));
+    }
 }
