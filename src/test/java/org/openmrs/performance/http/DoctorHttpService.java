@@ -233,7 +233,7 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder uploadAttachment(String patientUuid) {
-		return http("Upload Attachment Request")
+		return http("Upload an Attachment")
 				.post("/openmrs/ws/rest/v1/attachment")
 				.bodyPart(StringBodyPart("fileCaption", "openmrs image"))
 				.bodyPart(StringBodyPart("patient", patientUuid))
