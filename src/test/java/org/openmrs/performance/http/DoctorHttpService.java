@@ -247,13 +247,8 @@ public class DoctorHttpService extends HttpService {
 	}
 	
 	public HttpRequestActionBuilder getPrograms() {
-		return http("Get Programs of Patient")
+		return http("Get Programs")
 				.get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
-	}
-	
-	public HttpRequestActionBuilder getProgramEnrollment(String patientUuid) {
-		return http("Get Program Enrollment of Patient")
-				.get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=custom:(uuid,display,program,dateEnrolled,dateCompleted,location:(uuid,display),states:(startDate,endDate,voided,state:(uuid,concept:(display))))");
 	}
 	
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
