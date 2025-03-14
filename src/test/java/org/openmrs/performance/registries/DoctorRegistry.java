@@ -71,8 +71,11 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 				MID_UPPER_ARM_CIRCUMFERENCE
 		);
 		return exec(httpService.getPatientObservations(patientUuid, vitals))
-				.exec(httpService.getPatientObservations(patientUuid, biometrics))
-				.exec(httpService.saveVitalsData(patientUuid));
+				.exec(httpService.getPatientObservations(patientUuid, biometrics));
+	}
+
+	public ChainBuilder recordVitals(String patientUuid){
+		return exec(httpService.saveVitalsData(patientUuid));
 	}
 	
 	public ChainBuilder openMedicationsTab(String patientUuid) {
@@ -130,9 +133,15 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 				.exec(httpService.getAllowedFileExtensions());
 	}
 	
+
 	public ChainBuilder openProgramsTab(String patientUuid) {
 		return exec(httpService.getPrograms())
 				.exec(httpService.getProgramEnrollments(patientUuid));
+  }
+  
+	public ChainBuilder addAttachment(String patientUuid){
+		return exec(httpService.uploadAttachment(patientUuid))
+				.exec(httpService.getAttachments(patientUuid));
 	}
 	
 	public ChainBuilder openVisitsTab(String patientUuid) {
