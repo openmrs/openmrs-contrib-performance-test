@@ -263,7 +263,7 @@ public class DoctorHttpService extends HttpService {
 	
 	public HttpRequestActionBuilder getAppointments() {
 		return http("Get Appointments of Patient")
-				.get("/openmrs/ws/rest/v1/appointments/search");
+				.post("/openmrs/ws/rest/v1/appointments/search");
 	}
 	
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
