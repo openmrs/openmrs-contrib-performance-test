@@ -51,7 +51,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.exec(registry.openAttachmentsTab("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.openProgramsTab("#{patient_uuid}"))
-                .pause(5)
+				.pause(5)
 				.exec(registry.addAttachment("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.addDrugOrder("#{patient_uuid}", "#{visitUuid}", "#{currentUserUuid}"))
