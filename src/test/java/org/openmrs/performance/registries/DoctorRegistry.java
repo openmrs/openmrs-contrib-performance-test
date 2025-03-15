@@ -27,9 +27,7 @@ import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
 
-
-
-public class DoctorRegistry extends Registry<DoctorHttpService>{
+public class DoctorRegistry extends Registry<DoctorHttpService> {
 	
 	public DoctorRegistry() {
 		super(new DoctorHttpService());
@@ -106,19 +104,19 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 	public ChainBuilder openAllergiesTab(String patientUuid) {
 		return exec(httpService.getAllergies(patientUuid));
 	}
-
-	public ChainBuilder openAllergiesForm(){
+	
+	public ChainBuilder openAllergiesForm() {
 		return exec(
-			httpService.getAllergens("Drug",DRUG_ALLERGEN_UUID),
-			httpService.getAllergens("Environment",ENVIRONMENTAL_ALLERGEN_UUID),
-			httpService.getAllergens("Food",FOOD_ALLERGEN_UUID),
-			httpService.getAllergens("Allergic Reactions",ALLERGY_REACTION_UUID)
+				httpService.getAllergens("Drug", DRUG_ALLERGEN_UUID),
+				httpService.getAllergens("Environment", ENVIRONMENTAL_ALLERGEN_UUID),
+				httpService.getAllergens("Food", FOOD_ALLERGEN_UUID),
+				httpService.getAllergens("Allergic Reactions", ALLERGY_REACTION_UUID)
 		);
 	}
-
-	public ChainBuilder recordAllergy(String patientUuid) {	
+	
+	public ChainBuilder recordAllergy(String patientUuid) {
 		return exec(
-			httpService.saveAllergy(patientUuid)
+				httpService.saveAllergy(patientUuid)
 		);
 	}
 	
@@ -135,6 +133,12 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 				.exec(httpService.getAllowedFileExtensions());
 	}
 	
+
+	public ChainBuilder openProgramsTab(String patientUuid) {
+		return exec(httpService.getPrograms())
+				.exec(httpService.getProgramEnrollments(patientUuid));
+  }
+  
 	public ChainBuilder addAttachment(String patientUuid){
 		return exec(httpService.uploadAttachment(patientUuid))
 				.exec(httpService.getAttachments(patientUuid));
@@ -155,19 +159,19 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 				httpService.getActiveVisitOfPatient(patientUuid),
 				httpService.searchForDrug("asprin"),
 				httpService.searchForDrug("Tylenol"),
-				httpService.saveOrder(patientUuid, visitUuid,  currentUserUuid, asprin_162_5mg, asprinConcept)
+				httpService.saveOrder(patientUuid, visitUuid, currentUserUuid, asprin_162_5mg, asprinConcept)
 		);
-	
+		
 	}
-
+	
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
 		String visitNoteText = "Patient visit note";
 		String certainty = "PROVISIONAL";
 		String encounterUuid = "#{encounterUuid}";
 		
 		return exec(
-		    httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
-		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
-		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
+				httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
+				httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
+				httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
 }
