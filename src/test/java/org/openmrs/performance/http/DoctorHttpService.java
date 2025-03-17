@@ -7,6 +7,7 @@ import io.gatling.javaapi.http.HttpRequestActionBuilder;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -14,25 +15,38 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
-import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
+import static io.gatling.javaapi.http.HttpDsl.RawFileBodyPart;
+import static io.gatling.javaapi.http.HttpDsl.StringBodyPart;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
+import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
+import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
+import static org.openmrs.performance.Constants.HEIGHT_CM;
+import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.ONCE_DAILY;
 import static org.openmrs.performance.Constants.ORAL;
 import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.PULSE;
+import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SEVERITY_UUID;
+import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TABLET;
+import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
+import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
+import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
+import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
+import static org.openmrs.performance.Constants.WEIGHT_KG;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -224,6 +238,19 @@ public class DoctorHttpService extends HttpService {
 				.get("/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions");
 	}
 	
+	public HttpRequestActionBuilder uploadAttachment(String patientUuid) {
+		return http("Upload Attachment Request")
+				.post("/openmrs/ws/rest/v1/attachment")
+				.bodyPart(StringBodyPart("fileCaption", "Test Image"))
+				.bodyPart(StringBodyPart("patient", patientUuid))
+				.bodyPart(
+						RawFileBodyPart("file", "Sample_1MB_image.jpg")
+								.contentType("image/jpg")
+								.fileName("Sample_1MB_image.jpg")
+						)
+				.asMultipartForm();
+	}
+	
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
 		return http("Get Lab Results of Patient")
 				.get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid + "&_count=100&_summary=data")
@@ -238,6 +265,11 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder getImmunizations(String patientUuid) {
 		return http("Get Immunizations of Patient")
 				.get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
+	}
+	
+	public HttpRequestActionBuilder getPrograms() {
+		return http("Get Programs")
+				.get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
 	}
 	
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
@@ -350,6 +382,39 @@ public class DoctorHttpService extends HttpService {
 		}
 		catch (JsonProcessingException e) {
 			throw new RuntimeException("Error converting patientDiagnosis to JSON", e);
+		}
+	}
+
+	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
+		ZonedDateTime now = ZonedDateTime.now();
+		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		
+		Map<String, Object> encounter = new HashMap<>();
+		encounter.put("form", VITALS_FORM_UUID);
+		encounter.put("patient", patientUuid);
+		encounter.put("location", VITALS_LOCATION_UUID);
+		encounter.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
+		encounter.put("encounterDatetime", encounterDatetime);
+		
+		List<Map<String, Object>> observations = new ArrayList<>();
+		observations.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
+		observations.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
+		observations.add(Map.of("concept", RESPIRATORY_RATE, "value", 100));
+		observations.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
+		observations.add(Map.of("concept", PULSE, "value", 120));
+		observations.add(Map.of("concept", TEMPERATURE_C, "value", 28));
+		observations.add(Map.of("concept", WEIGHT_KG, "value", 60));
+		observations.add(Map.of("concept", HEIGHT_CM, "value", 121));
+		observations.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
+		
+		encounter.put("obs", observations);
+		
+		try {
+			String body = new ObjectMapper().writeValueAsString(encounter); // Convert Map to JSON
+			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException("Error converting visitNote to JSON", e);
 		}
 	}
 

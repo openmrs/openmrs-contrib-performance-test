@@ -10,7 +10,7 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <gatling.version>3.13.4</gatling.version>
-    <gatling-maven-plugin.version>4.15.1</gatling-maven-plugin.version>
+    <gatling-maven-plugin.version>4.16.1</gatling-maven-plugin.version>
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
@@ -29,7 +29,7 @@
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-databind</artifactId>
-      <version>2.18.2</version>
+      <version>2.18.3</version>
     </dependency>
     <dependency>
       <groupId>org.junit.jupiter</groupId>
@@ -40,12 +40,12 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>2.0.16</version>
+      <version>2.0.17</version>
     </dependency>
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.16</version>
+      <version>1.5.17</version>
     </dependency>
   </dependencies>
 
