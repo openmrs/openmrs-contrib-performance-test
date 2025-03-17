@@ -132,7 +132,9 @@ public class DoctorRegistry extends Registry<DoctorHttpService>{
 	}
 	
 	public ChainBuilder openVisitsTab(String patientUuid) {
-		return exec(httpService.getVisitsOfPatient(patientUuid));
+		return exec(httpService.getVisitsOfPatient(patientUuid))
+				.exec(httpService.getActiveOrders(patientUuid))
+				.exec(httpService.getLabResults(patientUuid));
 	}
 	
 	public ChainBuilder addDrugOrder(String patientUuid, String visitUuid, String currentUserUuid) {
