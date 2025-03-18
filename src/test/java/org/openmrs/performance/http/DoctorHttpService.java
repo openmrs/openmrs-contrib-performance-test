@@ -47,6 +47,11 @@ import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
 import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
+import static org.openmrs.performance.Constants.CONDITION_UUID;
+import static org.openmrs.performance.Constants.CONDITION_NAME;
+import static org.openmrs.performance.Constants.ONSET_DATE;
+import static org.openmrs.performance.Constants.PRACTITIONER_REFERENCE;
+import static org.openmrs.performance.Constants.SUBJECT_REFERENCE;
 
 public class DoctorHttpService extends HttpService {
 	
@@ -265,7 +270,12 @@ public class DoctorHttpService extends HttpService {
 		return http("Get Programs")
 				.get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
 	}
-	
+
+	public HttpRequestActionBuilder searchForConditions(String searchQuery) {
+		return http("Search for Condition")
+				.get("/openmrs/ws/rest/v1/concept?name=" + searchQuery + "&searchType=fuzzy&class=8d4918b0-c2cc-11de-8d13-0010c6dffd0f&v=custom:(uuid,display)");
+	}
+
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
 		String customRepresentation = """
 				custom:(uuid,display,name,strength,
@@ -275,7 +285,40 @@ public class DoctorHttpService extends HttpService {
 		return http("Search for Drug")
 				.get("/openmrs/ws/rest/v1/drug?name=" + searchQuery + "&v=" + customRepresentation);
 	}
-	
+	public HttpRequestActionBuilder saveCondition(String patientUuid){
+		String currentDate = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+
+		Map<String, Object> condition = new HashMap<>();
+		condition.put("clinicalStatus", Map.of(
+				"coding", new Object[]{Map.of(
+						"system", "http://terminology.hl7.org/CodeSystem/condition-clinical",
+						"code", "active"
+				)}
+		));
+		condition.put("code", Map.of(
+				"coding", new Object[]{Map.of(
+						"code", CONDITION_UUID,
+						"display", CONDITION_NAME
+				)}
+		));
+		condition.put("abatementDateTime", null);
+		condition.put("onsetDateTime", ONSET_DATE);
+		condition.put("recorder", Map.of(
+				"reference", PRACTITIONER_REFERENCE
+		));
+		condition.put("recordedDate", currentDate); // Set recordedDate to current date
+		condition.put("resourceType", "Condition");
+		condition.put("subject", Map.of(
+				"reference", "Patient/" + patientUuid
+		));
+		try {
+			return http("Save Conditions Record")
+					.post("/openmrs/ws/fhir2/R4/Condition?_summary=data")
+					.body(StringBody(new ObjectMapper().writeValueAsString(condition)));
+		} catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
 	public HttpRequestActionBuilder saveOrder(String patientUuid, String visitUuid, String currentUserUuid, String drugUuid,
 			String drugConceptUuid) {
 		Map<String, Object> order = new HashMap<>();

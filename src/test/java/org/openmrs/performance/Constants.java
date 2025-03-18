@@ -33,6 +33,13 @@ public class Constants {
 	public static final String DAYS = "1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 	public static final String ORDER = "39da3525-afe4-45ff-8977-c53b7b359158";
 
+	public static final String CONDITION_UUID = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final String CONDITION_NAME = "Pain";
+	public static final String ONSET_DATE = "2025-03-13T00:00:00+05:30";
+	public static final String PRACTITIONER_REFERENCE = "Practitioner/82f18b44-6814-11e8-923f-e9a88dcb533f";
+	public static final String SUBJECT_REFERENCE = "Patient/f0390404-fa0b-4b36-8f86-56bc2c8489d4";
+
+
 	public static final String DEFAULT_DOSING_TYPE = "org.openmrs.SimpleDosingInstructions";
 
 	// Allergies

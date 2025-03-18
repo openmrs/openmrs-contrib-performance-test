@@ -163,6 +163,15 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		);
 		
 	}
+
+	public ChainBuilder addCondition(String patientUuid) {
+		return exec(
+				httpService.getConditions(patientUuid),
+				httpService.searchForConditions("Pa"),
+				httpService.searchForConditions("Pain"),
+				httpService.saveCondition(patientUuid)
+		);
+	}
 	
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
 		String visitNoteText = "Patient visit note";
