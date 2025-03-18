@@ -51,7 +51,6 @@ import static org.openmrs.performance.Constants.CONDITION_UUID;
 import static org.openmrs.performance.Constants.CONDITION_NAME;
 import static org.openmrs.performance.Constants.ONSET_DATE;
 import static org.openmrs.performance.Constants.PRACTITIONER_REFERENCE;
-import static org.openmrs.performance.Constants.SUBJECT_REFERENCE;
 
 public class DoctorHttpService extends HttpService {
 	
