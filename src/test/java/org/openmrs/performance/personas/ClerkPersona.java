@@ -7,15 +7,13 @@ import org.openmrs.performance.scenarios.Scenario;
 import java.util.List;
 
 public class ClerkPersona extends Persona<ClerkRegistry> {
-	
+
 	public ClerkPersona(double loadShare) {
 		super(loadShare);
 	}
-	
+
 	@Override
 	public List<Scenario<ClerkRegistry>> getScenarios() {
-		return List.of(
-				new PatientRegistrationScenario(1)
-		);
+		return List.of(new PatientRegistrationScenario(1));
 	}
 }
