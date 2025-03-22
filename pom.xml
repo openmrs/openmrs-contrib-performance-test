@@ -85,6 +85,48 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.26.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <configFile>eclipse/OpenMRSFormatter.xml</configFile>
+          <compilerSource>${maven.compiler.source}</compilerSource>
+          <compilerCompliance>${maven.compiler.source}</compilerCompliance>
+          <compilerTargetPlatform>${maven.compiler.target}</compilerTargetPlatform>
+        </configuration>
+        <dependencies>
+					<dependency>
+						<groupId>org.openmrs.tools</groupId>
+						<artifactId>openmrs-tools</artifactId>
+						<version>2.7.3</version>
+					</dependency>
+				</dependencies>
+      </plugin>
     </plugins>
   </build>
+  <repositories>
+		<repository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>https://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+		</repository>
+	</repositories>
+  <pluginRepositories>
+		<pluginRepository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>https://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
