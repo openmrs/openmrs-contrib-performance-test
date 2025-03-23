@@ -46,6 +46,11 @@ To run the performance tests locally, follow these steps:
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
+4. Format code
+    ```
+    .mvnw formatter:format
+    ```
+
 ### Simulation Presets
 
 Simulation presets are configured within the OpenMRSClinic class. Below are the available presets. To add a new
