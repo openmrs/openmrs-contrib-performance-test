@@ -53,6 +53,12 @@ This command will initiate the performance tests using Gatling and generate a re
    git config core.hooksPath .githooks
    ```
 
+   Or, you can manually format the code using:
+
+   ```bash
+    ./mvnw formatter:format
+   ```
+
 
 ### Simulation Presets
 
