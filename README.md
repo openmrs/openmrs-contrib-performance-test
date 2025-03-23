@@ -46,10 +46,20 @@ To run the performance tests locally, follow these steps:
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
-4. Format code
-    ```
-    .mvnw formatter:format
-    ```
+4. Setup Git Hook for Code Formatting  
+   To automatically format code before committing, set up the Git hook:  
+
+   ```sh
+   cp pre-commit .git/hooks/pre-commit
+   chmod +x .git/hooks/pre-commit
+   ```
+
+   Or, you can manually format the code using:
+
+   ```bash
+    ./mvnw formatter:format
+   ```
+
 
 ### Simulation Presets
 
