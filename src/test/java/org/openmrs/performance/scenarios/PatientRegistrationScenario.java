@@ -13,8 +13,14 @@ public class PatientRegistrationScenario extends Scenario<ClerkRegistry> {
 
 	@Override
 	public ScenarioBuilder getScenarioBuilder() {
-		return scenario("Clerk - Patient Registration").exec(registry.login()).exec(registry.openHomePage()).pause(3)
-		        .exec(registry.openRegistrationPage()).pause(10).exec(registry.registerPatient())
+		// @formatter:off
+		return scenario("Clerk - Patient Registration")
+				.exec(registry.login())
+				.exec(registry.openHomePage())
+				.pause(3)
+		        .exec(registry.openRegistrationPage())
+				.pause(10)
+				.exec(registry.registerPatient())
 		        // redirect to patient chart page
 		        .exec(registry.openPatientChartPage("#{patientUuid}"));
 	}
