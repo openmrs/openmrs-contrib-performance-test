@@ -18,7 +18,8 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 		FeederBuilder<String> patientUuidFeeder = csv("patient_uuids.csv").circular();
 
 		// @formatter:off
-		return scenario("Doctor - Visit Patient").feed(patientUuidFeeder).exec(registry.login())
+		return scenario("Doctor - Visit Patient").feed(patientUuidFeeder)
+				.exec(registry.login())
 		        .exec(registry.openHomePage())
 				.pause(5)
 				.exec(registry.openPatientChartPage("#{patient_uuid}"))
@@ -61,4 +62,5 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(10)
 		        .exec(registry.endVisit("#{patient_uuid}"));
 	}
+	// @formatter:on
 }
