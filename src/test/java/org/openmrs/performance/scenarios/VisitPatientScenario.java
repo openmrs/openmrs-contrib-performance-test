@@ -61,6 +61,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 		        .exec(registry.addVisitNote("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
 		        .exec(registry.endVisit("#{patient_uuid}"));
+		// @formatter:on
 	}
-	// @formatter:on
+	
 }

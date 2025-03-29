@@ -23,6 +23,7 @@ public class PatientRegistrationScenario extends Scenario<ClerkRegistry> {
 				.exec(registry.registerPatient())
 		        // redirect to patient chart page
 		        .exec(registry.openPatientChartPage("#{patientUuid}"));
+		// @formatter:on
 	}
-	// @formatter:on
+	
 }
