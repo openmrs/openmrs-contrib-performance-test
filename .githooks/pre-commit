@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "🔄 Running Maven Formatter..."
+
+# Run the Maven formatter plugin
+./mvnw formatter:format
+FORMAT_STATUS=$?
+
+if [ $FORMAT_STATUS -ne 0 ]; then
+    echo "❌ Code formatting issues detected. Please fix them before committing."
+    exit 1
+fi
+
+echo "✅ Code formatting passed. Proceeding with commit."
+exit 0
