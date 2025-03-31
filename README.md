@@ -46,6 +46,20 @@ To run the performance tests locally, follow these steps:
 
 This command will initiate the performance tests using Gatling and generate a report upon completion.
 
+4. Setup Git Hook for Code Formatting  
+   To automatically format code before committing, set up the Git hook:  
+
+   ```sh
+   git config core.hooksPath .githooks
+   ```
+
+   Or, you can manually format the code using:
+
+   ```bash
+    ./mvnw formatter:format
+   ```
+
+
 ### Simulation Presets
 
 Simulation presets are configured within the OpenMRSClinic class. Below are the available presets. To add a new

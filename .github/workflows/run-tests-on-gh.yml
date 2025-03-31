@@ -61,7 +61,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'adopt'
-          java-version: '15'
+          java-version: '17'
 
       - name: Install dependencies
         run: ./mvnw install -DskipTests

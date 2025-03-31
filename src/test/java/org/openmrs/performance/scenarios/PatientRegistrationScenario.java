@@ -5,23 +5,25 @@ import org.openmrs.performance.registries.ClerkRegistry;
 
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
-public class PatientRegistrationScenario extends Scenario<ClerkRegistry>{
-	
+public class PatientRegistrationScenario extends Scenario<ClerkRegistry> {
+
 	public PatientRegistrationScenario(float scenarioLoadShare) {
 		super(scenarioLoadShare, new ClerkRegistry());
 	}
-	
+
 	@Override
 	public ScenarioBuilder getScenarioBuilder() {
+		// @formatter:off
 		return scenario("Clerk - Patient Registration")
 				.exec(registry.login())
 				.exec(registry.openHomePage())
 				.pause(3)
-				.exec(registry.openRegistrationPage())
+		        .exec(registry.openRegistrationPage())
 				.pause(10)
 				.exec(registry.registerPatient())
-				// redirect to patient chart page
-				.exec(registry.openPatientChartPage("#{patientUuid}"));
+		        // redirect to patient chart page
+		        .exec(registry.openPatientChartPage("#{patientUuid}"));
+		// @formatter:on
 	}
 	
 }
