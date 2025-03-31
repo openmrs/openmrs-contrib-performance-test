@@ -26,6 +26,8 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 				.exec(registry.startVisit("#{patient_uuid}"))
 				.pause(5)
+				.exec(registry.newVisit("{patient_uuid}"))
+				.pause(5)
 				.exec(registry.openVisitsTab("#{patient_uuid}"))
 				.pause(2)
 				.exec(registry.openVitalsAndBiometricsTab("#{patient_uuid}"))

@@ -53,6 +53,10 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 				.exec(httpService.getVisitsOfPatient(patientUuid));
 	}
 	
+	public ChainBuilder newVisit(String patientUuid) {
+		return exec(httpService.getVisitWithDiagnosesAndNotes(patientUuid));
+	}
+	
 	public ChainBuilder openVitalsAndBiometricsTab(String patientUuid) {
 		
 		Set<String> vitals = Set.of(
