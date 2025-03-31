@@ -83,7 +83,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
-		return http("Get Visits With Diagnoses and Notes")
+		return http("Get Visits With Diagnoses and Notes (new endpoint)")
 				.get("/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
 	}
 	
