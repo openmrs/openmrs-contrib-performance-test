@@ -66,7 +66,7 @@ jobs:
       - name: Install dependencies
         run: ./mvnw install -DskipTests
       
-      - name: Run code Formatter
+      - name: Run code Formatter Validate
         run: ./mvnw formatter:validate
 
       - name: Wait for the OpenMRS instance to start
