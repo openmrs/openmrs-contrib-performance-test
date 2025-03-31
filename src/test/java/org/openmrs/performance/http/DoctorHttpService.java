@@ -72,14 +72,14 @@ public class DoctorHttpService extends HttpService {
 		        + "visitType:(uuid,name,display),"
 		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
 		        + "location:(uuid,name,display))";
-	
+
 		return http("Get Active Visits of Patient").get(
 		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
 	}
-  
-  	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
+
+	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
-				.get("/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
+		        .get("/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
 	}
 
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {

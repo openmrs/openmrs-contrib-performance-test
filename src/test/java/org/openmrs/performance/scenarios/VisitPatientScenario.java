@@ -65,5 +65,5 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 		        .exec(registry.endVisit("#{patient_uuid}"));
 		// @formatter:on
 	}
-	
+
 }
