@@ -47,8 +47,7 @@ import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
 import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
-import static org.openmrs.performance.Constants.CONDITION_UUID;
-import static org.openmrs.performance.Constants.CONDITION_NAME;
+import static org.openmrs.performance.Constants.BACK_PAIN;
 import static org.openmrs.performance.Constants.ONSET_DATE;
 import static org.openmrs.performance.Constants.PRACTITIONER_REFERENCE;
 
@@ -270,16 +269,16 @@ public class DoctorHttpService extends HttpService {
 
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("clinicalStatus", Map.of(
-				"coding", new Object[]{Map.of(
+				"coding", List.of(Map.of(
 						"system", "http://terminology.hl7.org/CodeSystem/condition-clinical",
 						"code", "active"
-				)}
+				))
 		));
 		condition.put("code", Map.of(
-				"coding", new Object[]{Map.of(
-						"code", CONDITION_UUID,
-						"display", CONDITION_NAME
-				)}
+				"coding", List.of(Map.of(
+						"code", BACK_PAIN,
+						"display", "Back Pain"
+				))
 		));
 		condition.put("abatementDateTime", null);
 		condition.put("onsetDateTime", ONSET_DATE);
@@ -292,7 +291,7 @@ public class DoctorHttpService extends HttpService {
 				"reference", "Patient/" + patientUuid
 		));
 		try {
-			return http("Save Conditions Record")
+			return http("Save Conditions")
 					.post("/openmrs/ws/fhir2/R4/Condition?_summary=data")
 					.body(StringBody(new ObjectMapper().writeValueAsString(condition)));
 		} catch (JsonProcessingException e) {
