@@ -9,14 +9,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gatling.version>3.13.4</gatling.version>
-    <gatling-maven-plugin.version>4.16.1</gatling-maven-plugin.version>
+    <gatling.version>3.13.5</gatling.version>
+    <gatling-maven-plugin.version>4.16.2</gatling-maven-plugin.version>
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
-    <maven.compiler.source>15</maven.compiler.source>
-    <maven.compiler.target>15</maven.compiler.target>
-    <maven.compiler.release>15</maven.compiler.release>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
+    <maven.compiler.release>17</maven.compiler.release>
   </properties>
 
   <dependencies>
@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.12.0</version>
+      <version>5.12.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -45,7 +45,7 @@
     <dependency>
       <groupId>ch.qos.logback</groupId>
       <artifactId>logback-classic</artifactId>
-      <version>1.5.17</version>
+      <version>1.5.18</version>
     </dependency>
   </dependencies>
 
@@ -85,6 +85,48 @@
           </dependency>
         </dependencies>
       </plugin>
+      <plugin>
+        <groupId>net.revelc.code.formatter</groupId>
+        <artifactId>formatter-maven-plugin</artifactId>
+        <version>2.26.0</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>format</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <configFile>eclipse/OpenMRSFormatter.xml</configFile>
+          <compilerSource>${maven.compiler.source}</compilerSource>
+          <compilerCompliance>${maven.compiler.source}</compilerCompliance>
+          <compilerTargetPlatform>${maven.compiler.target}</compilerTargetPlatform>
+        </configuration>
+        <dependencies>
+					<dependency>
+						<groupId>org.openmrs.tools</groupId>
+						<artifactId>openmrs-tools</artifactId>
+						<version>2.7.3</version>
+					</dependency>
+				</dependencies>
+      </plugin>
     </plugins>
   </build>
+  <repositories>
+		<repository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>https://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+		</repository>
+	</repositories>
+  <pluginRepositories>
+		<pluginRepository>
+			<id>openmrs-repo</id>
+			<name>OpenMRS Nexus Repository</name>
+			<url>https://mavenrepo.openmrs.org/nexus/content/repositories/public</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
 </project>
