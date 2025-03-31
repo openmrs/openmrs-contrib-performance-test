@@ -65,6 +65,9 @@ jobs:
 
       - name: Install dependencies
         run: ./mvnw install -DskipTests
+      
+      - name: Run code Formatter
+        run: ./mvnw formatter:validate
 
       - name: Wait for the OpenMRS instance to start
         run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/login.htm))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/login.htm)"; sleep 10; done
