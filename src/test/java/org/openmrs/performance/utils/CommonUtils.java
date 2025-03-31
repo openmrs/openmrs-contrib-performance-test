@@ -3,6 +3,8 @@ package org.openmrs.performance.utils;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -31,6 +33,13 @@ public class CommonUtils {
 		}
 
 		return conceptIds;
+	}
+
+	public static String getDate(int daysToAdjust) {
+		// Get current date-time and adjust by the specified number of days
+		ZonedDateTime adjustedDateTime = ZonedDateTime.now().plusDays(daysToAdjust);
+
+		return adjustedDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 	}
 
 }

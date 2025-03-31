@@ -46,7 +46,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(10)
 		        .exec(registry.openConditionsTab("#{patient_uuid}"))
 				.pause(5)
-				.exec(registry.addCondition("#{patient_uuid}"))
+				.exec(registry.addCondition("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
 				.exec(registry.openImmunizationsTab("#{patient_uuid}"))
 				.pause(5)
@@ -65,5 +65,5 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 		        .exec(registry.endVisit("#{patient_uuid}"));
 		// @formatter:on
 	}
-	
+
 }

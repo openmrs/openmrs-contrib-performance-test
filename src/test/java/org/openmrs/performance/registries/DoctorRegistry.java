@@ -127,25 +127,15 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	public ChainBuilder addDrugOrder(String patientUuid, String visitUuid, String currentUserUuid) {
 		String asprin_162_5mg = "a722710f-403b-451f-804b-09f8624b0838";
 		String asprinConcept = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
-		return exec(
-				httpService.getActiveVisitOfPatient(patientUuid),
-				httpService.searchForDrug("asprin"),
-				httpService.searchForDrug("Tylenol"),
-				httpService.saveOrder(patientUuid, visitUuid, currentUserUuid, asprin_162_5mg, asprinConcept)
-		);
-		
+		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.searchForDrug("asprin"),
+		    httpService.searchForDrug("Tylenol"),
+		    httpService.saveOrder(patientUuid, visitUuid, currentUserUuid, asprin_162_5mg, asprinConcept));
+
 	}
 
-	public ChainBuilder addCondition(String patientUuid) {
-		return exec(
-				httpService.getConditions(patientUuid),
-				pause(Duration.ofSeconds(2)),
-				httpService.searchForConditions("Pa"),
-				pause(Duration.ofSeconds(1)),
-				httpService.searchForConditions("Pain"),
-				pause(Duration.ofSeconds(1)),
-				httpService.saveCondition(patientUuid)
-		);
+	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {
+		return exec(httpService.getConditions(patientUuid), pause(2), httpService.searchForConditions("Pa"), pause(1),
+		    httpService.searchForConditions("Pain"), pause(1), httpService.saveCondition(patientUuid, currentUserUuid));
 	}
 
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {

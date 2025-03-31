@@ -53,11 +53,10 @@ public class Constants {
 
 	public static final String ORDER = "39da3525-afe4-45ff-8977-c53b7b359158";
 
+	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-	public static final String ONSET_DATE = "2025-03-13T00:00:00+05:30";
-
-	public static final String PRACTITIONER_REFERENCE = "Practitioner/82f18b44-6814-11e8-923f-e9a88dcb533f";
+	public static final String DIAGNOSIS_UUID = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
 
 	public static final String DEFAULT_DOSING_TYPE = "org.openmrs.SimpleDosingInstructions";
 

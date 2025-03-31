@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
+import org.openmrs.performance.utils.CommonUtils;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -48,8 +47,7 @@ import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
 import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.Constants.BACK_PAIN;
-import static org.openmrs.performance.Constants.ONSET_DATE;
-import static org.openmrs.performance.Constants.PRACTITIONER_REFERENCE;
+import static org.openmrs.performance.Constants.DIAGNOSIS_UUID;
 
 public class DoctorHttpService extends HttpService {
 
@@ -89,21 +87,17 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getAppointments(String patientUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
+		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid,
+		    CommonUtils.getDate(0));
 
 		return http("Get Appointments of Patient").post("/openmrs/ws/rest/v1/appointments/search")
 		        .body(StringBody(requestBody));
 	}
 
 	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String startDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("patient", patientUuid);
-		requestBodyMap.put("startDatetime", startDateTime);
+		requestBodyMap.put("startDatetime", CommonUtils.getDate(0));
 		requestBodyMap.put("visitType", visitTypeUuid);
 		requestBodyMap.put("location", locationUuid);
 
@@ -118,13 +112,10 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String formattedStopDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("location", locationUuid);
 		requestBodyMap.put("visitType", visitTypeUuid);
-		requestBodyMap.put("stopDatetime", formattedStopDateTime);
+		requestBodyMap.put("stopDatetime", CommonUtils.getDate(0));
 
 		try {
 			return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
@@ -248,12 +239,10 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
 	}
 
-
 	public HttpRequestActionBuilder searchForConditions(String searchQuery) {
-		return http("Search for Condition")
-				.get("/openmrs/ws/rest/v1/concept?name=" + searchQuery + "&searchType=fuzzy&class=8d4918b0-c2cc-11de-8d13-0010c6dffd0f&v=custom:(uuid,display)");
+		return http("Search for Condition").get("/openmrs/ws/rest/v1/concept?name=" + searchQuery
+		        + "&searchType=fuzzy&class=" + DIAGNOSIS_UUID + "&v=custom:(uuid,display)");
 	}
-
 
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
 		String customRepresentation = """
@@ -264,37 +253,22 @@ public class DoctorHttpService extends HttpService {
 		return http("Search for Drug").get("/openmrs/ws/rest/v1/drug?name=" + searchQuery + "&v=" + customRepresentation);
 	}
 
-	public HttpRequestActionBuilder saveCondition(String patientUuid){
-		String currentDate = ZonedDateTime.now().format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
-
+	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
 		Map<String, Object> condition = new HashMap<>();
-		condition.put("clinicalStatus", Map.of(
-				"coding", List.of(Map.of(
-						"system", "http://terminology.hl7.org/CodeSystem/condition-clinical",
-						"code", "active"
-				))
-		));
-		condition.put("code", Map.of(
-				"coding", List.of(Map.of(
-						"code", BACK_PAIN,
-						"display", "Back Pain"
-				))
-		));
+		condition.put("clinicalStatus", Map.of("coding",
+		    List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
+		condition.put("code", Map.of("coding", List.of(Map.of("code", BACK_PAIN, "display", "Back Pain"))));
 		condition.put("abatementDateTime", null);
-		condition.put("onsetDateTime", ONSET_DATE);
-		condition.put("recorder", Map.of(
-				"reference", PRACTITIONER_REFERENCE
-		));
-		condition.put("recordedDate", currentDate); // Set recordedDate to current date
+		condition.put("onsetDateTime", CommonUtils.getDate(0));
+		condition.put("recorder", Map.of("reference", "Practitioner/" + currentUserUuid));
+		condition.put("recordedDate", CommonUtils.getDate(-2));
 		condition.put("resourceType", "Condition");
-		condition.put("subject", Map.of(
-				"reference", "Patient/" + patientUuid
-		));
+		condition.put("subject", Map.of("reference", "Patient/" + patientUuid));
 		try {
-			return http("Save Conditions")
-					.post("/openmrs/ws/fhir2/R4/Condition?_summary=data")
-					.body(StringBody(new ObjectMapper().writeValueAsString(condition)));
-		} catch (JsonProcessingException e) {
+			return http("Save Conditions").post("/openmrs/ws/fhir2/R4/Condition?_summary=data")
+			        .body(StringBody(new ObjectMapper().writeValueAsString(condition)));
+		}
+		catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -327,8 +301,7 @@ public class DoctorHttpService extends HttpService {
 
 		Map<String, Object> encounter = new HashMap<>();
 
-		encounter.put("encounterDatetime",
-		    ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")));
+		encounter.put("encounterDatetime", CommonUtils.getDate(0));
 		encounter.put("encounterType", ORDER);
 		encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
 		encounter.put("patient", patientUuid);
@@ -346,15 +319,12 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-
 		Map<String, Object> visitNote = new HashMap<>();
 		visitNote.put("form", VISIT_NOTE_FORM_UUID);
 		visitNote.put("patient", patientUuid);
 		visitNote.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
 		visitNote.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
-		visitNote.put("encounterDatetime", encounterDatetime);
+		visitNote.put("encounterDatetime", CommonUtils.getDate(0));
 
 		Map<String, Object> encounterProvider = new HashMap<>();
 		encounterProvider.put("encounterRole", CLINICIAN_ENCOUNTER_ROLE);
@@ -403,15 +373,12 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
-
 		Map<String, Object> encounter = new HashMap<>();
 		encounter.put("form", VITALS_FORM_UUID);
 		encounter.put("patient", patientUuid);
 		encounter.put("location", VITALS_LOCATION_UUID);
 		encounter.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
-		encounter.put("encounterDatetime", encounterDatetime);
+		encounter.put("encounterDatetime", CommonUtils.getDate(0));
 
 		List<Map<String, Object>> observations = new ArrayList<>();
 		observations.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
