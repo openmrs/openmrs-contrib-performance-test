@@ -28,6 +28,8 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 				.exec(registry.openVisitsTab("#{patient_uuid}"))
 		        .pause(2)
+				.exec(registry.getVisitsFromNewEndpoint("#{patient_uuid}"))
+				.pause(5)
 				.exec(registry.openVitalsAndBiometricsTab("#{patient_uuid}"))
 				.pause(5)
 		        .exec(registry.recordVitals("#{patient_uuid}"))
@@ -63,5 +65,5 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 		        .exec(registry.endVisit("#{patient_uuid}"));
 		// @formatter:on
 	}
-	
+
 }
