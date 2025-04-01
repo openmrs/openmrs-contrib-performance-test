@@ -1,6 +1,10 @@
 name: Run Performance Tests
 
 on:
+  workflow_run:
+    workflows: ["Formatter validater"]
+    types:
+      - completed
   push:
     branches:
       - main
@@ -31,31 +35,9 @@ jobs:
               - '.github/workflows/run-tests-on-gh.yml'
               - 'pom.xml'
               - 'commit-report.sh'
-  
-  formatter-validate:
-    needs: changes
-    if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.test-changes == 'true' }}
-
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-
-      - name: Set up Java
-        uses: actions/setup-java@v4
-        with:
-          distribution: 'adopt'
-          java-version: '17'
-
-      - name: Install dependencies
-        run: ./mvnw install -DskipTests
-
-      - name: Run code Formatter Validate
-        run: ./mvnw formatter:validate
 
   build-and-test:
-    needs: [changes, formatter-validate]
+    needs: changes
     if: ${{ github.event_name == 'schedule' || github.event_name == 'workflow_dispatch' || needs.changes.outputs.test-changes == 'true' }}
 
     runs-on: ubuntu-latest
