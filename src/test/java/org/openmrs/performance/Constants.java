@@ -56,7 +56,7 @@ public class Constants {
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-	public static final String DIAGNOSIS_UUID = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
+	public static final String DIAGNOSIS_CONCEPT = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
 
 	public static final String DEFAULT_DOSING_TYPE = "org.openmrs.SimpleDosingInstructions";
 

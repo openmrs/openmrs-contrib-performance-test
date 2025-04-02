@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
-import org.openmrs.performance.utils.CommonUtils;
 
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -49,7 +48,7 @@ import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
 import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.Constants.BACK_PAIN;
-import static org.openmrs.performance.Constants.DIAGNOSIS_UUID;
+import static org.openmrs.performance.Constants.DIAGNOSIS_CONCEPT;
 
 public class DoctorHttpService extends HttpService {
 
@@ -253,7 +252,7 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder searchForConditions(String searchQuery) {
 		return http("Search for Condition").get("/openmrs/ws/rest/v1/concept?name=" + searchQuery
-		        + "&searchType=fuzzy&class=" + DIAGNOSIS_UUID + "&v=custom:(uuid,display)");
+		        + "&searchType=fuzzy&class=" + DIAGNOSIS_CONCEPT + "&v=custom:(uuid,display)");
 	}
 
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
