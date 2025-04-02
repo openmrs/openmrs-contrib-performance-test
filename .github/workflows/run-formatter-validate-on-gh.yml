@@ -1,4 +1,4 @@
-name: Formatter validater
+name: Validate code formatting
 
 on:
   push:
