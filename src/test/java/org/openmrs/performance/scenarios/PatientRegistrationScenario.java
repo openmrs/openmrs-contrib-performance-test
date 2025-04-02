@@ -25,5 +25,5 @@ public class PatientRegistrationScenario extends Scenario<ClerkRegistry> {
 		        .exec(registry.openPatientChartPage("#{patientUuid}"));
 		// @formatter:on
 	}
-  
+
 }

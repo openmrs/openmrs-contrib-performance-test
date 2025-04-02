@@ -266,7 +266,7 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
 		ZonedDateTime now = ZonedDateTime.now();
-		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("clinicalStatus", Map.of("coding",
 		    List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
@@ -315,7 +315,7 @@ public class DoctorHttpService extends HttpService {
 		Map<String, Object> encounter = new HashMap<>();
 
 		encounter.put("encounterDatetime",
-				ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")));
+		    ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")));
 		encounter.put("encounterType", ORDER);
 		encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
 		encounter.put("patient", patientUuid);
