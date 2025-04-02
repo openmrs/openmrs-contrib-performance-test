@@ -393,14 +393,14 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
 		ZonedDateTime now = ZonedDateTime.now();
-		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
 
 		Map<String, Object> encounter = new HashMap<>();
 		encounter.put("form", VITALS_FORM_UUID);
 		encounter.put("patient", patientUuid);
 		encounter.put("location", VITALS_LOCATION_UUID);
 		encounter.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
-		encounter.put("encounterDatetime", startDate);
+		encounter.put("encounterDatetime", encounterDatetime);
 
 		List<Map<String, Object>> observations = new ArrayList<>();
 		observations.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
