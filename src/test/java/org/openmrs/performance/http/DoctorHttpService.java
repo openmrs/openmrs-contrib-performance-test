@@ -104,6 +104,7 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
 		ZonedDateTime now = ZonedDateTime.now();
 		String startDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("patient", patientUuid);
 		requestBodyMap.put("startDatetime", startDateTime);
@@ -123,6 +124,7 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
 		ZonedDateTime now = ZonedDateTime.now();
 		String formattedStopDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("location", locationUuid);
 		requestBodyMap.put("visitType", visitTypeUuid);
@@ -335,6 +337,7 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
 		ZonedDateTime now = ZonedDateTime.now();
 		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+
 		Map<String, Object> visitNote = new HashMap<>();
 		visitNote.put("form", VISIT_NOTE_FORM_UUID);
 		visitNote.put("patient", patientUuid);
@@ -391,6 +394,7 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
 		ZonedDateTime now = ZonedDateTime.now();
 		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+
 		Map<String, Object> encounter = new HashMap<>();
 		encounter.put("form", VITALS_FORM_UUID);
 		encounter.put("patient", patientUuid);
