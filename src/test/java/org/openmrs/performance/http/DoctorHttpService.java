@@ -80,6 +80,11 @@ public class DoctorHttpService extends HttpService {
 		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
 	}
 
+	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
+		return http("Get Visits With Diagnoses and Notes (new endpoint)")
+		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
+	}
+
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted,"
 		        + "location:(uuid,display))";
