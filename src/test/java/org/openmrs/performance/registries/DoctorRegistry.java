@@ -3,10 +3,12 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.DoctorHttpService;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
+import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.DIABETIC_FOOT_ULCER_CONCEPT;
@@ -133,6 +135,11 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		    httpService.searchForDrug("Tylenol"),
 		    httpService.saveOrder(patientUuid, visitUuid, currentUserUuid, asprin_162_5mg, asprinConcept));
 
+	}
+
+	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {
+		return exec(httpService.getConditions(patientUuid), pause(2), httpService.searchForConditions("Pa"), pause(1),
+		    httpService.searchForConditions("Pain"), pause(1), httpService.saveCondition(patientUuid, currentUserUuid));
 	}
 
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
