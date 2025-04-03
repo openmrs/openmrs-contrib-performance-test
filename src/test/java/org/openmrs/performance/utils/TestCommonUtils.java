@@ -61,7 +61,7 @@ public class TestCommonUtils {
 	public void testGetAdjustedDateTimeAsString_PositiveAdjustment() {
 		int daysToAdjust = 5;
 		String adjustedDateTimeStr = CommonUtils.getAdjustedDateTimeAsString(daysToAdjust);
-		ZonedDateTime adjustedDateTime = ZonedDateTime.parse(adjustedDateTimeStr, DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		ZonedDateTime adjustedDateTime = ZonedDateTime.parse(adjustedDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 		ZonedDateTime expectedDateTime = ZonedDateTime.now().plusDays(daysToAdjust);
 		assertEquals(0, Math.abs(ChronoUnit.SECONDS.between(adjustedDateTime, expectedDateTime)),
 		    "Date adjustment is incorrect");

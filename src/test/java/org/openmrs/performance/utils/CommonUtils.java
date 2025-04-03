@@ -46,7 +46,7 @@ public class CommonUtils {
 	}
 
 	private static String formatDateTime(ZonedDateTime dateTime) {
-		return dateTime.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+		return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 	}
 
 }
