@@ -28,6 +28,8 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 				.exec(registry.openVisitsTab("#{patient_uuid}"))
 		        .pause(2)
+				.exec(registry.getVisitsFromNewEndpoint("#{patient_uuid}"))
+				.pause(5)
 				.exec(registry.openVitalsAndBiometricsTab("#{patient_uuid}"))
 				.pause(5)
 		        .exec(registry.recordVitals("#{patient_uuid}"))
@@ -46,7 +48,9 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(10)
 		        .exec(registry.openConditionsTab("#{patient_uuid}"))
 				.pause(5)
-		        .exec(registry.openImmunizationsTab("#{patient_uuid}"))
+				.exec(registry.addCondition("#{patient_uuid}", "#{currentUserUuid}"))
+				.pause(10)
+				.exec(registry.openImmunizationsTab("#{patient_uuid}"))
 				.pause(5)
 		        .exec(registry.openAttachmentsTab("#{patient_uuid}"))
 				.pause(5)
@@ -63,5 +67,5 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 		        .exec(registry.endVisit("#{patient_uuid}"));
 		// @formatter:on
 	}
-	
+
 }

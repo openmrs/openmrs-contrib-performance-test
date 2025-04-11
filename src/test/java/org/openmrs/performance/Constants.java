@@ -53,6 +53,11 @@ public class Constants {
 
 	public static final String ORDER = "39da3525-afe4-45ff-8977-c53b7b359158";
 
+	//Conditions
+	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+	public static final String DIAGNOSIS_CONCEPT = "8d4918b0-c2cc-11de-8d13-0010c6dffd0f";
+
 	public static final String DEFAULT_DOSING_TYPE = "org.openmrs.SimpleDosingInstructions";
 
 	// Allergies

@@ -47,6 +47,8 @@ import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
 import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
+import static org.openmrs.performance.Constants.BACK_PAIN;
+import static org.openmrs.performance.Constants.DIAGNOSIS_CONCEPT;
 
 public class DoctorHttpService extends HttpService {
 
@@ -76,6 +78,11 @@ public class DoctorHttpService extends HttpService {
 
 		return http("Get Active Visits of Patient").get(
 		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
+	}
+
+	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
+		return http("Get Visits With Diagnoses and Notes (new endpoint)")
+		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
 	}
 
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
@@ -246,6 +253,11 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
 	}
 
+	public HttpRequestActionBuilder searchForConditions(String searchQuery) {
+		return http("Search for Condition").get("/openmrs/ws/rest/v1/concept?name=" + searchQuery
+		        + "&searchType=fuzzy&class=" + DIAGNOSIS_CONCEPT + "&v=custom:(uuid,display)");
+	}
+
 	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
 		String customRepresentation = """
 		        custom:(uuid,display,name,strength,
@@ -253,6 +265,28 @@ public class DoctorHttpService extends HttpService {
 		        	concept:(display,uuid))
 		        """;
 		return http("Search for Drug").get("/openmrs/ws/rest/v1/drug?name=" + searchQuery + "&v=" + customRepresentation);
+	}
+
+	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
+		ZonedDateTime now = ZonedDateTime.now();
+		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+		Map<String, Object> condition = new HashMap<>();
+		condition.put("clinicalStatus", Map.of("coding",
+		    List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
+		condition.put("code", Map.of("coding", List.of(Map.of("code", BACK_PAIN, "display", "Back Pain"))));
+		condition.put("abatementDateTime", null);
+		condition.put("onsetDateTime", startDate);
+		condition.put("recorder", Map.of("reference", "Practitioner/" + currentUserUuid));
+		condition.put("recordedDate", startDate);
+		condition.put("resourceType", "Condition");
+		condition.put("subject", Map.of("reference", "Patient/" + patientUuid));
+		try {
+			return http("Save Conditions").post("/openmrs/ws/fhir2/R4/Condition?_summary=data")
+			        .body(StringBody(new ObjectMapper().writeValueAsString(condition)));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public HttpRequestActionBuilder saveOrder(String patientUuid, String visitUuid, String currentUserUuid, String drugUuid,
