@@ -68,7 +68,9 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder openMedicationsTab(String patientUuid) {
-		return exec(httpService.getDrugOrders(patientUuid));
+		return exec(httpService.getDrugOrdersExceptCancelledAndExpired(patientUuid))
+				.exec(httpService.getDrugOrdersExceptDiscontinuedOrders(patientUuid))
+				.exec(httpService.getActiveVisitOfPatient(patientUuid));
 	}
 
 	public ChainBuilder openOrdersTab(String patientUuid) {
