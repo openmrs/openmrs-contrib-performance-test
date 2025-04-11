@@ -53,7 +53,7 @@ public class TestCommonUtils {
 	public void testGetCurrentDateTimeAsString_Format() {
 		String currentDateTime = CommonUtils.getCurrentDateTimeAsString();
 		System.out.println(currentDateTime);
-		assertTrue(currentDateTime.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{6}(Z|[+-]\\d{2}:\\d{2})$"),
+		assertTrue(currentDateTime.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(Z|[+-]\\d{2}:\\d{2})$"),
 		    "DateTime format is incorrect");
 	}
 
@@ -61,7 +61,8 @@ public class TestCommonUtils {
 	public void testGetAdjustedDateTimeAsString_PositiveAdjustment() {
 		int daysToAdjust = 5;
 		String adjustedDateTimeStr = CommonUtils.getAdjustedDateTimeAsString(daysToAdjust);
-		ZonedDateTime adjustedDateTime = ZonedDateTime.parse(adjustedDateTimeStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+		ZonedDateTime adjustedDateTime = ZonedDateTime.parse(adjustedDateTimeStr,
+		    DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
 		ZonedDateTime expectedDateTime = ZonedDateTime.now().plusDays(daysToAdjust);
 		assertEquals(0, Math.abs(ChronoUnit.SECONDS.between(adjustedDateTime, expectedDateTime)),
 		    "Date adjustment is incorrect");
