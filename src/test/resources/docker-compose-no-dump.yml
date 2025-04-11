@@ -1,9 +1,0 @@
-version: "3.7"
-
-# This override file is used to run the application without loading the dump data, ensuring a fresh start.
-# It is currently used in the "generate-demo-patients" GitHub Action.
-
-services:
-  db:
-    volumes:
-      - db-data:/var/lib/mysql
