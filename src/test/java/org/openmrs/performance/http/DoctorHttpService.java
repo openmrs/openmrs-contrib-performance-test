@@ -166,7 +166,7 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getDrugOrdersExceptDiscontinuedOrders(String patientUuid) {
 		String customRepresentation = """
-        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
+        &v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
         previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
         encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
         orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
