@@ -49,10 +49,19 @@ public abstract class Registry<H extends HttpService> {
 		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
 
 		Set<String> biometrics = Set.of(HEIGHT_CM, WEIGHT_KG, MID_UPPER_ARM_CIRCUMFERENCE);
-		return exec(httpService.getPatientSummaryData(patientUuid), httpService.getCurrentVisit(patientUuid),
+		return exec(httpService.getPatientSummaryData(patientUuid), httpService.getActiveVisitOfPatient(patientUuid),
+		    httpService.getPrimaryIdentifierTermMapping(), httpService.getIsVisitsEnabled(),
+		    httpService.getPatientLifeStatus(patientUuid), httpService.getVitalConceptSetDetails(),
 		    httpService.getPatientObservations(patientUuid, unknownObservationSet),
 		    httpService.getPatientObservations(patientUuid, vitals),
 		    httpService.getPatientObservations(patientUuid, biometrics), httpService.getVisitQueueEntry(patientUuid),
 		    httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
 	}
 }
+
+//openPatientChartPage
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/person/73366b93-0838-4c62-9f19-53bb4612b09f?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/metadatamapping/termmapping?v=custom:(metadataUuid)&code=emr.primaryIdentifierType
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/visit?patient=c457027f-b1fa-4f26-8555-90c5360625ce&v=custom:(uuid,display,voided,indication,startDatetime,stopDatetime,encounters:(uuid,display,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:(uuid,display,provider:(uuid,display))),patient:(uuid,display),visitType:(uuid,name,display),attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),location:(uuid,name,display))&includeInactive=false
