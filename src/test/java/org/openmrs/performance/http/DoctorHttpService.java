@@ -166,7 +166,7 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getDrugOrdersExceptDiscontinuedOrders(String patientUuid) {
 		String customRepresentation = """
-        &v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
+        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
         previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
         encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
         orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
@@ -175,7 +175,7 @@ public class DoctorHttpService extends HttpService {
         """;
 		return http("Get Drug Orders except the discontinued orders")
 				.get("/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
-						+ "&status=any&orderType=" + DRUG_ORDER + customRepresentation + "&excludeDiscontinueOrders=true");
+						+ "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation + "&excludeDiscontinueOrders=true");
 	}
 
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
