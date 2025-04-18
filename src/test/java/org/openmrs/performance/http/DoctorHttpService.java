@@ -57,27 +57,15 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided)," +
-				"form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display))," +
-				"display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime)," +
-				"encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display)," +
-				"provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient," +
-				"attributes:(attributeType:ref,display,uuid,value)";
+		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided),"
+		        + "form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),"
+		        + "display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),"
+		        + "encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),"
+		        + "provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,"
+		        + "attributes:(attributeType:ref,display,uuid,value)";
 
 		return http("Get Visits of Patient")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
-	}
-
-	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
-		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
-		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
-		        + "visitType:(uuid,name,display),"
-		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
-		        + "location:(uuid,name,display))";
-
-		return http("Get Active Visits of Patient").get(
-		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
 	}
 
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
@@ -237,6 +225,11 @@ public class DoctorHttpService extends HttpService {
 		return http("Get Lab Results of Patient").get(
 		    "/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid + "&_count=100&_summary=data")
 		        .check(bodyString().saveAs("labResultsResponse"));
+	}
+
+	public HttpRequestActionBuilder getObservationTree(String patientUuid, String observationTreeUuid) {
+		return http("Get Observation Tree Details")
+		        .get("/openmrs/ws/rest/v1/obstree?patient=" + patientUuid + "&concept=" + observationTreeUuid);
 	}
 
 	public HttpRequestActionBuilder getConcept(String conceptUuid) {

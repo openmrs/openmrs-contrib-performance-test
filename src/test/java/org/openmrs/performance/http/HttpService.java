@@ -8,6 +8,7 @@ import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.VITAL_SIGNS_CONCEPT_SET;
 
 public abstract class HttpService {
 
@@ -66,13 +67,41 @@ public abstract class HttpService {
 		return http("Get Auto Generation Options").get("/openmrs/ws/rest/v1/idgen/autogenerationoption?v=full");
 	}
 
+	public HttpRequestActionBuilder getPatientEncounters() {
+		String customString = "custom%3A%28uuid%2Cdisplay%2CencounterDatetime%2Cform%2CencounterType%2Cvisit%2Cpatient%2"
+		        + "Cobs%3A%28uuid%2Cconcept%3A%28uuid%2Cdisplay%2CconceptClass%3A%28uuid%2Cdisplay%29%29%2Cdisplay%2C"
+		        + "groupMembers%3A%28uuid%2Cconcept%3A%28uuid%2Cdisplay%29%2Cvalue%3A%28uuid%2Cdisplay%29%2Cdisplay%29%2C"
+		        + "value%2CobsDatetime%29%2CencounterProviders%3A%28provider%3A%28person%29%29%29&";
+
+		return http("Get Patient Encounters")
+		        .get("/openmrs/ws/rest/v1/encounter?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&v=" + customString
+		                + "order=desc&limit=20&startIndex=0&totalCount=true");
+	}
+
 	public HttpRequestActionBuilder getVisitQueueEntry(String patientUuid) {
 		return http("Get Visit Queue Entry").get("/openmrs/ws/rest/v1/visit-queue-entry??v=full&patient=" + patientUuid);
 	}
 
+	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
+		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
+		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
+		        + "visitType:(uuid,name,display),"
+		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
+		        + "location:(uuid,name,display))";
+
+		return http("Get Active Visits of Patient").get(
+		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
+	}
+
 	public HttpRequestActionBuilder getCurrentVisit(String patientUuid) {
-		return http("Get Patient's current visit").get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid
-		        + "&v=custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)&limit=5");
+		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),encounterDatetime,"
+		        + "orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:"
+		        + "(uuid,display),provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,"
+		        + "patient,attributes:(attributeType:ref,display,uuid,value)";
+
+		return http("Get Patient's current visit")
+		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
 	}
 
 	public HttpRequestActionBuilder getPatientSummaryData(String patientUuid) {
@@ -105,4 +134,24 @@ public abstract class HttpService {
 		        + "&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
 	}
 
+	public HttpRequestActionBuilder getIsVisitsEnabled() {
+		return http("Get isVisitsEnabled").get("/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)");
+	}
+
+	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
+		return http("Get the status of patient's death").get(
+		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
+	}
+
+	public HttpRequestActionBuilder getVitalConceptSetDetails() {
+		return http("Get all the constraints on the vital concepts").get("/openmrs/ws/rest/v1/concept/"
+		        + VITAL_SIGNS_CONCEPT_SET
+		        + "?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))");
+	}
+
 }
+
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/person/73366b93-0838-4c62-9f19-53bb4612b09f?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/metadatamapping/termmapping?v=custom:(metadataUuid)&code=emr.primaryIdentifierType
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))

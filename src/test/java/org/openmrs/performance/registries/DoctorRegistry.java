@@ -27,6 +27,10 @@ import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
+import static org.openmrs.performance.Constants.BLOODWORK;
+import static org.openmrs.performance.Constants.HEMATOLOGY;
+import static org.openmrs.performance.Constants.HIV_VIRAL_LOAD;
+
 import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
 
 public class DoctorRegistry extends Registry<DoctorHttpService> {
@@ -76,13 +80,16 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder openLabResultsTab(String patientUuid) {
-		return exec(httpService.getLabResults(patientUuid)).exec(session -> {
-			// Extract concept IDs from the lab results response
-			String response = session.getString("labResultsResponse");
-			List<String> conceptIds = extractConceptIds(response);
-			// Save concept IDs in the session
-			return session.set("labResultConceptIds", conceptIds);
-		}).foreach("#{labResultConceptIds}", "conceptId").on(exec(httpService.getConcept("#{conceptId}")));
+		return exec(httpService.getObservationTree(patientUuid, HEMATOLOGY))
+		        .exec(httpService.getObservationTree(patientUuid, BLOODWORK))
+		        .exec(httpService.getObservationTree(patientUuid, HIV_VIRAL_LOAD))
+		        .exec(httpService.getLabResults(patientUuid)).exec(session -> {
+			        // Extract concept IDs from the lab results response
+			        String response = session.getString("labResultsResponse");
+			        List<String> conceptIds = extractConceptIds(response);
+			        // Save concept IDs in the session
+			        return session.set("labResultConceptIds", conceptIds);
+		        }).foreach("#{labResultConceptIds}", "conceptId").on(exec(httpService.getConcept("#{conceptId}")));
 	}
 
 	public ChainBuilder openAllergiesTab(String patientUuid) {
@@ -121,7 +128,12 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder openVisitsTab(String patientUuid) {
-		return exec(httpService.getVisitsOfPatient(patientUuid));
+		return exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getPatientEncounters())
+		        .exec(httpService.getLabResults(patientUuid)).exec(session -> {
+			        String response = session.getString("labResultsResponse");
+			        List<String> conceptIds = extractConceptIds(response);
+			        return session.set("labResultConceptIds", conceptIds);
+		        }).foreach("#{labResultConceptIds}", "conceptId").on(exec(httpService.getConcept("#{conceptId}")));
 	}
 
 	public ChainBuilder openAppointmentsTab(String patientUuid) {
@@ -152,3 +164,11 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
 }
+//openVisitsTab
+//https://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&category=laboratory&_sort=-_date&_summary=data&_format=json&_count=300&_getpagesoffset=0
+//http://localhost:8080/openmrs/ws/rest/v1/concept/887AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?v=full
+
+//openLabResultsTab
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/obstree?patient=e46a11d6-e4bd-46e0-86cb-1fbb4f5acb77&concept=ae485e65-2e3f-4297-b35e-c818bbefe894
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/obstree?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&concept=8904fa2b-6a8f-437d-89ec-6fce3cd99093
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/obstree?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&concept=856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
