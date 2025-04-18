@@ -52,7 +52,6 @@ public class TestCommonUtils {
 	@Test
 	public void testGetCurrentDateTimeAsString_Format() {
 		String currentDateTime = CommonUtils.getCurrentDateTimeAsString();
-		System.out.println(currentDateTime);
 		assertTrue(currentDateTime.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(Z|[+-]\\d{2}:\\d{2})$"),
 		    "DateTime format is incorrect");
 	}
