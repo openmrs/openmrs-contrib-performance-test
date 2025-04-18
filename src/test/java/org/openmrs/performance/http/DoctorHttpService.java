@@ -57,12 +57,12 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided)," +
-				"form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display))," +
-				"display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime)," +
-				"encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display)," +
-				"provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient," +
-				"attributes:(attributeType:ref,display,uuid,value)";
+		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided),"
+		        + "form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),"
+		        + "display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),"
+		        + "encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),"
+		        + "provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,"
+		        + "attributes:(attributeType:ref,display,uuid,value)";
 
 		return http("Get Visits of Patient")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
@@ -149,33 +149,32 @@ public class DoctorHttpService extends HttpService {
 		    "/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=ACTIVE");
 	}
 
-
 	public HttpRequestActionBuilder getDrugOrdersExceptCancelledAndExpired(String patientUuid) {
 		String customRepresentation = """
-        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
-        previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
-        encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
-        orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
-        dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,
-        numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
-        """;
+		        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
+		        previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
+		        encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
+		        orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
+		        dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,
+		        numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
+		        """;
 		return http("Get Drug Orders except the cancelled and expired").get(
-				"/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
-						+ "&status=any&orderType=" + DRUG_ORDER + "&excludeCanceledAndExpired=true&v=" + customRepresentation);
+		    "/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
+		            + "&status=any&orderType=" + DRUG_ORDER + "&excludeCanceledAndExpired=true&v=" + customRepresentation);
 	}
 
 	public HttpRequestActionBuilder getDrugOrdersExceptDiscontinuedOrders(String patientUuid) {
 		String customRepresentation = """
-        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
-        previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
-        encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
-        orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
-        dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,
-        numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
-        """;
-		return http("Get Drug Orders except the discontinued orders")
-				.get("/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
-						+ "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation + "&excludeDiscontinueOrders=true");
+		        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
+		        previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
+		        encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
+		        orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
+		        dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,
+		        numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
+		        """;
+		return http("Get Drug Orders except the discontinued orders").get("/openmrs/ws/rest/v1/order" + "?patient="
+		        + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v="
+		        + customRepresentation + "&excludeDiscontinueOrders=true");
 	}
 
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
