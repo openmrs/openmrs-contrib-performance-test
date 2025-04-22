@@ -108,6 +108,12 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.getImmunizations(patientUuid));
 	}
 
+	public ChainBuilder addImmunization(String patientUuid, String locationUuid, String currentUserUuid,
+	        String encounterUuid) {
+		return exec(httpService.searchForImmunization(""),
+		    httpService.saveImmunization(patientUuid, locationUuid, currentUserUuid, encounterUuid));
+	}
+
 	public ChainBuilder openAttachmentsTab(String patientUuid) {
 		return exec(httpService.getAttachments(patientUuid)).exec(httpService.getAllowedFileExtensions());
 	}
