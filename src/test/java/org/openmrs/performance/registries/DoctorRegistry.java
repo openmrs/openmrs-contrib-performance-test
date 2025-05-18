@@ -2,6 +2,9 @@ package org.openmrs.performance.registries;
 
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.DoctorHttpService;
+import org.openmrs.performance.http.get.AppointmentHttpService;
+import org.openmrs.performance.http.get.PatientVisitHttpService;
+import org.openmrs.performance.http.post.PostPatientVisitHttpService;
 
 import java.time.Duration;
 import java.util.List;
@@ -38,10 +41,10 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	public ChainBuilder startVisit(String patientUuid) {
 
 		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
-		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
-		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointments(patientUuid)).pause(5)
-		        .exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
-		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
+		        .exec(PatientVisitHttpService.getVisitsOfPatient(patientUuid)).exec(PatientVisitHttpService.getProgramEnrollments(patientUuid))
+		        .exec(PatientVisitHttpService.getVisitQueueEntry(patientUuid)).exec(AppointmentHttpService.getAppointments(patientUuid)).pause(5)
+		        .exec(PostPatientVisitHttpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
+		        .exec(PatientVisitHttpService.getCurrentVisit(patientUuid)).exec(PatientVisitHttpService.getVisitsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder endVisit(String patientUuid) {
