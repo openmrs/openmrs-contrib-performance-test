@@ -16,10 +16,11 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 
 	public ChainBuilder openRegistrationPage() {
 		return exec(ClinicDetailsHttpService.getAddressTemplate(), ClinicDetailsHttpService.getPatientIdentifierTypes(),
-				ClinicDetailsHttpService.getPrimaryIdentifierTermMapping(), ClinicDetailsHttpService.getRelationshipTypes(),
-				ClinicDetailsHttpService.getModuleInformation(), ClinicDetailsHttpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
-				ClinicDetailsHttpService.getAutoGenerationOptions(), ClinicDetailsHttpService.getOrderedAddressHierarchyLevels(),
-				ClinicDetailsHttpService.getIdentifierSources());
+		    ClinicDetailsHttpService.getPrimaryIdentifierTermMapping(), ClinicDetailsHttpService.getRelationshipTypes(),
+		    ClinicDetailsHttpService.getModuleInformation(),
+		    ClinicDetailsHttpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
+		    ClinicDetailsHttpService.getAutoGenerationOptions(), ClinicDetailsHttpService.getOrderedAddressHierarchyLevels(),
+		    ClinicDetailsHttpService.getIdentifierSources());
 	}
 
 	public ChainBuilder registerPatient() {

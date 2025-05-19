@@ -8,14 +8,14 @@ import static io.gatling.javaapi.http.HttpDsl.http;
 
 public class PostPatientDetailsHttpService {
 
-    public static HttpRequestActionBuilder generateOMRSIdentifier() {
-        return http("Generate OMRS Identifier")
-                .post("/openmrs/ws/rest/v1/idgen/identifiersource/8549f706-7e85-4c1d-9424-217d50a2988b/identifier")
-                .body(StringBody("{}")).check(jsonPath("$.identifier").saveAs("identifier"));
-    }
+	public static HttpRequestActionBuilder generateOMRSIdentifier() {
+		return http("Generate OMRS Identifier")
+		        .post("/openmrs/ws/rest/v1/idgen/identifiersource/8549f706-7e85-4c1d-9424-217d50a2988b/identifier")
+		        .body(StringBody("{}")).check(jsonPath("$.identifier").saveAs("identifier"));
+	}
 
-    public static HttpRequestActionBuilder sendPatientRegistrationRequest() {
-        String registrationRequestTemplate = """
+	public static HttpRequestActionBuilder sendPatientRegistrationRequest() {
+		String registrationRequestTemplate = """
 		        		{
 		        		   "identifiers":[
 		        		      {
@@ -52,7 +52,7 @@ public class PostPatientDetailsHttpService {
 
 		        """;
 
-        return http("Send Patient Registration Request").post("/openmrs/ws/rest/v1/patient/")
-                .body(StringBody(registrationRequestTemplate)).check(jsonPath("$.uuid").saveAs("patientUuid"));
-    }
+		return http("Send Patient Registration Request").post("/openmrs/ws/rest/v1/patient/")
+		        .body(StringBody(registrationRequestTemplate)).check(jsonPath("$.uuid").saveAs("patientUuid"));
+	}
 }
