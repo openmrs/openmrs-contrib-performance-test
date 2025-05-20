@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
+import org.openmrs.performance.utils.CommonUtils;
 
-import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,12 +56,12 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided)," +
-				"form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display))," +
-				"display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime)," +
-				"encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display)," +
-				"provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient," +
-				"attributes:(attributeType:ref,display,uuid,value)";
+		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided),"
+		        + "form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),"
+		        + "display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),"
+		        + "encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),"
+		        + "provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,"
+		        + "attributes:(attributeType:ref,display,uuid,value)";
 
 		return http("Get Visits of Patient")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
@@ -94,8 +93,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getAppointments(String patientUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String startDate = CommonUtils.getCurrentDateTimeAsString();
 		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
 
 		return http("Get Appointments of Patient").post("/openmrs/ws/rest/v1/appointments/search")
@@ -103,8 +101,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String startDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String startDateTime = CommonUtils.getCurrentDateTimeAsString();
 
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("patient", patientUuid);
@@ -123,8 +120,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String formattedStopDateTime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String formattedStopDateTime = CommonUtils.getCurrentDateTimeAsString();
 
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("location", locationUuid);
@@ -149,22 +145,32 @@ public class DoctorHttpService extends HttpService {
 		    "/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=ACTIVE");
 	}
 
-	public HttpRequestActionBuilder getDrugOrders(String patientUuid) {
+	public HttpRequestActionBuilder getDrugOrdersExceptCancelledAndExpired(String patientUuid) {
 		String customRepresentation = """
-		        custom:(uuid,dosingType,orderNumber,accessionNumber,
-		        	patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,
-		        	orderType:ref,encounter:ref,
-		        	orderer:(uuid,display,person:(display)),
-		        	orderReason,orderReasonNonCoded,orderType,urgency,instructions,
-		        	commentToFulfiller,
-		        	drug:(uuid,display,strength,
-		        		dosageForm:(display,uuid),concept),
-		        		dose,doseUnits:ref,
-		        	frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,
-		        	duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
+		        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
+		        previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
+		        encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
+		        orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
+		        dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,
+		        numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
 		        """;
-		return http("Get Orders").get("/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting="
-		        + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation);
+		return http("Get Drug Orders except the cancelled and expired").get(
+		    "/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
+		            + "&status=any&orderType=" + DRUG_ORDER + "&excludeCanceledAndExpired=true&v=" + customRepresentation);
+	}
+
+	public HttpRequestActionBuilder getDrugOrdersExceptDiscontinuedOrders(String patientUuid) {
+		String customRepresentation = """
+		        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,
+		        previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,
+		        encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,
+		        orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),
+		        dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,
+		        numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
+		        """;
+		return http("Get Drug Orders except the discontinued orders").get("/openmrs/ws/rest/v1/order" + "?patient="
+		        + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v="
+		        + customRepresentation + "&excludeDiscontinueOrders=true");
 	}
 
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
@@ -268,16 +274,16 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String startDate = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+		String recordedDate = CommonUtils.getCurrentDateTimeAsString();
+		String onSetDate = CommonUtils.getAdjustedDateTimeAsString(-2);
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("clinicalStatus", Map.of("coding",
 		    List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
 		condition.put("code", Map.of("coding", List.of(Map.of("code", BACK_PAIN, "display", "Back Pain"))));
 		condition.put("abatementDateTime", null);
-		condition.put("onsetDateTime", startDate);
+		condition.put("onsetDateTime", onSetDate);
 		condition.put("recorder", Map.of("reference", "Practitioner/" + currentUserUuid));
-		condition.put("recordedDate", startDate);
+		condition.put("recordedDate", recordedDate);
 		condition.put("resourceType", "Condition");
 		condition.put("subject", Map.of("reference", "Patient/" + patientUuid));
 		try {
@@ -317,8 +323,7 @@ public class DoctorHttpService extends HttpService {
 
 		Map<String, Object> encounter = new HashMap<>();
 
-		encounter.put("encounterDatetime",
-		    ZonedDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ")));
+		encounter.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
 		encounter.put("encounterType", ORDER);
 		encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
 		encounter.put("patient", patientUuid);
@@ -336,8 +341,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String encounterDatetime = CommonUtils.getCurrentDateTimeAsString();
 
 		Map<String, Object> visitNote = new HashMap<>();
 		visitNote.put("form", VISIT_NOTE_FORM_UUID);
@@ -393,8 +397,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
-		ZonedDateTime now = ZonedDateTime.now();
-		String encounterDatetime = now.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ"));
+		String encounterDatetime = CommonUtils.getCurrentDateTimeAsString();
 
 		Map<String, Object> encounter = new HashMap<>();
 		encounter.put("form", VITALS_FORM_UUID);
