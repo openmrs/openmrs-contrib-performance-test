@@ -216,11 +216,6 @@ public class DoctorHttpService extends HttpService {
 		}
 	}
 
-	public HttpRequestActionBuilder getConditions(String patientUuid) {
-		return http("Get Conditions of Patient")
-		        .get("/openmrs/ws/fhir2/R4/Condition?patient=" + patientUuid + "&_count=100&_summary=data");
-	}
-
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
 		return http("Get Attachments of Patient")
 		        .get("/openmrs/ws/rest/v1/attachment?patient=" + patientUuid + "&includeEncounterless=true");
@@ -409,7 +404,7 @@ public class DoctorHttpService extends HttpService {
 		List<Map<String, Object>> observations = new ArrayList<>();
 		observations.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
 		observations.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
-		observations.add(Map.of("concept", RESPIRATORY_RATE, "value", 20));
+		observations.add(Map.of("concept", RESPIRATORY_RATE, "value", 100));
 		observations.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
 		observations.add(Map.of("concept", PULSE, "value", 120));
 		observations.add(Map.of("concept", TEMPERATURE_C, "value", 28));
