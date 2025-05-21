@@ -55,11 +55,9 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitsOfLocation(String locationUuid) {
-		String customRepresentation = """
-		        custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),person:(age,display,
-		        gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),location:
-		        (uuid,name,display),startDatetime,stopDatetime)
-		        """;
+		String customRepresentation = "custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),"
+		       + "person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),"
+		        + "location:(uuid,name,display),startDatetime,stopDatetime)";
 		return http("Get Visits")
 		        .get("/openmrs/ws/rest/v1/visit?v= + + &includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
@@ -77,12 +75,10 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getCurrentVisit(String patientUuid) {
-		String customRepresentation = """
-		        custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),
-		        encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),
-		        encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),
-		        visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)
-		        """;
+		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),"
+		        + "encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),"
+		        + "encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),"
+		        + "visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)";
 		return http("Get Patient's current visit")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
 	}
@@ -113,13 +109,11 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getActiveOrders(String patientUuid) {
-		String customRepresentation = """
-		        custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,
-		        dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,
-		        person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:
-		        (uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,
-		        quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)
-		        """;
+		String customRepresentation = "custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,"
+		        + "dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,"
+		        + "person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:"
+		        + "(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,"
+		        + "quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
 		return http("Get Active Orders").get("/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting="
 		        + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation);
 	}
