@@ -56,10 +56,10 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getVisitsOfLocation(String locationUuid) {
 		String customRepresentation = "custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),"
-		       + "person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),"
+		        + "person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),"
 		        + "location:(uuid,name,display),startDatetime,stopDatetime)";
-		return http("Get Visits")
-		        .get("/openmrs/ws/rest/v1/visit?v=" + customRepresentation + "&includeInactive=false&totalCount=true&location=" + locationUuid);
+		return http("Get Visits").get("/openmrs/ws/rest/v1/visit?v=" + customRepresentation
+		        + "&includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
 
 	public HttpRequestActionBuilder getIdentifierSources() {
