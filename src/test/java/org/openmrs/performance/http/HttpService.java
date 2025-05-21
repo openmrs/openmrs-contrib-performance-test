@@ -59,7 +59,7 @@ public abstract class HttpService {
 		       + "person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),"
 		        + "location:(uuid,name,display),startDatetime,stopDatetime)";
 		return http("Get Visits")
-		        .get("/openmrs/ws/rest/v1/visit?v= + + &includeInactive=false&totalCount=true&location=" + locationUuid);
+		        .get("/openmrs/ws/rest/v1/visit?v=" + customRepresentation + "&includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
 
 	public HttpRequestActionBuilder getIdentifierSources() {
