@@ -8,6 +8,8 @@ import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
+import static org.openmrs.performance.Constants.DRUG_ORDER;
 
 public abstract class HttpService {
 
@@ -53,9 +55,11 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitsOfLocation(String locationUuid) {
-		return http("Get Visits").get(
-		    "/openmrs/ws/rest/v1/visit?v=custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),location:(uuid,name,display),startDatetime,stopDatetime)&includeInactive=false&totalCount=true&location="
-		            + locationUuid);
+		String customRepresentation = "custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),"
+		        + "person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),"
+		        + "location:(uuid,name,display),startDatetime,stopDatetime)";
+		return http("Get Visits").get("/openmrs/ws/rest/v1/visit?v=" + customRepresentation
+		        + "&includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
 
 	public HttpRequestActionBuilder getIdentifierSources() {
@@ -71,8 +75,12 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getCurrentVisit(String patientUuid) {
-		return http("Get Patient's current visit").get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid
-		        + "&v=custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)&limit=5");
+		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),"
+		        + "encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),"
+		        + "encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),"
+		        + "visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)";
+		return http("Get Patient's current visit")
+		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
 	}
 
 	public HttpRequestActionBuilder getPatientSummaryData(String patientUuid) {
@@ -101,8 +109,13 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getActiveOrders(String patientUuid) {
-		return http("Get Active Orders").get("/openmrs/ws/rest/v1/order?patient=" + patientUuid
-		        + "&careSetting=6f0c9a92-6f24-11e3-af88-005056821db0&status=ACTIVE&orderType=131168f4-15f5-102d-96e4-000c29c2a5d7&v=custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)");
+		String customRepresentation = "custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting:ref,previousOrder:ref,"
+		        + "dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,encounter:ref,orderer:(uuid,display,"
+		        + "person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:"
+		        + "(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,"
+		        + "quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
+		return http("Get Active Orders").get("/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting="
+		        + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation);
 	}
 
 }

@@ -103,7 +103,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder openConditionsTab(String patientUuid) {
-		return exec(httpService.getConditions(patientUuid));
+		return exec(httpService.getPatientConditions(patientUuid));
 	}
 
 	public ChainBuilder openImmunizationsTab(String patientUuid) {
@@ -140,7 +140,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {
-		return exec(httpService.getConditions(patientUuid), pause(2), httpService.searchForConditions("Pa"), pause(1),
+		return exec(httpService.getPatientConditions(patientUuid), pause(2), httpService.searchForConditions("Pa"), pause(1),
 		    httpService.searchForConditions("Pain"), pause(1), httpService.saveCondition(patientUuid, currentUserUuid));
 	}
 
