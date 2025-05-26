@@ -204,11 +204,6 @@ public class DoctorHttpService extends HttpService {
 		}
 	}
 
-	public HttpRequestActionBuilder getConditions(String patientUuid) {
-		return http("Get Conditions of Patient")
-		        .get("/openmrs/ws/fhir2/R4/Condition?patient=" + patientUuid + "&_count=100&_summary=data");
-	}
-
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
 		return http("Get Attachments of Patient")
 		        .get("/openmrs/ws/rest/v1/attachment?patient=" + patientUuid + "&includeEncounterless=true");
