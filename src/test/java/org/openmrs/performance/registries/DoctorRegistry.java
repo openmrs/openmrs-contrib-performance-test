@@ -166,11 +166,3 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
 }
-//openVisitsTab
-//https://dev3.openmrs.org/openmrs/ws/fhir2/R4/Observation?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&category=laboratory&_sort=-_date&_summary=data&_format=json&_count=300&_getpagesoffset=0
-//http://localhost:8080/openmrs/ws/rest/v1/concept/887AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?v=full
-
-//openLabResultsTab
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/obstree?patient=e46a11d6-e4bd-46e0-86cb-1fbb4f5acb77&concept=ae485e65-2e3f-4297-b35e-c818bbefe894
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/obstree?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&concept=8904fa2b-6a8f-437d-89ec-6fce3cd99093
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/obstree?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&concept=856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA

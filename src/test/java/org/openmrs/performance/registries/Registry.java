@@ -58,10 +58,3 @@ public abstract class Registry<H extends HttpService> {
 		    httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
 	}
 }
-
-//openPatientChartPage
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/person/73366b93-0838-4c62-9f19-53bb4612b09f?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/metadatamapping/termmapping?v=custom:(metadataUuid)&code=emr.primaryIdentifierType
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/visit?patient=c457027f-b1fa-4f26-8555-90c5360625ce&v=custom:(uuid,display,voided,indication,startDatetime,stopDatetime,encounters:(uuid,display,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:(uuid,display,provider:(uuid,display))),patient:(uuid,display),visitType:(uuid,name,display),attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),location:(uuid,name,display))&includeInactive=false

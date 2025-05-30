@@ -59,6 +59,7 @@ public abstract class HttpService {
 		String customRepresentation = "custom:(uuid,patient:(uuid,identifiers:(identifier,uuid,identifierType:(name,uuid)),"
 		        + "person:(age,display,gender,uuid,attributes:(value,attributeType:(uuid,display)))),visitType:(uuid,name,display),"
 		        + "location:(uuid,name,display),startDatetime,stopDatetime)";
+
 		return http("Get Visits").get("/openmrs/ws/rest/v1/visit?v=" + customRepresentation
 		        + "&includeInactive=false&totalCount=true&location=" + locationUuid);
 	}
@@ -72,10 +73,9 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientEncounters() {
-		String customString = "custom%3A%28uuid%2Cdisplay%2CencounterDatetime%2Cform%2CencounterType%2Cvisit%2Cpatient%2"
-		        + "Cobs%3A%28uuid%2Cconcept%3A%28uuid%2Cdisplay%2CconceptClass%3A%28uuid%2Cdisplay%29%29%2Cdisplay%2C"
-		        + "groupMembers%3A%28uuid%2Cconcept%3A%28uuid%2Cdisplay%29%2Cvalue%3A%28uuid%2Cdisplay%29%2Cdisplay%29%2C"
-		        + "value%2CobsDatetime%29%2CencounterProviders%3A%28provider%3A%28person%29%29%29&";
+		String customString = "custom:(uuid,display,encounterDatetime,form,encounterType,visit,patient,"
+				+ "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:(uuid,concept:"
+				+ "(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
 
 		return http("Get Patient Encounters")
 		        .get("/openmrs/ws/rest/v1/encounter?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&v=" + customString
@@ -139,6 +139,7 @@ public abstract class HttpService {
 		        + "person:(display)),orderReason,orderReasonNonCoded,orderType,urgency,instructions,commentToFulfiller,drug:"
 		        + "(uuid,display,strength,dosageForm:(display,uuid),concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,"
 		        + "quantity,quantityUnits:ref,numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
+
 		return http("Get Active Orders").get("/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting="
 		        + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation);
 	}
@@ -159,8 +160,3 @@ public abstract class HttpService {
 	}
 
 }
-
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/person/73366b93-0838-4c62-9f19-53bb4612b09f?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/metadatamapping/termmapping?v=custom:(metadataUuid)&code=emr.primaryIdentifierType
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/concept/1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))
