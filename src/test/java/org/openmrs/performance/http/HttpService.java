@@ -74,8 +74,8 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getPatientEncounters() {
 		String customString = "custom:(uuid,display,encounterDatetime,form,encounterType,visit,patient,"
-				+ "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:(uuid,concept:"
-				+ "(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
+		        + "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:(uuid,concept:"
+		        + "(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
 
 		return http("Get Patient Encounters")
 		        .get("/openmrs/ws/rest/v1/encounter?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&v=" + customString
@@ -103,7 +103,7 @@ public abstract class HttpService {
 		        + "encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),"
 		        + "encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),"
 		        + "visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)";
-    
+
 		return http("Get Patient's current visit")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
 	}
