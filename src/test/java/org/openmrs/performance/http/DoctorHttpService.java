@@ -151,7 +151,7 @@ public class DoctorHttpService extends HttpService {
 		        + "encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,"
 		        + "orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid)"
 		        + ",concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,"
-		        + "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)" ;
+		        + "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
 
 		return http("Get Drug Orders except the cancelled and expired").get(
 		    "/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
@@ -160,11 +160,11 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getDrugOrdersExceptDiscontinuedOrders(String patientUuid) {
 		String customRepresentation = "custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,"
-		         + "careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,"
+		        + "careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,"
 		        + "orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,"
 		        + "orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),"
 		        + "concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,"
-		        + "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)" ;
+		        + "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
 
 		return http("Get Drug Orders except the discontinued orders").get("/openmrs/ws/rest/v1/order" + "?patient="
 		        + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v="
