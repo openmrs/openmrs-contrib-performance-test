@@ -49,7 +49,9 @@ public abstract class Registry<H extends HttpService> {
 		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
 
 		Set<String> biometrics = Set.of(HEIGHT_CM, WEIGHT_KG, MID_UPPER_ARM_CIRCUMFERENCE);
-		return exec(httpService.getPatientSummaryData(patientUuid), httpService.getCurrentVisit(patientUuid),
+		return exec(httpService.getPatientSummaryData(patientUuid), httpService.getActiveVisitOfPatient(patientUuid),
+		    httpService.getPrimaryIdentifierTermMapping(), httpService.getIsVisitsEnabled(),
+		    httpService.getPatientLifeStatus(patientUuid), httpService.getVitalConceptSetDetails(),
 		    httpService.getPatientObservations(patientUuid, unknownObservationSet),
 		    httpService.getPatientObservations(patientUuid, vitals),
 		    httpService.getPatientObservations(patientUuid, biometrics), httpService.getVisitQueueEntry(patientUuid),
