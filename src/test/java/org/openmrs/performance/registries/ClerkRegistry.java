@@ -3,9 +3,14 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.ClerkHttpService;
 
+import java.util.List;
+import java.util.Random;
+
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.*;
+import static org.openmrs.performance.utils.CommonUtils.extractPatientIds;
+import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 
 public class ClerkRegistry extends Registry<ClerkHttpService> {
 
@@ -25,4 +30,36 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		return exec(httpService.generateOMRSIdentifier(), httpService.sendPatientRegistrationRequest(), pause(2));
 	}
 
+	public ChainBuilder openAppointmentPage() {
+		return exec(httpService.getAllAppointmentServices(), httpService.getAppointmentsOfTheDay(),
+		    httpService.getAppointmentsSummary(), httpService.getAppointmentByStatus("Scheduled"),
+		    httpService.getAppointmentByStatus("Missed"), httpService.getAppointmentByStatus("Completed"),
+		    httpService.getAppointmentByStatus("Cancelled"), httpService.getDefaultAppointmentService(),
+		    httpService.getAllVisitsOfTheLocationWithDate(OUTPATIENT_CLINIC_LOCATION_UUID));
+	}
+
+	public ChainBuilder openAppointmentFormPage(String patientUuid) {
+		return exec(httpService.getAppointmentLocations(), httpService.getPatientLifeStatus(patientUuid),
+		    httpService.getPatientSummaryData(patientUuid), httpService.getAllAppointmentServices(),
+		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientQueueEntry(patientUuid),
+		    httpService.getAllProviders(), httpService.getActiveVisitOfPatient(patientUuid));
+	}
+
+	public ChainBuilder createAppointment(String providerUuid) {
+		Random random = new Random();
+		int randomDay = random.nextInt(100);
+		String startDateTime = getAdjustedDateTimeAsString(randomDay);
+		String endDateTime = getAdjustedDateTimeAsString(randomDay, 1);
+		return exec(httpService.checkAppointmentConflicts(providerUuid, startDateTime, endDateTime),
+		    httpService.createAppointment(providerUuid, startDateTime, endDateTime));
+	}
+
+	public ChainBuilder searchPatient() {
+		return exec(httpService.getPatients("jay")).exec(session -> {
+			String response = session.getString("patientSearchResults");
+			List<String> patientIDs = extractPatientIds(response);
+			return session.set("patientIDs", patientIDs);
+		}).foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
+		    httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}")));
+	}
 }
