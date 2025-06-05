@@ -118,4 +118,20 @@ public abstract class HttpService {
 		        + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation);
 	}
 
+	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
+		return http("Get the status of patient's death").get(
+		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
+	}
+
+	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
+		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
+		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
+		        + "visitType:(uuid,name,display),"
+		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
+		        + "location:(uuid,name,display))";
+
+		return http("Get Active Visits of Patient").get(
+		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
+	}
 }
