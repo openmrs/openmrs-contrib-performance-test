@@ -35,14 +35,36 @@ public class CommonUtils {
 		return conceptIds;
 	}
 
+	public static List<String> extractPatientIds(String response) {
+		List<String> patientIds = new ArrayList<>();
+		try {
+			ObjectMapper objectMapper = new ObjectMapper();
+			JsonNode jsonObject = objectMapper.readTree(response);
+			JsonNode results = jsonObject.get("results");
+
+			if (results != null && results.isArray()) {
+				return StreamSupport.stream(results.spliterator(), false).map(result -> result.get("uuid").asText())
+				        .collect(Collectors.toList());
+			}
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+		return patientIds;
+	}
+
 	public static String getCurrentDateTimeAsString() {
 		ZonedDateTime now = ZonedDateTime.now();
 		return formatDateTime(now);
 	}
 
-	public static String getAdjustedDateTimeAsString(int daysToAdjust) {
-		ZonedDateTime adjustedDateTime = ZonedDateTime.now().plusDays(daysToAdjust);
+	public static String getAdjustedDateTimeAsString(int daysToAdjust, int minToAdjust) {
+		ZonedDateTime adjustedDateTime = ZonedDateTime.now().plusDays(daysToAdjust).plusMinutes(minToAdjust);
 		return formatDateTime(adjustedDateTime);
+	}
+
+	public static String getAdjustedDateTimeAsString(int daysToAdjust) {
+		return getAdjustedDateTimeAsString(daysToAdjust, 0);
 	}
 
 	private static String formatDateTime(ZonedDateTime dateTime) {

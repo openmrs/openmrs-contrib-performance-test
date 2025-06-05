@@ -39,7 +39,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
 		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
-		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointments(patientUuid)).pause(5)
+		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointmentsOfPatient(patientUuid)).pause(5)
 		        .exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
 		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
 	}
@@ -127,7 +127,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder openAppointmentsTab(String patientUuid) {
-		return exec(httpService.getAppointments(patientUuid));
+		return exec(httpService.getAppointmentsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder addDrugOrder(String patientUuid, String visitUuid, String currentUserUuid) {
