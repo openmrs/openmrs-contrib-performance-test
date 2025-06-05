@@ -20,6 +20,10 @@ public class Constants {
 
 	public static final String DRUG_ORDER = "131168f4-15f5-102d-96e4-000c29c2a5d7";
 
+	public static final String PATIENT_IDENTIFICATION_PHOTO = "736e8771-e501-4615-bfa7-570c03f4bef5";
+
+	public static final String GENERAL_MEDICINE_SERVICE_UUID = "7ba3aa21-cc56-47ca-bb4d-a60549f666c0";
+
 	// Observation Types
 	public static final String SYSTOLIC_BLOOD_PRESSURE = "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 

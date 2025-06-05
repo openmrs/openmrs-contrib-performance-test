@@ -67,18 +67,6 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
 	}
 
-	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
-		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
-		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
-		        + "visitType:(uuid,name,display),"
-		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
-		        + "location:(uuid,name,display))";
-
-		return http("Get Active Visits of Patient").get(
-		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
-	}
-
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
 		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
@@ -92,11 +80,11 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
 	}
 
-	public HttpRequestActionBuilder getAppointments(String patientUuid) {
+	public HttpRequestActionBuilder getAppointmentsOfPatient(String patientUuid) {
 		String startDate = CommonUtils.getCurrentDateTimeAsString();
 		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
 
-		return http("Get Appointments of Patient").post("/openmrs/ws/rest/v1/appointments/search")
+		return http("Get Appointments of a Patient").post("/openmrs/ws/rest/v1/appointments/search")
 		        .body(StringBody(requestBody));
 	}
 
