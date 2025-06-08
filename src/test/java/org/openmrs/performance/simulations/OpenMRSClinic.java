@@ -92,14 +92,16 @@ public class OpenMRSClinic extends Simulation {
 			    personaUserIncrementPerTier);
 
 			for (Scenario<?> scenario : persona.getScenarios()) {
-				logger.info("\t building scenario: {}", scenario.getClass().getSimpleName());
+				int scenarioUserIncrementPerTier = (int) Math.ceil(personaUserIncrementPerTier * scenario.scenarioLoadShare);
+				logger.info("\t building scenario: {}, users increment for the scenario: {}",
+				    scenario.getClass().getSimpleName(), scenarioUserIncrementPerTier);
 
 				int userCount = 0;
 				List<ClosedInjectionStep> steps = new ArrayList<>();
 
 				for (int i = 0; i < tierCount; i++) {
 					int startUserCount = userCount;
-					int endUserCount = userCount + personaUserIncrementPerTier;
+					int endUserCount = userCount + scenarioUserIncrementPerTier;
 
 					ClosedInjectionStep rampPhase = rampConcurrentUsers(startUserCount).to(endUserCount)
 					        .during(rampDurationMinutes * 60L);
