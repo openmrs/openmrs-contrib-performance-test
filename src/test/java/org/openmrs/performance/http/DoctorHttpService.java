@@ -20,6 +20,8 @@ import static io.gatling.javaapi.http.HttpDsl.StringBodyPart;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
+import static org.openmrs.performance.Constants.ASPRIN_CONCEPT_UUID;
+import static org.openmrs.performance.Constants.ASPRIN_DRUG_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
@@ -280,49 +282,50 @@ public class DoctorHttpService extends HttpService {
 		}
 	}
 
-	public HttpRequestActionBuilder saveOrder(String patientUuid, String visitUuid, String currentUserUuid, String drugUuid,
-	        String drugConceptUuid) {
-		Map<String, Object> order = new HashMap<>();
-		order.put("action", "NEW");
-		order.put("asNeeded", false);
-		order.put("asNeededCondition", null);
-		order.put("careSetting", CARE_SETTING_UUID);
-		order.put("concept", drugConceptUuid);
-		order.put("dose", 1);
-		order.put("doseUnits", TABLET);
-		order.put("dosingInstructions", "");
-		order.put("dosingType", DEFAULT_DOSING_TYPE);
-		order.put("drug", drugUuid);
-		order.put("duration", null);
-		order.put("durationUnits", DAYS);
-		order.put("encounter", visitUuid);
-		order.put("frequency", ONCE_DAILY);
-		order.put("numRefills", 0);
-		order.put("orderReasonNonCoded", "reason");
-		order.put("orderer", currentUserUuid);
-		order.put("patient", patientUuid);
-		order.put("quantity", 1);
-		order.put("quantityUnits", TABLET);
-		order.put("route", ORAL);
-		order.put("type", "drugorder");
+	public HttpRequestActionBuilder saveOrder() {
 
-		Map<String, Object> encounter = new HashMap<>();
+		return http("Save Drug Order").post("/openmrs/ws/rest/v1/encounter").body(StringBody(session -> {
+			try {
+				Map<String, Object> order = new HashMap<>();
+				order.put("action", "NEW");
+				order.put("asNeeded", false);
+				order.put("asNeededCondition", null);
+				order.put("careSetting", CARE_SETTING_UUID);
+				order.put("concept", ASPRIN_CONCEPT_UUID);
+				order.put("dose", 1);
+				order.put("doseUnits", TABLET);
+				order.put("dosingInstructions", "");
+				order.put("dosingType", DEFAULT_DOSING_TYPE);
+				order.put("drug", ASPRIN_DRUG_UUID);
+				order.put("duration", null);
+				order.put("durationUnits", DAYS);
+				order.put("encounter", session.getString("visitUuid"));
+				order.put("frequency", ONCE_DAILY);
+				order.put("numRefills", 0);
+				order.put("orderReasonNonCoded", "reason");
+				order.put("orderer", session.getString("currentUserUuid"));
+				order.put("patient", session.getString("patient_uuid"));
+				order.put("quantity", 1);
+				order.put("quantityUnits", TABLET);
+				order.put("route", ORAL);
+				order.put("type", "drugorder");
 
-		encounter.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
-		encounter.put("encounterType", ORDER);
-		encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
-		encounter.put("patient", patientUuid);
-		encounter.put("visit", visitUuid);
-		encounter.put("obs", new Object[0]);
-		encounter.put("orders", new Object[] { order });
+				Map<String, Object> encounter = new HashMap<>();
 
-		try {
-			return http("Save Drug Order").post("/openmrs/ws/rest/v1/encounter")
-			        .body(StringBody(new ObjectMapper().writeValueAsString(encounter)));
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+				encounter.put("encounterType", ORDER);
+				encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+				encounter.put("patient", session.getString("patient_uuid"));
+				encounter.put("visit", session.getString("visitUuid"));
+				encounter.put("obs", new Object[0]);
+				encounter.put("orders", new Object[] { order });
+				encounter.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
+
+				return new ObjectMapper().writeValueAsString(encounter);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		}));
 	}
 
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
