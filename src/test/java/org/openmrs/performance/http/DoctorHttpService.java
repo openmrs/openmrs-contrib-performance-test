@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
@@ -183,37 +184,42 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
-		Map<String, Object> payload = new HashMap<>();
 
-		Map<String, String> codedAllergen = new HashMap<>();
-		codedAllergen.put("uuid", CODED_ALLERGEN_UUID);
+		return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
+		        .body(StringBody(session -> {
+			        try {
+				        String random = new Random().ints(7, 'a', 'z' + 1)
+				                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
+				        Map<String, Object> payload = new HashMap<>();
 
-		Map<String, Object> allergen = new HashMap<>();
-		allergen.put("allergenType", "DRUG");
-		allergen.put("codedAllergen", codedAllergen);
+				        Map<String, String> codedAllergen = new HashMap<>();
+				        codedAllergen.put("uuid", CODED_ALLERGEN_UUID);
 
-		Map<String, String> severity = new HashMap<>();
-		severity.put("uuid", SEVERITY_UUID);
+				        Map<String, Object> allergen = new HashMap<>();
+				        allergen.put("allergenType", "OTHER");
+				        allergen.put("codedAllergen", codedAllergen);
+				        allergen.put("nonCodedAllergen", random);
+				        Map<String, String> severity = new HashMap<>();
+				        severity.put("uuid", SEVERITY_UUID);
 
-		Map<String, String> reactionUuid = new HashMap<>();
-		reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
+				        Map<String, String> reactionUuid = new HashMap<>();
+				        reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
 
-		Map<String, Object> reaction = new HashMap<>();
-		reaction.put("reaction", reactionUuid);
-		List<Map<String, Object>> reactions = Collections.singletonList(reaction);
+				        Map<String, Object> reaction = new HashMap<>();
+				        reaction.put("reaction", reactionUuid);
+				        List<Map<String, Object>> reactions = Collections.singletonList(reaction);
 
-		payload.put("allergen", allergen);
-		payload.put("severity", severity);
-		payload.put("comment", "test");
-		payload.put("reactions", reactions);
+				        payload.put("allergen", allergen);
+				        payload.put("severity", severity);
+				        payload.put("comment", "test");
+				        payload.put("reactions", reactions);
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
 
-		try {
-			return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
-			        .body(StringBody(new ObjectMapper().writeValueAsString(payload)));
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
