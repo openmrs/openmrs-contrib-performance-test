@@ -101,11 +101,10 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
-		String startDateTime = CommonUtils.getCurrentDateTimeAsString();
 
 		Map<String, String> requestBodyMap = new HashMap<>();
 		requestBodyMap.put("patient", patientUuid);
-		requestBodyMap.put("startDatetime", startDateTime);
+		requestBodyMap.put("startDatetime", null);
 		requestBodyMap.put("visitType", visitTypeUuid);
 		requestBodyMap.put("location", locationUuid);
 
@@ -120,20 +119,17 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
-		String formattedStopDateTime = CommonUtils.getCurrentDateTimeAsString();
 
-		Map<String, String> requestBodyMap = new HashMap<>();
-		requestBodyMap.put("location", locationUuid);
-		requestBodyMap.put("visitType", visitTypeUuid);
-		requestBodyMap.put("stopDatetime", formattedStopDateTime);
-
-		try {
-			return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
-			        .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)));
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+		return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid).body(StringBody(session -> {
+			try {
+				Map<String, String> requestBodyMap = new HashMap<>();
+				requestBodyMap.put("stopDatetime", CommonUtils.getCurrentDateTimeAsString());
+				return new ObjectMapper().writeValueAsString(requestBodyMap);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		}));
 	}
 
 	public HttpRequestActionBuilder getOrderTypes() {
