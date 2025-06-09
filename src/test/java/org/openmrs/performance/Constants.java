@@ -25,6 +25,8 @@ public class Constants {
 	public static final String GENERAL_MEDICINE_SERVICE_UUID = "7ba3aa21-cc56-47ca-bb4d-a60549f666c0";
 
 	// Observation Types
+	public static final String VITAL_SIGNS_CONCEPT_SET = "1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
 	public static final String SYSTOLIC_BLOOD_PRESSURE = "5085AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	public static final String DIASTOLIC_BLOOD_PRESSURE = "5086AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -56,6 +58,12 @@ public class Constants {
 	public static final String DAYS = "1072AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	public static final String ORDER = "39da3525-afe4-45ff-8977-c53b7b359158";
+
+	public static final String HEMATOLOGY = "ae485e65-2e3f-4297-b35e-c818bbefe894";
+
+	public static final String BLOODWORK = "8904fa2b-6a8f-437d-89ec-6fce3cd99093";
+
+	public static final String HIV_VIRAL_LOAD = "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -97,4 +105,9 @@ public class Constants {
 	public static final String VITALS_LOCATION_UUID = "ba685651-ed3b-4e63-9b35-78893060758a";
 
 	public static final String VITALS_ENCOUNTER_TYPE_UUID = "67a71486-1a54-468f-ac3e-7091a9a79584";
+
+	// Drugs
+	public static final String ASPRIN_DRUG_UUID = "a722710f-403b-451f-804b-09f8624b0838";
+
+	public static final String ASPRIN_CONCEPT_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 }
