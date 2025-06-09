@@ -101,4 +101,9 @@ public class Constants {
 	public static final String VITALS_LOCATION_UUID = "ba685651-ed3b-4e63-9b35-78893060758a";
 
 	public static final String VITALS_ENCOUNTER_TYPE_UUID = "67a71486-1a54-468f-ac3e-7091a9a79584";
+
+	// Drugs
+	public static final String ASPRIN_DRUG_UUID = "a722710f-403b-451f-804b-09f8624b0838";
+
+	public static final String ASPRIN_CONCEPT_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 }
