@@ -1,7 +1,12 @@
 package org.openmrs.performance.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import org.openmrs.performance.utils.CommonUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
@@ -10,6 +15,7 @@ import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.PATIENT_IDENTIFICATION_PHOTO;
 import static org.openmrs.performance.Constants.GENERAL_MEDICINE_SERVICE_UUID;
+import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 
 public class ClerkHttpService extends HttpService {
 
@@ -75,20 +81,20 @@ public class ClerkHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getAppointmentsOfTheDay() {
-		String recordedDate = CommonUtils.getCurrentDateTimeAsString();
+		String recordedDate = getCurrentDateTimeAsString();
 		return http("Get all appointments for a specific day")
 		        .get("/openmrs/ws/rest/v1/appointment/all?forDate=" + recordedDate);
 	}
 
 	public HttpRequestActionBuilder getAppointmentsSummary() {
-		String startDate = CommonUtils.getCurrentDateTimeAsString();
+		String startDate = getCurrentDateTimeAsString();
 		String endDate = CommonUtils.getAdjustedDateTimeAsString(5);
 		return http("Get all appointment summaries")
 		        .get("/openmrs/ws/rest/v1/appointment/appointmentSummary?startDate=" + startDate + "&endDate=" + endDate);
 	}
 
 	public HttpRequestActionBuilder getAppointmentByStatus(String status) {
-		String startDate = CommonUtils.getCurrentDateTimeAsString();
+		String startDate = getCurrentDateTimeAsString();
 		String endDate = CommonUtils.getAdjustedDateTimeAsString(5);
 		String requestBody = String.format("""
 		        {
@@ -183,4 +189,50 @@ public class ClerkHttpService extends HttpService {
 		    patientUuid);
 		return http("Create Appointment").post("/openmrs/ws/rest/v1/appointment").body(StringBody(requestBody));
 	}
+
+	public HttpRequestActionBuilder getVisitLocations() {
+		return http("Get Visit Locations by Tag and Query")
+				.get("/openmrs/ws/rest/v1/location?tag=Visit+Location")
+				.check(bodyString().saveAs("visitLocationsByTag"));
+	}
+
+	public HttpRequestActionBuilder getLocationsThatSupportVisits() {
+		return http("Get Locations That Support Visits")
+				.get("/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=" + OUTPATIENT_CLINIC_LOCATION_UUID)
+				.check(bodyString().saveAs("locationsThatSupportVisits"));
+	}
+
+	public HttpRequestActionBuilder submitVisitAttributes(String visitUuid) {
+		String requestBody = """
+				{
+				attributeType: "57ea0cbb-064f-4d09-8cf4-e8228700491c",
+				value: "90af4b72-442a-4fcc-84c2-2bb1c0361737"
+				}
+				""";
+		return http("Submit the visit attributes").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
+				.body(StringBody(requestBody));
+	}
+
+	public HttpRequestActionBuilder submitAppointmentStatusChange(String appointmentUuid) {
+		return http("Submit Appointment StatusChange").post("/openmrs/ws/rest/v1/appointments/" + appointmentUuid + "/status-change")
+				.body(StringBody(session -> {
+					try {
+						Map<String, Object> statusChangeMessage = new HashMap<>();
+						statusChangeMessage.put("toStatus", "CheckedIn");
+						statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
+						statusChangeMessage.put("timeZone","Asia/Calcutta");
+
+						return new ObjectMapper().writeValueAsString(statusChangeMessage);
+					}
+					catch (JsonProcessingException e) {
+						throw new RuntimeException(e);
+					}
+				}));
+	}
 }
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=ba685651-ed3b-4e63-9b35-78893060758a
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/location?tag=Visit+Location
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/visit/298b7efe-1d48-4a4f-a810-f9bc4f10e023/attribute
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/appointments/79801223-3ae7-4e99-b7e6-1818971151fa/status-change
+
+

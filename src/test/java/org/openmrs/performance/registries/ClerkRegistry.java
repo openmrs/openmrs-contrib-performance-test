@@ -54,6 +54,14 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		    httpService.createAppointment(providerUuid, startDateTime, endDateTime));
 	}
 
+	public ChainBuilder openCheckInPatientForm(String patientUuid) {
+		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
+				httpService.getProgramEnrollments(patientUuid), httpService.getVisitLocations(),
+				httpService.getAppointmentsOfPatient(patientUuid),httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
+				httpService.submitVisitForm(patientUuid,patientUuid,patientUuid)
+		);
+	}
+
 	public ChainBuilder searchPatient() {
 		return exec(httpService.getPatients("jay")).exec(session -> {
 			String response = session.getString("patientSearchResults");

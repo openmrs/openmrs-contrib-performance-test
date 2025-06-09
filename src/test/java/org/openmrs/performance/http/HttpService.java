@@ -1,6 +1,12 @@
 package org.openmrs.performance.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
+import org.openmrs.performance.utils.CommonUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -10,6 +16,7 @@ import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
+import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 
 public abstract class HttpService {
 
@@ -87,6 +94,18 @@ public abstract class HttpService {
 		return http("Get Patient Summary Data").get("/openmrs/ws/fhir2/R4/Patient/" + patientUuid + "?_summary=data");
 	}
 
+	public HttpRequestActionBuilder getVisitTypes() {
+		return http("Get Visit Types").get("/openmrs/ws/rest/v1/visittype");
+	}
+
+	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted,"
+				+ "location:(uuid,display))";
+
+		return http("Get Program Enrollments of Patient")
+				.get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
+	}
+
 	public HttpRequestActionBuilder getPatientObservations(String patientUuid, Set<String> observationTypes) {
 		// Join the observationTypes array into a single string with "%2C" as the delimiter
 		StringJoiner joiner = new StringJoiner("%2C");
@@ -133,5 +152,49 @@ public abstract class HttpService {
 
 		return http("Get Active Visits of Patient").get(
 		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
+	}
+
+	public HttpRequestActionBuilder getAppointmentsOfPatient(String patientUuid) {
+		String startDate = getCurrentDateTimeAsString();
+		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
+
+		return http("Get Appointments of a Patient").post("/openmrs/ws/rest/v1/appointments/search")
+				.body(StringBody(requestBody));
+	}
+
+	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
+		String startDateTime = CommonUtils.getCurrentDateTimeAsString();
+
+		Map<String, String> requestBodyMap = new HashMap<>();
+		requestBodyMap.put("patient", patientUuid);
+		requestBodyMap.put("startDatetime", startDateTime);
+		requestBodyMap.put("visitType", visitTypeUuid);
+		requestBodyMap.put("location", locationUuid);
+
+		try {
+			return http("Submit Visit Form").post("/openmrs/ws/rest/v1/visit")
+					.body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)))
+					.check(jsonPath("$.uuid").saveAs("visitUuid"));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
+		String formattedStopDateTime = CommonUtils.getCurrentDateTimeAsString();
+
+		Map<String, String> requestBodyMap = new HashMap<>();
+		requestBodyMap.put("location", locationUuid);
+		requestBodyMap.put("visitType", visitTypeUuid);
+		requestBodyMap.put("stopDatetime", formattedStopDateTime);
+
+		try {
+			return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
+					.body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }
