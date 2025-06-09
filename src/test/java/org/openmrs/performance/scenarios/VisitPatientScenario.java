@@ -52,6 +52,8 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(10)
 				.exec(registry.openImmunizationsTab("#{patient_uuid}"))
 				.pause(5)
+				.exec(registry.addImmunization("#{patient_uuid}", "#{locationUuid}", "#{currentUserUuid}", "#{encounterUuid}"))
+				.pause(5)
 		        .exec(registry.openAttachmentsTab("#{patient_uuid}"))
 				.pause(5)
 		        .exec(registry.openProgramsTab("#{patient_uuid}"))

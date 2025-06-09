@@ -7,6 +7,7 @@ import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import org.openmrs.performance.utils.CommonUtils;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -236,6 +237,39 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder getImmunizations(String patientUuid) {
 		return http("Get Immunizations of Patient")
 		        .get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
+	}
+
+	public HttpRequestActionBuilder searchForImmunization(String searchQuery) {
+		String custom = """
+		        custom:(uuid,display,answers:(uuid,display),
+		        conceptMappings:(conceptReferenceTerm:(conceptSource:(name),code)))""";
+		return http("Select an Immunization").get("/openmrs/ws/rest/v1/concept?references=" + searchQuery + "&v=" + custom);
+	}
+
+	public HttpRequestActionBuilder saveImmunization(String patientUuid, String locationUuid, String currentUserUuid,
+	        String encounterUuid) {
+		Map<String, Object> immunization = new HashMap<>();
+		immunization.put("expirationDate", "2025-04-29T18:30:00.000Z");
+		immunization.put("lotNumber", "123456");
+		immunization.put("occurrenceDateTime", "2025-04-22T14:34:00.000Z");
+		immunization.put("resourceType", "Immunization");
+		immunization.put("status", "completed");
+		immunization.put("Location", Map.of("reference", "Location/" + locationUuid, "type", "Location"));
+		immunization.put("performer",
+		    List.of(Map.of("actor", Map.of("reference", "Practitioner/" + currentUserUuid, "type", "Practitioner"))));
+		immunization.put("protocolApplied", List.of(Map.of("doseNumberPositiveInt", 2, "series", null)));
+		immunization.put("vaccineCode", Map.of("coding",
+		    List.of(Map.of("code", "783AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", "display", "Polio vaccination, oral"))));
+		immunization.put("patient", Map.of("reference", "Patient/" + patientUuid, "type", "Patient"));
+		immunization.put("manufacturer", Map.of("display", "Manufacturer"));
+		immunization.put("encounter", Map.of("reference", "Encounter/" + encounterUuid, "type", "Encounter"));
+		try {
+			return http("Save Immunization").post("/openmrs/ws/fhir2/R4/Immunization?_summary=data")
+			        .body(StringBody(new ObjectMapper().writeValueAsString(immunization)));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	public HttpRequestActionBuilder getPrograms() {
