@@ -142,12 +142,10 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.getAppointments(patientUuid));
 	}
 
-	public ChainBuilder addDrugOrder(String patientUuid, String visitUuid, String currentUserUuid) {
-		String asprin_162_5mg = "a722710f-403b-451f-804b-09f8624b0838";
-		String asprinConcept = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public ChainBuilder addDrugOrder(String patientUuid) {
+
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.searchForDrug("asprin"),
-		    httpService.searchForDrug("Tylenol"),
-		    httpService.saveOrder(patientUuid, visitUuid, currentUserUuid, asprin_162_5mg, asprinConcept));
+		    httpService.searchForDrug("Tylenol"), httpService.saveOrder());
 
 	}
 
