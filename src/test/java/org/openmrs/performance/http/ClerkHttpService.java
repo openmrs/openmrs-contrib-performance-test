@@ -191,48 +191,45 @@ public class ClerkHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getVisitLocations() {
-		return http("Get Visit Locations by Tag and Query")
-				.get("/openmrs/ws/rest/v1/location?tag=Visit+Location")
-				.check(bodyString().saveAs("visitLocationsByTag"));
+		return http("Get Visit Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=Visit+Location")
+		        .check(bodyString().saveAs("visitLocationsByTag"));
 	}
 
 	public HttpRequestActionBuilder getLocationsThatSupportVisits() {
 		return http("Get Locations That Support Visits")
-				.get("/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=" + OUTPATIENT_CLINIC_LOCATION_UUID)
-				.check(bodyString().saveAs("locationsThatSupportVisits"));
+		        .get("/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=" + OUTPATIENT_CLINIC_LOCATION_UUID)
+		        .check(bodyString().saveAs("locationsThatSupportVisits"));
 	}
 
 	public HttpRequestActionBuilder submitVisitAttributes(String visitUuid) {
 		String requestBody = """
-				{
-				attributeType: "57ea0cbb-064f-4d09-8cf4-e8228700491c",
-				value: "90af4b72-442a-4fcc-84c2-2bb1c0361737"
-				}
-				""";
+		        {
+		        attributeType: "57ea0cbb-064f-4d09-8cf4-e8228700491c",
+		        value: "90af4b72-442a-4fcc-84c2-2bb1c0361737"
+		        }
+		        """;
 		return http("Submit the visit attributes").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
-				.body(StringBody(requestBody));
+		        .body(StringBody(requestBody));
 	}
 
 	public HttpRequestActionBuilder submitAppointmentStatusChange(String appointmentUuid) {
-		return http("Submit Appointment StatusChange").post("/openmrs/ws/rest/v1/appointments/" + appointmentUuid + "/status-change")
-				.body(StringBody(session -> {
-					try {
-						Map<String, Object> statusChangeMessage = new HashMap<>();
-						statusChangeMessage.put("toStatus", "CheckedIn");
-						statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
-						statusChangeMessage.put("timeZone","Asia/Calcutta");
+		return http("Submit Appointment StatusChange")
+		        .post("/openmrs/ws/rest/v1/appointments/" + appointmentUuid + "/status-change").body(StringBody(session -> {
+			        try {
+				        Map<String, Object> statusChangeMessage = new HashMap<>();
+				        statusChangeMessage.put("toStatus", "CheckedIn");
+				        statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
+				        statusChangeMessage.put("timeZone", "Asia/Calcutta");
 
-						return new ObjectMapper().writeValueAsString(statusChangeMessage);
-					}
-					catch (JsonProcessingException e) {
-						throw new RuntimeException(e);
-					}
-				}));
+				        return new ObjectMapper().writeValueAsString(statusChangeMessage);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
 	}
 }
 //https://dev3.openmrs.org/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=ba685651-ed3b-4e63-9b35-78893060758a
 //https://dev3.openmrs.org/openmrs/ws/rest/v1/location?tag=Visit+Location
 //https://dev3.openmrs.org/openmrs/ws/rest/v1/visit/298b7efe-1d48-4a4f-a810-f9bc4f10e023/attribute
 //https://dev3.openmrs.org/openmrs/ws/rest/v1/appointments/79801223-3ae7-4e99-b7e6-1818971151fa/status-change
-
-

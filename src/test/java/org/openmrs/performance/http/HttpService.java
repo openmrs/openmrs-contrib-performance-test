@@ -100,10 +100,10 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted,"
-				+ "location:(uuid,display))";
+		        + "location:(uuid,display))";
 
 		return http("Get Program Enrollments of Patient")
-				.get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
+		        .get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
 	}
 
 	public HttpRequestActionBuilder getPatientObservations(String patientUuid, Set<String> observationTypes) {
@@ -159,7 +159,7 @@ public abstract class HttpService {
 		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
 
 		return http("Get Appointments of a Patient").post("/openmrs/ws/rest/v1/appointments/search")
-				.body(StringBody(requestBody));
+		        .body(StringBody(requestBody));
 	}
 
 	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
@@ -173,8 +173,8 @@ public abstract class HttpService {
 
 		try {
 			return http("Submit Visit Form").post("/openmrs/ws/rest/v1/visit")
-					.body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)))
-					.check(jsonPath("$.uuid").saveAs("visitUuid"));
+			        .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)))
+			        .check(jsonPath("$.uuid").saveAs("visitUuid"));
 		}
 		catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
@@ -191,7 +191,7 @@ public abstract class HttpService {
 
 		try {
 			return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
-					.body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)));
+			        .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)));
 		}
 		catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
