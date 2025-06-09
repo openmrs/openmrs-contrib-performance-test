@@ -104,7 +104,7 @@ public abstract class HttpService {
 		        + "encounterProviders:(uuid,display,encounterRole:(uuid,display),provider:(uuid,person:(uuid,display)))),"
 		        + "visitType:(uuid,name,display),startDatetime,stopDatetime,patient,attributes:(attributeType:ref,display,uuid,value)";
 
-		return http("Get Patient's current visit")
+		return http("Get Current Visit of Patient")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
 	}
 
@@ -149,7 +149,7 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
-		return http("Get the status of patient's death").get(
+		return http("Get Patient Death Status").get(
 		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
 	}
 
