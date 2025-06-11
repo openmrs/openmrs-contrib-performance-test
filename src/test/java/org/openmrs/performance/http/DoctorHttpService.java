@@ -25,7 +25,7 @@ import static org.openmrs.performance.Constants.ASPRIN_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.ASPRIN_DRUG_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
-import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
+import static org.openmrs.performance.Constants.OTHER_NON_CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
@@ -168,6 +168,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
+		// Here we are using the OTHER type Allergen ,thus creating unique allergy and avoiding the allergy duplication issue
 		return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
 		        .body(StringBody(session -> {
 			        try {
@@ -176,7 +177,7 @@ public class DoctorHttpService extends HttpService {
 				        Map<String, Object> payload = new HashMap<>();
 				        Map<String, String> codedAllergen = new HashMap<>();
 
-				        codedAllergen.put("uuid", CODED_ALLERGEN_UUID);
+				        codedAllergen.put("uuid", OTHER_NON_CODED_ALLERGEN_UUID);
 				        Map<String, Object> allergen = new HashMap<>();
 
 				        allergen.put("allergenType", "OTHER");
