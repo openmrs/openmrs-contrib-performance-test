@@ -50,8 +50,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder endVisit(String patientUuid) {
-		return exec(httpService.submitEndVisit("#{visitUuid}", OUTPATIENT_CLINIC_LOCATION_UUID, FACULTY_VISIT_TYPE_UUID))
-		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
+		return exec(httpService.submitEndVisit("#{visitUuid}")).exec(httpService.getCurrentVisit(patientUuid))
+		        .exec(httpService.getVisitsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder getVisitsFromNewEndpoint(String patientUuid) {

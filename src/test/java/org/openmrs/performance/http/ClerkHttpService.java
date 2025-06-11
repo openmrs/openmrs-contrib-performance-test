@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import org.openmrs.performance.utils.CommonUtils;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
@@ -15,6 +19,7 @@ import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.PATIENT_IDENTIFICATION_PHOTO;
 import static org.openmrs.performance.Constants.GENERAL_MEDICINE_SERVICE_UUID;
+import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 
 public class ClerkHttpService extends HttpService {
@@ -150,44 +155,60 @@ public class ClerkHttpService extends HttpService {
 		return http("Get All Providers").get("/openmrs/ws/rest/v1/provider");
 	}
 
-	public HttpRequestActionBuilder checkAppointmentConflicts(String patientUuid, String startDateTime, String endDateTime) {
-		String requestBody = String.format("""
-		        {
-		            "patientUuid": "%s",
-		            "serviceUuid": "%s",
-		            "startDateTime": "%s",
-		            "endDateTime": "%s",
-		            "providers": [],
-		            "locationUuid": "%s",
-		            "appointmentKind": "Scheduled"
-		        }
-		        """, patientUuid, GENERAL_MEDICINE_SERVICE_UUID, startDateTime, endDateTime,
-		    OUTPATIENT_CLINIC_LOCATION_UUID);
+	public HttpRequestActionBuilder checkAppointmentConflicts() {
+
 		return http("Check Appointment Conflicts").post("/openmrs/ws/rest/v1/appointments/conflicts")
-		        .body(StringBody(requestBody));
+		        .body(StringBody(session -> {
+
+			        String startDatetime = getCurrentDateTimeAsString();
+			        String endDatetime = getAdjustedDateTimeAsString(0, 1);
+			        session.set("startDateTime", startDatetime);
+			        session.set("endDateTime", endDatetime);
+
+			        Map<String, Object> payload = new HashMap<>();
+			        payload.put("patientUuid", session.get("patient_uuid"));
+			        payload.put("serviceUuid", GENERAL_MEDICINE_SERVICE_UUID);
+			        payload.put("startDateTime", getCurrentDateTimeAsString());
+			        payload.put("endDateTime", getAdjustedDateTimeAsString(0, 1));
+			        payload.put("providers", new ArrayList<>());
+			        payload.put("locationUuid", OUTPATIENT_CLINIC_LOCATION_UUID);
+			        payload.put("appointmentKind", "Scheduled");
+			        try {
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
 	}
 
-	public HttpRequestActionBuilder createAppointment(String patientUuid, String startDateTime, String endDateTime) {
-		String requestBody = String.format("""
-		        {
-		            "appointmentKind": "Scheduled",
-		            "status": "",
-		            "serviceUuid": "%s",
-		            "startDateTime": "%s",
-		            "endDateTime": "%s",
-		            "locationUuid": "%s",
-		            "providers": [
-		                {
-		                    "uuid": "705f5791-07a7-44b8-932f-a81f3526fc98"
-		                }
-		            ],
-		            "patientUuid": "%s",
-		            "comments": "Hi",
-		            "dateAppointmentScheduled": "2025-03-24T23:01:46+05:30"
-		        }
-		        """, GENERAL_MEDICINE_SERVICE_UUID, startDateTime, endDateTime, OUTPATIENT_CLINIC_LOCATION_UUID,
-		    patientUuid);
-		return http("Create Appointment").post("/openmrs/ws/rest/v1/appointment").body(StringBody(requestBody));
+	public HttpRequestActionBuilder createAppointment() {
+
+		return http("Create Appointment").post("/openmrs/ws/rest/v1/appointment").body(StringBody(session -> {
+			Map<String, Object> payload = new HashMap<>();
+
+			payload.put("appointmentKind", "Scheduled");
+			payload.put("status", "");
+			payload.put("serviceUuid", GENERAL_MEDICINE_SERVICE_UUID);
+			payload.put("startDateTime", session.get("startDateTime"));
+			payload.put("endDateTime", session.get("endDateTime"));
+			payload.put("locationUuid", OUTPATIENT_CLINIC_LOCATION_UUID);
+
+			Map<String, String> provider = new HashMap<>();
+			provider.put("uuid", "705f5791-07a7-44b8-932f-a81f3526fc98");
+
+			List<Map<String, String>> providers = Collections.singletonList(provider);
+			payload.put("providers", providers);
+			payload.put("patientUuid", session.get("patient_uuid"));
+			payload.put("comments", "Hi");
+			payload.put("dateAppointmentScheduled", "2025-03-24T23:01:46+05:30");
+			try {
+				return new ObjectMapper().writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		})).check(jsonPath("$.uuid").saveAs("appointmentUuid"));
 	}
 
 	public HttpRequestActionBuilder getVisitLocations() {
@@ -201,23 +222,12 @@ public class ClerkHttpService extends HttpService {
 		        .check(bodyString().saveAs("locationsThatSupportVisits"));
 	}
 
-	public HttpRequestActionBuilder submitVisitAttributes(String visitUuid) {
-		String requestBody = """
-		        {
-		        attributeType: "57ea0cbb-064f-4d09-8cf4-e8228700491c",
-		        value: "90af4b72-442a-4fcc-84c2-2bb1c0361737"
-		        }
-		        """;
-		return http("Submit the visit attributes").post("/openmrs/ws/rest/v1/visit/" + visitUuid)
-		        .body(StringBody(requestBody));
-	}
-
-	public HttpRequestActionBuilder submitAppointmentStatusChange(String appointmentUuid) {
+	public HttpRequestActionBuilder submitAppointmentStatusChange(String appointmentUuid, String status) {
 		return http("Submit Appointment StatusChange")
 		        .post("/openmrs/ws/rest/v1/appointments/" + appointmentUuid + "/status-change").body(StringBody(session -> {
 			        try {
 				        Map<String, Object> statusChangeMessage = new HashMap<>();
-				        statusChangeMessage.put("toStatus", "CheckedIn");
+				        statusChangeMessage.put("toStatus", status);
 				        statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
 				        statusChangeMessage.put("timeZone", "Asia/Calcutta");
 
@@ -229,7 +239,3 @@ public class ClerkHttpService extends HttpService {
 		        }));
 	}
 }
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=ba685651-ed3b-4e63-9b35-78893060758a
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/location?tag=Visit+Location
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/visit/298b7efe-1d48-4a4f-a810-f9bc4f10e023/attribute
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/appointments/79801223-3ae7-4e99-b7e6-1818971151fa/status-change

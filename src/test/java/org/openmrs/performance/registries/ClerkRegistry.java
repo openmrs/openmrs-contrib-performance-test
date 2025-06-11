@@ -45,21 +45,23 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		    httpService.getAllProviders(), httpService.getActiveVisitOfPatient(patientUuid));
 	}
 
-	public ChainBuilder createAppointment(String providerUuid) {
-		Random random = new Random();
-		int randomDay = random.nextInt(100);
-		String startDateTime = getAdjustedDateTimeAsString(randomDay);
-		String endDateTime = getAdjustedDateTimeAsString(randomDay, 1);
-		return exec(httpService.checkAppointmentConflicts(providerUuid, startDateTime, endDateTime),
-		    httpService.createAppointment(providerUuid, startDateTime, endDateTime));
+	public ChainBuilder createAppointment() {
+		return exec(httpService.checkAppointmentConflicts(), httpService.createAppointment());
 	}
 
-	public ChainBuilder openCheckInPatientForm(String patientUuid) {
+	public ChainBuilder checkInPatient(String patientUuid) {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
 		    httpService.getProgramEnrollments(patientUuid), httpService.getVisitLocations(),
 		    httpService.getAppointmentsOfPatient(patientUuid),
 		    httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
-		    httpService.submitVisitForm(patientUuid, patientUuid, patientUuid));
+		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID),
+		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "CheckedIn"));
+	}
+
+	public ChainBuilder checkOutPatient() {
+		return exec(httpService.submitEndVisit("#{visitUuid}"), httpService.getVisitTypes(),
+		    httpService.getLocationsThatSupportVisits(),
+		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "Completed"));
 	}
 
 	public ChainBuilder searchPatient() {
