@@ -53,10 +53,6 @@ import static org.openmrs.performance.Constants.DIAGNOSIS_CONCEPT;
 
 public class DoctorHttpService extends HttpService {
 
-	public HttpRequestActionBuilder getVisitTypes() {
-		return http("Get Visit Types").get("/openmrs/ws/rest/v1/visittype");
-	}
-
 	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
 		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided),"
 		        + "form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),"
@@ -72,54 +68,6 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
 		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
-	}
-
-	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
-		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted,"
-		        + "location:(uuid,display))";
-
-		return http("Get Program Enrollments of Patient")
-		        .get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
-	}
-
-	public HttpRequestActionBuilder getAppointments(String patientUuid) {
-		String startDate = CommonUtils.getCurrentDateTimeAsString();
-		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
-
-		return http("Get Appointments of Patient").post("/openmrs/ws/rest/v1/appointments/search")
-		        .body(StringBody(requestBody));
-	}
-
-	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
-
-		Map<String, String> requestBodyMap = new HashMap<>();
-		requestBodyMap.put("patient", patientUuid);
-		requestBodyMap.put("startDatetime", null);
-		requestBodyMap.put("visitType", visitTypeUuid);
-		requestBodyMap.put("location", locationUuid);
-
-		try {
-			return http("Submit Visit Form").post("/openmrs/ws/rest/v1/visit")
-			        .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)))
-			        .check(jsonPath("$.uuid").saveAs("visitUuid"));
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	public HttpRequestActionBuilder submitEndVisit(String visitUuid, String locationUuid, String visitTypeUuid) {
-
-		return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid).body(StringBody(session -> {
-			try {
-				Map<String, String> requestBodyMap = new HashMap<>();
-				requestBodyMap.put("stopDatetime", CommonUtils.getCurrentDateTimeAsString());
-				return new ObjectMapper().writeValueAsString(requestBodyMap);
-			}
-			catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
-		}));
 	}
 
 	public HttpRequestActionBuilder getOrderTypes() {

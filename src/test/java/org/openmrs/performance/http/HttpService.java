@@ -1,6 +1,12 @@
 package org.openmrs.performance.http;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
+import org.openmrs.performance.utils.CommonUtils;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import java.util.StringJoiner;
 
@@ -11,6 +17,7 @@ import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.VITAL_SIGNS_CONCEPT_SET;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
+import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 
 public abstract class HttpService {
 
@@ -86,18 +93,6 @@ public abstract class HttpService {
 		return http("Get Visit Queue Entry").get("/openmrs/ws/rest/v1/visit-queue-entry??v=full&patient=" + patientUuid);
 	}
 
-	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
-		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
-		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
-		        + "visitType:(uuid,name,display),"
-		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
-		        + "location:(uuid,name,display))";
-
-		return http("Get Active Visits of Patient").get(
-		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
-	}
-
 	public HttpRequestActionBuilder getCurrentVisit(String patientUuid) {
 		String customRepresentation = "custom:(uuid,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis),form:(uuid,display),"
 		        + "encounterDatetime,orders:full,obs:full,encounterType:(uuid,display,viewPrivilege,editPrivilege),"
@@ -110,6 +105,18 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getPatientSummaryData(String patientUuid) {
 		return http("Get Patient Summary Data").get("/openmrs/ws/fhir2/R4/Patient/" + patientUuid + "?_summary=data");
+	}
+
+	public HttpRequestActionBuilder getVisitTypes() {
+		return http("Get Visit Types").get("/openmrs/ws/rest/v1/visittype");
+	}
+
+	public HttpRequestActionBuilder getProgramEnrollments(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,program,dateEnrolled,dateCompleted,"
+		        + "location:(uuid,display))";
+
+		return http("Get Program Enrollments of Patient")
+		        .get("/openmrs/ws/rest/v1/programenrollment?patient=" + patientUuid + "&v=" + customRepresentation);
 	}
 
 	public HttpRequestActionBuilder getPatientObservations(String patientUuid, Set<String> observationTypes) {
@@ -144,13 +151,64 @@ public abstract class HttpService {
 		        + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v=" + customRepresentation);
 	}
 
-	public HttpRequestActionBuilder getIsVisitsEnabled() {
-		return http("Get isVisitsEnabled").get("/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)");
+	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
+		return http("Get the status of patient's death").get(
+		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
 	}
 
-	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
-		return http("Get Patient Death Status").get(
-		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
+	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
+		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
+		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
+		        + "visitType:(uuid,name,display),"
+		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
+		        + "location:(uuid,name,display))";
+
+		return http("Get Active Visits of Patient").get(
+		    "/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&includeInactive=false");
+	}
+
+	public HttpRequestActionBuilder getAppointmentsOfPatient(String patientUuid) {
+		String startDate = getCurrentDateTimeAsString();
+		String requestBody = String.format("{\"patientUuid\":\"%s\",\"startDate\":\"%s\"}", patientUuid, startDate);
+
+		return http("Get Appointments of a Patient").post("/openmrs/ws/rest/v1/appointments/search")
+		        .body(StringBody(requestBody));
+	}
+
+	public HttpRequestActionBuilder submitVisitForm(String patientUuid, String visitTypeUuid, String locationUuid) {
+		Map<String, String> requestBodyMap = new HashMap<>();
+		requestBodyMap.put("patient", patientUuid);
+		requestBodyMap.put("startDatetime", null);
+		requestBodyMap.put("visitType", visitTypeUuid);
+		requestBodyMap.put("location", locationUuid);
+
+		try {
+			return http("Submit Visit Form").post("/openmrs/ws/rest/v1/visit")
+			        .body(StringBody(new ObjectMapper().writeValueAsString(requestBodyMap)))
+			        .check(jsonPath("$.uuid").saveAs("visitUuid"));
+		}
+		catch (JsonProcessingException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public HttpRequestActionBuilder submitEndVisit(String visitUuid) {
+
+		return http("End Visit").post("/openmrs/ws/rest/v1/visit/" + visitUuid).body(StringBody(session -> {
+			try {
+				Map<String, String> requestBodyMap = new HashMap<>();
+				requestBodyMap.put("stopDatetime", CommonUtils.getCurrentDateTimeAsString());
+				return new ObjectMapper().writeValueAsString(requestBodyMap);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		}));
+	}
+
+	public HttpRequestActionBuilder getIsVisitsEnabled() {
+		return http("Get isVisitsEnabled").get("/openmrs/ws/rest/v1/systemsetting/visits.enabled?v=custom:(value)");
 	}
 
 	public HttpRequestActionBuilder getVitalConceptSetDetails() {
