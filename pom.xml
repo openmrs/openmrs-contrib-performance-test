@@ -9,7 +9,7 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gatling.version>3.13.5</gatling.version>
+    <gatling.version>3.14.3</gatling.version>
     <gatling-maven-plugin.version>4.19.0</gatling-maven-plugin.version>
     <maven-compiler-plugin.version>3.14.0</maven-compiler-plugin.version>
     <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
@@ -34,7 +34,7 @@
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
-      <version>5.12.2</version>
+      <version>5.13.1</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -106,7 +106,7 @@
 					<dependency>
 						<groupId>org.openmrs.tools</groupId>
 						<artifactId>openmrs-tools</artifactId>
-						<version>2.7.3</version>
+						<version>2.7.4</version>
 					</dependency>
 				</dependencies>
       </plugin>
