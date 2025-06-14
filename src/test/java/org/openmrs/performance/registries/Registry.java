@@ -9,6 +9,7 @@ import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
 import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
