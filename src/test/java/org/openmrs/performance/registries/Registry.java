@@ -3,6 +3,7 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.HttpService;
 
+import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
@@ -19,6 +20,7 @@ import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
+import static org.openmrs.performance.utils.CommonUtils.extractPatientIds;
 
 public abstract class Registry<H extends HttpService> {
 
@@ -57,5 +59,14 @@ public abstract class Registry<H extends HttpService> {
 		    httpService.getPatientObservations(patientUuid, vitals),
 		    httpService.getPatientObservations(patientUuid, biometrics), httpService.getVisitQueueEntry(patientUuid),
 		    httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
+	}
+
+	public ChainBuilder searchPatient() {
+		return exec(httpService.getPatients("jay")).exec(session -> {
+			String response = session.getString("patientSearchResults");
+			List<String> patientIDs = extractPatientIds(response);
+			return session.set("patientIDs", patientIDs);
+		}).foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
+		    httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}")));
 	}
 }

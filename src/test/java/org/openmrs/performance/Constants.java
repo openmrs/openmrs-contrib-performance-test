@@ -18,7 +18,17 @@ public class Constants {
 
 	public static final String TEST_ORDER_TYPE_UUID = "52a447d3-a64a-11e3-9aeb-50e549534c5e";
 
+	public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "e22e39fd-7db2-45e7-80f1-60fa0d5a4378";
+
+	public static final String DISCHARGE_ENCOUNTER_TYPE_UUID = "181820aa-88c9-479b-9077-af92f5364329";
+
 	public static final String FACULTY_VISIT_TYPE_UUID = "7b0f5697-27e3-40c4-8bae-f4049abfb4ed";
+
+	public static final String BED_ASSIGNMENT_UUID = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+
+	public static final String WARD1_CLINIC_LOCATION_UUID = "184ac7d9-225a-41f8-bac7-c87b1327e1b0";
+
+	public static final String TRANSFER_PATIENT_REQUEST = "b2c4d5e6-7f8a-4e9b-8c1d-2e3f8e4a3b8f";
 
 	public static final String CARE_SETTING_UUID = "6f0c9a92-6f24-11e3-af88-005056821db0";
 
@@ -27,6 +37,8 @@ public class Constants {
 	public static final String PATIENT_IDENTIFICATION_PHOTO = "736e8771-e501-4615-bfa7-570c03f4bef5";
 
 	public static final String GENERAL_MEDICINE_SERVICE_UUID = "7ba3aa21-cc56-47ca-bb4d-a60549f666c0";
+
+	public static final String WARD_ADMISSION_NOTE_UUID = "161011AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	// Observation Types
 	public static final String VITAL_SIGNS_CONCEPT_SET = "1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

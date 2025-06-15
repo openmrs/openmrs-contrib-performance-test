@@ -10,7 +10,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
@@ -120,19 +119,6 @@ public class ClerkHttpService extends HttpService {
 		                + "&fromStartDate=2025-06-02&location=" + locationUuid);
 	}
 
-	public HttpRequestActionBuilder getPatients(String searchQuery) {
-		String customRepresentation = "custom:(patientId,uuid,identifiers,display,patientIdentifier:(uuid,identifier),"
-		        + "person:(gender,age,birthdate,birthdateEstimated,personName,addresses,display,dead,deathDate),attributes:"
-		        + "(value,attributeType:(uuid,display)))";
-		return http("Get Patients").get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
-		        + "&includeDead=false&limit=50&totalCount=true").check(bodyString().saveAs("patientSearchResults"));
-	}
-
-	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
-		return http("Get patient's identification photo").get(
-		    "/openmrs/ws/rest/v1/obs?patient=" + patientUuid + "&concept=" + PATIENT_IDENTIFICATION_PHOTO + "&v=full");
-	}
-
 	public HttpRequestActionBuilder getAppointmentLocations() {
 		return http("Get Appointment Locations").get("/openmrs/ws/rest/v1/location?tag=Appointment+Location");
 	}
@@ -209,17 +195,6 @@ public class ClerkHttpService extends HttpService {
 				throw new RuntimeException(e);
 			}
 		})).check(jsonPath("$.uuid").saveAs("appointmentUuid"));
-	}
-
-	public HttpRequestActionBuilder getVisitLocations() {
-		return http("Get Visit Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=Visit+Location")
-		        .check(bodyString().saveAs("visitLocationsByTag"));
-	}
-
-	public HttpRequestActionBuilder getLocationsThatSupportVisits() {
-		return http("Get Locations That Support Visits")
-		        .get("/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=" + OUTPATIENT_CLINIC_LOCATION_UUID)
-		        .check(bodyString().saveAs("locationsThatSupportVisits"));
 	}
 
 	public HttpRequestActionBuilder submitAppointmentStatusChange(String appointmentUuid, String status) {
