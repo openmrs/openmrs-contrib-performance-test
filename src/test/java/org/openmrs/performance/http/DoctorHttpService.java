@@ -168,7 +168,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
-		// Here we are using the OTHER type Allergen ,thus creating unique allergy and avoiding the allergy duplication issue
+		// Using the 'OTHER' allergen type to create a unique entry and avoid duplication
 		return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
 		        .body(StringBody(session -> {
 			        try {
