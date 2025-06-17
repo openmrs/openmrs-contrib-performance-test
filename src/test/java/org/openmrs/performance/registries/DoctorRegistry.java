@@ -149,7 +149,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder discontinueDrugOrder() {
-		return exec(httpService.deleteDrugOrder());
+		return exec(httpService.discontinueDrugOrder());
 	}
 
 	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {

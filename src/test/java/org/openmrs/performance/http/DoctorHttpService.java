@@ -326,7 +326,7 @@ public class DoctorHttpService extends HttpService {
 		})).check(jsonPath("$.uuid").saveAs("orderUuid"));
 	}
 
-	public HttpRequestActionBuilder deleteDrugOrder() {
+	public HttpRequestActionBuilder discontinueDrugOrder() {
 		return http("Discontinue the drug order").post("/openmrs/ws/rest/v1/order").body(StringBody(session -> {
 			Map<String, Object> order = new HashMap<>();
 			order.put("action", "DISCONTINUE");
