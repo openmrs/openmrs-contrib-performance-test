@@ -3,7 +3,6 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.DoctorHttpService;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
@@ -149,7 +148,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	}
 
-	public ChainBuilder deleteDrugOrder() {
+	public ChainBuilder discontinueDrugOrder() {
 		return exec(httpService.deleteDrugOrder());
 	}
 
