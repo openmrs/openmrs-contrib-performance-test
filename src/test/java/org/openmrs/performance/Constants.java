@@ -12,6 +12,8 @@ public class Constants {
 
 	public static final String ENV_TIER_COUNT = "TIER_COUNT";
 
+	public static final String ADMIN_SUPER_USER_UUID= "705f5791-07a7-44b8-932f-a81f3526fc98";
+
 	public static final String OUTPATIENT_CLINIC_LOCATION_UUID = "44c3efb0-2583-4c80-a79e-1f756a03c0a1";
 
 	public static final String FACULTY_VISIT_TYPE_UUID = "7b0f5697-27e3-40c4-8bae-f4049abfb4ed";

@@ -4,7 +4,6 @@ import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.ClerkHttpService;
 
 import java.util.List;
-import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
@@ -39,7 +38,7 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 	}
 
 	public ChainBuilder openAppointmentFormPage(String patientUuid) {
-		return exec(httpService.getAppointmentLocations(), httpService.getPatientLifeStatus(patientUuid),
+		return exec(httpService.getLocationsByTag("Appointment+Location"), httpService.getPatientLifeStatus(patientUuid),
 		    httpService.getPatientSummaryData(patientUuid), httpService.getAllAppointmentServices(),
 		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientQueueEntry(patientUuid),
 		    httpService.getAllProviders(), httpService.getActiveVisitOfPatient(patientUuid));
@@ -51,7 +50,7 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 
 	public ChainBuilder checkInPatient(String patientUuid) {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
-		    httpService.getProgramEnrollments(patientUuid), httpService.getVisitLocations(),
+		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
 		    httpService.getAppointmentsOfPatient(patientUuid),
 		    httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
 		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID),

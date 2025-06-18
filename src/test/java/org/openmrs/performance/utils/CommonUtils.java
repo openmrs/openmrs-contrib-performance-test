@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -69,6 +70,11 @@ public class CommonUtils {
 
 	private static String formatDateTime(ZonedDateTime dateTime) {
 		return dateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSXXX"));
+	}
+
+	public static String getCurrentTimeZone() {
+		TimeZone timeZone = TimeZone.getDefault();
+		return  timeZone.getID();
 	}
 
 }
