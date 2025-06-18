@@ -74,7 +74,7 @@ public class CommonUtils {
 
 	public static String getCurrentTimeZone() {
 		TimeZone timeZone = TimeZone.getDefault();
-		return  timeZone.getID();
+		return timeZone.getID();
 	}
 
 }

@@ -14,6 +14,7 @@ import java.util.stream.Stream;
 public class SharedPoolFeeder {
 
 	public static final BlockingQueue<String> uuidPool = new LinkedBlockingQueue<>();
+
 	private static final Logger logger = Logger.getLogger(SharedPoolFeeder.class.getName());
 
 	static {
@@ -38,8 +39,9 @@ public class SharedPoolFeeder {
 					throw new RuntimeException("UUID pool exhausted: no more UUIDs available");
 				}
 
-				return Map.<String, Object>of("patient_uuid", uuid);
-			} catch (InterruptedException e) {
+				return Map.<String, Object> of("patient_uuid", uuid);
+			}
+			catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				logger.severe("Feeder interrupted while waiting for UUID: " + e.getMessage());
 				throw new RuntimeException("Feeder interrupted", e);

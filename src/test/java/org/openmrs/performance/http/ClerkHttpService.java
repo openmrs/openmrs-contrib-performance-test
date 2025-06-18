@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
 import org.openmrs.performance.utils.CommonUtils;
 
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -120,9 +122,11 @@ public class ClerkHttpService extends HttpService {
 		String customRepresentation = "custom:(uuid,patient:(uuid,identifiers:(identifier,uuid),person:(age,display,gender,"
 		        + "uuid)),visitType:(uuid,name,display),location:(uuid,name,display),startDatetime,stopDatetime)";
 
+		String startDate = URLEncoder.encode(getCurrentDateTimeAsString(), StandardCharsets.UTF_8);
+
 		return http("Get all visits of the given location with date")
 		        .get("/openmrs/ws/rest/v1/visit?includeInactive=true&includeParentLocations=true&v=" + customRepresentation
-		                + "&fromStartDate=" + getCurrentDateTimeAsString() + "&location=" + locationUuid);
+		                + "&fromStartDate=" + startDate + "&location=" + locationUuid);
 	}
 
 	public HttpRequestActionBuilder getPatients(String searchQuery) {
@@ -228,10 +232,10 @@ public class ClerkHttpService extends HttpService {
 		return http("Submit Appointment StatusChange")
 		        .post("/openmrs/ws/rest/v1/appointments/" + appointmentUuid + "/status-change").body(StringBody(session -> {
 
-					Map<String, Object> statusChangeMessage = new HashMap<>();
-					statusChangeMessage.put("toStatus", status);
-					statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
-					statusChangeMessage.put("timeZone", getCurrentTimeZone());
+			        Map<String, Object> statusChangeMessage = new HashMap<>();
+			        statusChangeMessage.put("toStatus", status);
+			        statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
+			        statusChangeMessage.put("timeZone", getCurrentTimeZone());
 
 			        try {
 				        return new ObjectMapper().writeValueAsString(statusChangeMessage);
