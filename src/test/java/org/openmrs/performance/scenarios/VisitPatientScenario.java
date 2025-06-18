@@ -62,6 +62,8 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 		        .exec(registry.addDrugOrder("#{patient_uuid}"))
 				.pause(5)
+				.exec(registry.discontinueDrugOrder()) // Delete drug order end-point was introduces to overcome the drug duplication issue
+				.pause(5)
 		        .exec(registry.addVisitNote("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
 		        .exec(registry.endVisit("#{patient_uuid}"));
