@@ -3,6 +3,10 @@ package org.openmrs.performance.scenarios;
 import io.gatling.javaapi.core.FeederBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import org.openmrs.performance.registries.DoctorRegistry;
+import org.openmrs.performance.utils.SharedPoolFeeder;
+
+import java.util.Iterator;
+import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.csv;
 import static io.gatling.javaapi.core.CoreDsl.scenario;
@@ -15,7 +19,7 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 
 	@Override
 	public ScenarioBuilder getScenarioBuilder() {
-		FeederBuilder<String> patientUuidFeeder = csv("patient_uuids.csv").circular();
+		Iterator<Map<String, Object>> patientUuidFeeder = SharedPoolFeeder.feeder();
 
 		// @formatter:off
 		return scenario("Doctor - Visit Patient").feed(patientUuidFeeder)
@@ -66,7 +70,12 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 		        .exec(registry.addVisitNote("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
-		        .exec(registry.endVisit("#{patient_uuid}"));
+		        .exec(registry.endVisit("#{patient_uuid}"))
+				.exec(session -> {
+					String uuid = session.getString("patient_uuid");
+					SharedPoolFeeder.returnUuid(uuid);
+					return session;
+				});
 		// @formatter:on
 	}
 
