@@ -3,7 +3,6 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.DoctorHttpService;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
@@ -43,14 +42,15 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
 		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
-		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointments(patientUuid)).pause(5)
+		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointmentsOfPatient(patientUuid))
+		        .pause(5)
 		        .exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
 		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder endVisit(String patientUuid) {
-		return exec(httpService.submitEndVisit("#{visitUuid}", OUTPATIENT_CLINIC_LOCATION_UUID, FACULTY_VISIT_TYPE_UUID))
-		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
+		return exec(httpService.submitEndVisit("#{visitUuid}")).exec(httpService.getCurrentVisit(patientUuid))
+		        .exec(httpService.getVisitsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder getVisitsFromNewEndpoint(String patientUuid) {
@@ -139,7 +139,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder openAppointmentsTab(String patientUuid) {
-		return exec(httpService.getAppointments(patientUuid));
+		return exec(httpService.getAppointmentsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder addDrugOrder(String patientUuid) {
@@ -147,6 +147,10 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.searchForDrug("asprin"),
 		    httpService.searchForDrug("Tylenol"), httpService.saveOrder());
 
+	}
+
+	public ChainBuilder discontinueDrugOrder() {
+		return exec(httpService.discontinueDrugOrder());
 	}
 
 	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {
@@ -163,4 +167,5 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
+
 }

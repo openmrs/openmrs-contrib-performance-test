@@ -12,6 +12,8 @@ public class Constants {
 
 	public static final String ENV_TIER_COUNT = "TIER_COUNT";
 
+	public static final String ADMIN_SUPER_USER_UUID = "705f5791-07a7-44b8-932f-a81f3526fc98";
+
 	public static final String OUTPATIENT_CLINIC_LOCATION_UUID = "44c3efb0-2583-4c80-a79e-1f756a03c0a1";
 
 	public static final String FACULTY_VISIT_TYPE_UUID = "7b0f5697-27e3-40c4-8bae-f4049abfb4ed";
@@ -19,6 +21,10 @@ public class Constants {
 	public static final String CARE_SETTING_UUID = "6f0c9a92-6f24-11e3-af88-005056821db0";
 
 	public static final String DRUG_ORDER = "131168f4-15f5-102d-96e4-000c29c2a5d7";
+
+	public static final String PATIENT_IDENTIFICATION_PHOTO = "736e8771-e501-4615-bfa7-570c03f4bef5";
+
+	public static final String GENERAL_MEDICINE_SERVICE_UUID = "7ba3aa21-cc56-47ca-bb4d-a60549f666c0";
 
 	// Observation Types
 	public static final String VITAL_SIGNS_CONCEPT_SET = "1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -77,7 +83,7 @@ public class Constants {
 
 	public static final String ALLERGY_REACTION_UUID = "162553AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
-	public static final String CODED_ALLERGEN_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+	public static final String OTHER_NON_CODED_ALLERGEN_UUID = "5622AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	public static final String SEVERITY_UUID = "1498AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
