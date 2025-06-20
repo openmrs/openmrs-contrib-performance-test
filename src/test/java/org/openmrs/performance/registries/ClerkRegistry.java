@@ -3,14 +3,9 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.ClerkHttpService;
 
-import java.util.List;
-import java.util.Random;
-
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.*;
-import static org.openmrs.performance.utils.CommonUtils.extractPatientIds;
-import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 
 public class ClerkRegistry extends Registry<ClerkHttpService> {
 
@@ -39,7 +34,7 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 	}
 
 	public ChainBuilder openAppointmentFormPage(String patientUuid) {
-		return exec(httpService.getAppointmentLocations(), httpService.getPatientLifeStatus(patientUuid),
+		return exec(httpService.getLocationsByTag("Appointment+Location"), httpService.getPatientLifeStatus(patientUuid),
 		    httpService.getPatientSummaryData(patientUuid), httpService.getAllAppointmentServices(),
 		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientQueueEntry(patientUuid),
 		    httpService.getAllProviders(), httpService.getActiveVisitOfPatient(patientUuid));
@@ -51,7 +46,7 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 
 	public ChainBuilder checkInPatient(String patientUuid) {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
-		    httpService.getProgramEnrollments(patientUuid), httpService.getVisitLocations(),
+		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
 		    httpService.getAppointmentsOfPatient(patientUuid),
 		    httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
 		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID),
@@ -62,14 +57,5 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		return exec(httpService.submitEndVisit("#{visitUuid}"), httpService.getVisitTypes(),
 		    httpService.getLocationsThatSupportVisits(),
 		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "Completed"));
-	}
-
-	public ChainBuilder searchPatient() {
-		return exec(httpService.getPatients("jay")).exec(session -> {
-			String response = session.getString("patientSearchResults");
-			List<String> patientIDs = extractPatientIds(response);
-			return session.set("patientIDs", patientIDs);
-		}).foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
-		    httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}")));
 	}
 }

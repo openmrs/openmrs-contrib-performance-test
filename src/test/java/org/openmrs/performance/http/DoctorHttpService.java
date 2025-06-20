@@ -173,9 +173,10 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
-		return http("Get Lab Results of Patient").get(
-		    "/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid + "&_count=100&_summary=data")
-		        .check(bodyString().saveAs("labResultsResponse"));
+		return http("Get Lab Results of Patient")
+		        .get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid
+		                + "&_count=100&_summary=data")
+		        .check(jsonPath("$.entry[*].resource.code.coding[0].code").findAll().optional().saveAs("conceptIDs"));
 	}
 
 	public HttpRequestActionBuilder getObservationTree(String patientUuid, String observationTreeUuid) {

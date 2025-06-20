@@ -154,7 +154,7 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
-		return http("Get the status of patient's death").get(
+		return http("Get the status of patient death").get(
 		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
 	}
 
@@ -219,8 +219,8 @@ public abstract class HttpService {
 		        + "?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))");
 	}
 
-	public HttpRequestActionBuilder getVisitLocations() {
-		return http("Get Visit Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=Visit+Location")
+	public HttpRequestActionBuilder getLocationsByTag(String tagName) {
+		return http("Get Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=" + tagName)
 		        .check(bodyString().saveAs("visitLocationsByTag"));
 	}
 
@@ -234,12 +234,14 @@ public abstract class HttpService {
 		String customRepresentation = "custom:(patientId,uuid,identifiers,display,patientIdentifier:(uuid,identifier),"
 		        + "person:(gender,age,birthdate,birthdateEstimated,personName,addresses,display,dead,deathDate),attributes:"
 		        + "(value,attributeType:(uuid,display)))";
-		return http("Get Patients").get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
-		        + "&includeDead=false&limit=50&totalCount=true").check(bodyString().saveAs("patientSearchResults"));
+		return http("Get Patients")
+		        .get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
+		                + "&includeDead=false&limit=50&totalCount=true")
+		        .check(jsonPath("$.results[*].uuid").findAll().optional().saveAs("patientIDs"));
 	}
 
 	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
-		return http("Get patient's identification photo").get(
+		return http("Get patient identification photo").get(
 		    "/openmrs/ws/rest/v1/obs?patient=" + patientUuid + "&concept=" + PATIENT_IDENTIFICATION_PHOTO + "&v=full");
 	}
 

@@ -34,6 +34,8 @@ public class Constants {
 
 	public static final String CARE_SETTING_UUID = "6f0c9a92-6f24-11e3-af88-005056821db0";
 
+	public static final String CLINICAL_NOTES = "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
 	public static final String DRUG_ORDER = "131168f4-15f5-102d-96e4-000c29c2a5d7";
 
 	public static final String PATIENT_IDENTIFICATION_PHOTO = "736e8771-e501-4615-bfa7-570c03f4bef5";

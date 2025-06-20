@@ -13,6 +13,7 @@ import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.foreach;
 import static org.openmrs.performance.Constants.ADMISSION_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
+import static org.openmrs.performance.Constants.CLINICAL_NOTES;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DISCHARGE_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
@@ -40,7 +41,7 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 
 	public ChainBuilder admitPatientToWardPage(String patientUuid) {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
-		    httpService.getProgramEnrollments(patientUuid), httpService.getVisitLocations(),
+		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
 		    httpService.getAppointmentsOfPatient(patientUuid),
 		    httpService.getVisitsOfLocation(INPATEINT_CLINIC_LOCATION_UUID),
 		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID),
@@ -75,7 +76,7 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 		groupMember.put("value", "CIEL:167731");
 
 		Map<String, Object> transferLocationNote = new HashMap<>();
-		transferLocationNote.put("concept", "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
+		transferLocationNote.put("concept", CLINICAL_NOTES);
 		transferLocationNote.put("value", "test");
 
 		obs.put("groupMembers", List.of(transferLocationConcept, groupMember, transferLocationNote));

@@ -3,14 +3,13 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.HttpService;
 
-import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
+import static io.gatling.javaapi.core.CoreDsl.foreach;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
 import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
@@ -20,7 +19,6 @@ import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WEIGHT_KG;
-import static org.openmrs.performance.utils.CommonUtils.extractPatientIds;
 
 public abstract class Registry<H extends HttpService> {
 
@@ -62,11 +60,8 @@ public abstract class Registry<H extends HttpService> {
 	}
 
 	public ChainBuilder searchPatient() {
-		return exec(httpService.getPatients("jay")).exec(session -> {
-			String response = session.getString("patientSearchResults");
-			List<String> patientIDs = extractPatientIds(response);
-			return session.set("patientIDs", patientIDs);
-		}).foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
-		    httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}")));
+		return exec(httpService.getPatients("jay")).doIf(session -> session.contains("patientIDs"))
+		        .then(foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
+		            httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))));
 	}
 }
