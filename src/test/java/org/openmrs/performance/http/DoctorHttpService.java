@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
@@ -24,7 +25,7 @@ import static org.openmrs.performance.Constants.ASPRIN_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.ASPRIN_DRUG_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
-import static org.openmrs.performance.Constants.CODED_ALLERGEN_UUID;
+import static org.openmrs.performance.Constants.OTHER_NON_CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
@@ -115,37 +116,42 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
-		Map<String, Object> payload = new HashMap<>();
+		// Using the 'OTHER' allergen type to create a unique entry and avoid duplication
+		return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
+		        .body(StringBody(session -> {
+			        try {
+				        String random = new Random().ints(7, 'a', 'z' + 1)
+				                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
+				        Map<String, Object> payload = new HashMap<>();
+				        Map<String, String> codedAllergen = new HashMap<>();
 
-		Map<String, String> codedAllergen = new HashMap<>();
-		codedAllergen.put("uuid", CODED_ALLERGEN_UUID);
+				        codedAllergen.put("uuid", OTHER_NON_CODED_ALLERGEN_UUID);
+				        Map<String, Object> allergen = new HashMap<>();
 
-		Map<String, Object> allergen = new HashMap<>();
-		allergen.put("allergenType", "DRUG");
-		allergen.put("codedAllergen", codedAllergen);
+				        allergen.put("allergenType", "OTHER");
+				        allergen.put("codedAllergen", codedAllergen);
+				        allergen.put("nonCodedAllergen", random);
 
-		Map<String, String> severity = new HashMap<>();
-		severity.put("uuid", SEVERITY_UUID);
+				        Map<String, String> severity = new HashMap<>();
+				        severity.put("uuid", SEVERITY_UUID);
 
-		Map<String, String> reactionUuid = new HashMap<>();
-		reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
+				        Map<String, String> reactionUuid = new HashMap<>();
+				        reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
 
-		Map<String, Object> reaction = new HashMap<>();
-		reaction.put("reaction", reactionUuid);
-		List<Map<String, Object>> reactions = Collections.singletonList(reaction);
+				        Map<String, Object> reaction = new HashMap<>();
+				        reaction.put("reaction", reactionUuid);
 
-		payload.put("allergen", allergen);
-		payload.put("severity", severity);
-		payload.put("comment", "test");
-		payload.put("reactions", reactions);
-
-		try {
-			return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
-			        .body(StringBody(new ObjectMapper().writeValueAsString(payload)));
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException(e);
-		}
+				        List<Map<String, Object>> reactions = Collections.singletonList(reaction);
+				        payload.put("allergen", allergen);
+				        payload.put("severity", severity);
+				        payload.put("comment", "test");
+				        payload.put("reactions", reactions);
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
 	}
 
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
@@ -226,42 +232,63 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder saveOrder() {
 
 		return http("Save Drug Order").post("/openmrs/ws/rest/v1/encounter").body(StringBody(session -> {
+			Map<String, Object> order = new HashMap<>();
+			order.put("action", "NEW");
+			order.put("asNeeded", false);
+			order.put("asNeededCondition", null);
+			order.put("careSetting", CARE_SETTING_UUID);
+			order.put("concept", ASPRIN_CONCEPT_UUID);
+			order.put("dose", 1);
+			order.put("doseUnits", TABLET);
+			order.put("dosingInstructions", "");
+			order.put("dosingType", DEFAULT_DOSING_TYPE);
+			order.put("drug", ASPRIN_DRUG_UUID);
+			order.put("duration", null);
+			order.put("durationUnits", DAYS);
+			order.put("encounter", null);
+			order.put("frequency", ONCE_DAILY);
+			order.put("numRefills", 0);
+			order.put("orderReasonNonCoded", "reason");
+			order.put("orderer", session.getString("currentUserUuid"));
+			order.put("patient", session.getString("patient_uuid"));
+			order.put("quantity", 1);
+			order.put("quantityUnits", TABLET);
+			order.put("route", ORAL);
+			order.put("type", "drugorder");
+
+			Map<String, Object> encounter = new HashMap<>();
+
+			encounter.put("encounterType", ORDER);
+			encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+			encounter.put("patient", session.getString("patient_uuid"));
+			encounter.put("visit", session.getString("visitUuid"));
+			encounter.put("obs", new Object[0]);
+			encounter.put("orders", new Object[] { order });
+			encounter.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
 			try {
-				Map<String, Object> order = new HashMap<>();
-				order.put("action", "NEW");
-				order.put("asNeeded", false);
-				order.put("asNeededCondition", null);
-				order.put("careSetting", CARE_SETTING_UUID);
-				order.put("concept", ASPRIN_CONCEPT_UUID);
-				order.put("dose", 1);
-				order.put("doseUnits", TABLET);
-				order.put("dosingInstructions", "");
-				order.put("dosingType", DEFAULT_DOSING_TYPE);
-				order.put("drug", ASPRIN_DRUG_UUID);
-				order.put("duration", null);
-				order.put("durationUnits", DAYS);
-				order.put("encounter", session.getString("visitUuid"));
-				order.put("frequency", ONCE_DAILY);
-				order.put("numRefills", 0);
-				order.put("orderReasonNonCoded", "reason");
-				order.put("orderer", session.getString("currentUserUuid"));
-				order.put("patient", session.getString("patient_uuid"));
-				order.put("quantity", 1);
-				order.put("quantityUnits", TABLET);
-				order.put("route", ORAL);
-				order.put("type", "drugorder");
-
-				Map<String, Object> encounter = new HashMap<>();
-
-				encounter.put("encounterType", ORDER);
-				encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
-				encounter.put("patient", session.getString("patient_uuid"));
-				encounter.put("visit", session.getString("visitUuid"));
-				encounter.put("obs", new Object[0]);
-				encounter.put("orders", new Object[] { order });
-				encounter.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
-
 				return new ObjectMapper().writeValueAsString(encounter);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		})).check(jsonPath("$.uuid").saveAs("orderUuid"));
+	}
+
+	public HttpRequestActionBuilder discontinueDrugOrder() {
+		return http("Discontinue the drug order").post("/openmrs/ws/rest/v1/order").body(StringBody(session -> {
+			Map<String, Object> order = new HashMap<>();
+			order.put("action", "DISCONTINUE");
+			order.put("type", "drugorder");
+			order.put("previousOrder", null);
+			order.put("orderer", session.getString("currentUserUuid"));
+			order.put("patient", session.getString("patient_uuid"));
+			order.put("careSetting", CARE_SETTING_UUID);
+			order.put("drug", ASPRIN_DRUG_UUID);
+			order.put("concept", ASPRIN_CONCEPT_UUID);
+			order.put("orderReasonNonCoded", "reason");
+			order.put("encounter", session.getString("orderUuid"));
+			try {
+				return new ObjectMapper().writeValueAsString(order);
 			}
 			catch (JsonProcessingException e) {
 				throw new RuntimeException(e);

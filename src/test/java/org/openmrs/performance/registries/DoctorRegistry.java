@@ -149,6 +149,10 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	}
 
+	public ChainBuilder discontinueDrugOrder() {
+		return exec(httpService.discontinueDrugOrder());
+	}
+
 	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {
 		return exec(httpService.getPatientConditions(patientUuid), pause(2), httpService.searchForConditions("Pa"), pause(1),
 		    httpService.searchForConditions("Pain"), pause(1), httpService.saveCondition(patientUuid, currentUserUuid));
@@ -163,4 +167,5 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
+
 }

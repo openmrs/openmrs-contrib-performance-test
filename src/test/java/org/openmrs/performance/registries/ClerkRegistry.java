@@ -63,4 +63,13 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		    httpService.getLocationsThatSupportVisits(),
 		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "Completed"));
 	}
+
+	public ChainBuilder searchPatient() {
+		return exec(httpService.getPatients("jay")).exec(session -> {
+			String response = session.getString("patientSearchResults");
+			List<String> patientIDs = extractPatientIds(response);
+			return session.set("patientIDs", patientIDs);
+		}).foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
+		    httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}")));
+	}
 }
