@@ -152,7 +152,7 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientLifeStatus(String patientUuid) {
-		return http("Get the status of patient's death").get(
+		return http("Get the status of patient death").get(
 		    "/openmrs/ws/rest/v1/person/" + patientUuid + "?v=custom:(causeOfDeath:(display),causeOfDeathNonCoded)");
 	}
 
