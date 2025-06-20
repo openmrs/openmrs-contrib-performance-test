@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
-import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.RawFileBodyPart;
 import static io.gatling.javaapi.http.HttpDsl.StringBodyPart;
