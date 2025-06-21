@@ -33,4 +33,3 @@ public class LabTechRegistry extends Registry<LabTechHttpService> {
 		    httpService.updateFullFillerStatus("#{labOrderUuid}", "COMPLETED", "Test Results Entered"));
 	}
 }
-
