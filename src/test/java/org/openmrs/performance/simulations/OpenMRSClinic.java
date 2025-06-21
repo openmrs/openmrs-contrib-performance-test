@@ -6,6 +6,7 @@ import io.gatling.javaapi.core.Simulation;
 import io.gatling.javaapi.http.HttpProtocolBuilder;
 import org.openmrs.performance.personas.ClerkPersona;
 import org.openmrs.performance.personas.DoctorPersona;
+import org.openmrs.performance.personas.LabTechPersona;
 import org.openmrs.performance.personas.Persona;
 import org.openmrs.performance.scenarios.Scenario;
 import org.slf4j.Logger;
@@ -50,7 +51,7 @@ public class OpenMRSClinic extends Simulation {
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
 		    preset, userIncrementPerTier, tierDurationMinutes, tierCount);
 
-		List<Persona<?>> personas = List.of(new ClerkPersona(0.5), new DoctorPersona(0.5));
+		List<Persona<?>> personas = List.of(new LabTechPersona(1));
 
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 		    tierCount);
