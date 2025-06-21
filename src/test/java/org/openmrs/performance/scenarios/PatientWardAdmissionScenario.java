@@ -40,7 +40,12 @@ public class PatientWardAdmissionScenario extends Scenario<NurseRegistry> {
 				.pause(3)
 				.exec(registry.admitTheTransferPatient())
 				.pause(5)
-				.exec(registry.dischargePatient());
+				.exec(registry.dischargePatient())
+				.exec(session -> {
+					String uuid = session.getString("patient_uuid");
+					SharedPoolFeeder.returnUuid(uuid);
+					return session;
+				});
         // @formatter:on
 	}
 }
