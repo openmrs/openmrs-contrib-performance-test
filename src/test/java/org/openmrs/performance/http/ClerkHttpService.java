@@ -14,12 +14,10 @@ import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
-import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ADMIN_SUPER_USER_UUID;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
-import static org.openmrs.performance.Constants.PATIENT_IDENTIFICATION_PHOTO;
 import static org.openmrs.performance.Constants.GENERAL_MEDICINE_SERVICE_UUID;
 import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
@@ -129,20 +127,6 @@ public class ClerkHttpService extends HttpService {
 		                + "&fromStartDate=" + startDate + "&location=" + locationUuid);
 	}
 
-	public HttpRequestActionBuilder getPatients(String searchQuery) {
-		String customRepresentation = "custom:(patientId,uuid,identifiers,display,patientIdentifier:(uuid,identifier),"
-		        + "person:(gender,age,birthdate,birthdateEstimated,personName,addresses,display,dead,deathDate),attributes:"
-		        + "(value,attributeType:(uuid,display)))";
-
-		return http("Get Patients").get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
-		        + "&includeDead=false&limit=50&totalCount=true").check(bodyString().saveAs("patientSearchResults"));
-	}
-
-	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
-		return http("Get patient identification photo").get(
-		    "/openmrs/ws/rest/v1/obs?patient=" + patientUuid + "&concept=" + PATIENT_IDENTIFICATION_PHOTO + "&v=full");
-	}
-
 	public HttpRequestActionBuilder getAllAppointmentServices() {
 		return http("Get All Appointment Services(full)").get("/openmrs/ws/rest/v1/appointmentService/all/full");
 	}
@@ -217,17 +201,6 @@ public class ClerkHttpService extends HttpService {
 		})).check(jsonPath("$.uuid").saveAs("appointmentUuid"));
 	}
 
-	public HttpRequestActionBuilder getLocationsByTag(String tagName) {
-		return http("Get Visit Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=" + tagName)
-		        .check(bodyString().saveAs("visitLocationsByTag"));
-	}
-
-	public HttpRequestActionBuilder getLocationsThatSupportVisits() {
-		return http("Get Locations That Support Visits")
-		        .get("/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=" + OUTPATIENT_CLINIC_LOCATION_UUID)
-		        .check(bodyString().saveAs("locationsThatSupportVisits"));
-	}
-
 	public HttpRequestActionBuilder submitAppointmentStatusChange(String appointmentUuid, String status) {
 		return http("Submit Appointment StatusChange")
 		        .post("/openmrs/ws/rest/v1/appointments/" + appointmentUuid + "/status-change").body(StringBody(session -> {
@@ -236,7 +209,6 @@ public class ClerkHttpService extends HttpService {
 			        statusChangeMessage.put("toStatus", status);
 			        statusChangeMessage.put("onDate", getCurrentDateTimeAsString());
 			        statusChangeMessage.put("timeZone", getCurrentTimeZone());
-
 			        try {
 				        return new ObjectMapper().writeValueAsString(statusChangeMessage);
 			        }

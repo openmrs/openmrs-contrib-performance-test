@@ -13,43 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class TestCommonUtils {
 
 	@Test
-	public void testExtractConceptIds() {
-		String response = """
-		        {
-		          "resourceType": "Bundle",
-		          "entry": [
-		            {
-		              "resource": {
-		                "code": {
-		                  "coding": [
-		                    {
-		                      "code": "123"
-		                    }
-		                  ]
-		                }
-		              }
-		            },
-		            {
-		              "resource": {
-		                "code": {
-		                  "coding": [
-		                    {
-		                      "code": "456"
-		                    }
-		                  ]
-		                }
-		              }
-		            }
-		          ]
-		        }
-		        """;
-
-		List<String> expected = List.of("123", "456");
-
-		assertEquals(CommonUtils.extractConceptIds(response), expected);
-	}
-
-	@Test
 	public void testGetCurrentDateTimeAsString_Format() {
 		String currentDateTime = CommonUtils.getCurrentDateTimeAsString();
 		assertTrue(currentDateTime.matches("^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}\\.\\d{3}(Z|[+-]\\d{2}:\\d{2})$"),
