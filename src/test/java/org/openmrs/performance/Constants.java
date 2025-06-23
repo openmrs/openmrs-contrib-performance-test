@@ -1,7 +1,5 @@
 package org.openmrs.performance;
 
-import com.redis.S;
-
 public class Constants {
 
 	public static final String BASE_URL = "http://localhost";
