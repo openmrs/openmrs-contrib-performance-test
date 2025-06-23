@@ -243,6 +243,7 @@ public abstract class HttpService {
 	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
 		return http("Get patient identification photo").get(
 		    "/openmrs/ws/rest/v1/obs?patient=" + patientUuid + "&concept=" + PATIENT_IDENTIFICATION_PHOTO + "&v=full");
+	}
 
 	public HttpRequestActionBuilder getSpecificVisitDetails(String visitUuid) {
 		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,encounters:"

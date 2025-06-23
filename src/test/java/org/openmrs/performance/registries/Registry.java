@@ -10,6 +10,7 @@ import static io.gatling.javaapi.core.CoreDsl.foreach;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
+import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
 import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
@@ -59,12 +60,12 @@ public abstract class Registry<H extends HttpService> {
 		    httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
 	}
 
-
 	public ChainBuilder searchPatient() {
 		return exec(httpService.getPatients("jay")).doIf(session -> session.contains("patientIDs"))
 		        .then(foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
 		            httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))));
-  
+	}
+
 	public ChainBuilder startVisit(String patientUuid) {
 		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
 		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))

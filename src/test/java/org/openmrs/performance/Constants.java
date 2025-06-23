@@ -85,6 +85,10 @@ public class Constants {
 
 	public static final String HIV_VIRAL_LOAD = "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
+	public static final String TRANSFER_LOCATION = "731318a6-9fa9-4f68-97a9-5bd4cbc707f7";
+
+	public static final String TRANSFER_DISPOSITION = "ce085d74-323c-4c9a-9fdf-051de81dd020";
+
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 

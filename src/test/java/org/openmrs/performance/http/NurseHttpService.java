@@ -105,16 +105,6 @@ public class NurseHttpService extends HttpService {
 		}));
 	}
 
-	public HttpRequestActionBuilder getSpecificVisitDetails(String visitUuid) {
-		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,encounters:"
-		        + "(uuid,display,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:"
-		        + "(uuid,display,provider:(uuid,display))),patient:(uuid,display),visitType:(uuid,name,display),attributes:"
-		        + "(uuid,display,attributeType:(name,datatypeClassname,uuid),value),location:(uuid,name,display))";
-
-		return http("Get Specific Visit Details")
-		        .get("/openmrs/ws/rest/v1/visit/" + visitUuid + "?v=" + customRepresentation);
-	}
-
 	public HttpRequestActionBuilder getVitalsConceptRefRanges(String patientUuid, Set<String> observationTypes) {
 		StringJoiner joiner = new StringJoiner("%2C");
 		for (String code : observationTypes) {

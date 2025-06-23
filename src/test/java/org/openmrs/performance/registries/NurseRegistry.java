@@ -22,6 +22,8 @@ import static org.openmrs.performance.Constants.PULSE;
 import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TEMPERATURE_C;
+import static org.openmrs.performance.Constants.TRANSFER_DISPOSITION;
+import static org.openmrs.performance.Constants.TRANSFER_LOCATION;
 import static org.openmrs.performance.Constants.TRANSFER_PATIENT_REQUEST;
 import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WARD1_CLINIC_LOCATION_UUID;
@@ -68,11 +70,11 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 		obs.put("concept", "9ceedfb7-60e4-42ce-a11e-f2dbabc82112");
 
 		Map<String, Object> transferLocationConcept = new HashMap<>();
-		transferLocationConcept.put("concept", "731318a6-9fa9-4f68-97a9-5bd4cbc707f7");
+		transferLocationConcept.put("concept", TRANSFER_LOCATION);
 		transferLocationConcept.put("value", WARD1_CLINIC_LOCATION_UUID);
 
 		Map<String, Object> groupMember = new HashMap<>();
-		groupMember.put("concept", "ce085d74-323c-4c9a-9fdf-051de81dd020");
+		groupMember.put("concept", TRANSFER_DISPOSITION);
 		groupMember.put("value", "CIEL:167731");
 
 		Map<String, Object> transferLocationNote = new HashMap<>();
