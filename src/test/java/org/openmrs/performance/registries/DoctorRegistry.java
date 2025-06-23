@@ -36,21 +36,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		super(new DoctorHttpService());
 	}
 
-	public ChainBuilder startVisit(String patientUuid) {
-
-		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
-		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
-		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointmentsOfPatient(patientUuid))
-		        .pause(5)
-		        .exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
-		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
-	}
-
-	public ChainBuilder endVisit(String patientUuid) {
-		return exec(httpService.submitEndVisit("#{visitUuid}")).exec(httpService.getCurrentVisit(patientUuid))
-		        .exec(httpService.getVisitsOfPatient(patientUuid));
-	}
-
 	public ChainBuilder getVisitsFromNewEndpoint(String patientUuid) {
 		return exec(httpService.getVisitWithDiagnosesAndNotes(patientUuid));
 	}
@@ -133,7 +118,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	}
 
 	public ChainBuilder addDrugOrder(String patientUuid) {
-
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.searchForDrug("asprin"),
 		    httpService.searchForDrug("Tylenol"), httpService.saveOrder());
 

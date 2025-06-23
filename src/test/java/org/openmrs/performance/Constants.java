@@ -130,4 +130,11 @@ public class Constants {
 	public static final String ASPRIN_DRUG_UUID = "a722710f-403b-451f-804b-09f8624b0838";
 
 	public static final String ASPRIN_CONCEPT_UUID = "71617AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+	// Lab Order
+	public static final String TEST_ORDER_TYPE = "52a447d3-a64a-11e3-9aeb-50e549534c5e";
+
+	public static final String ALKALINE_PHOSPHATE_CONCEPT = "785AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+	public static final String ORDERABLE_LAB_TESTS = "1748a953-d12e-4be1-914c-f6b096c6cdef";
 }

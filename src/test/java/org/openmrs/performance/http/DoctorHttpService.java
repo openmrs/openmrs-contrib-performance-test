@@ -53,18 +53,6 @@ import static org.openmrs.performance.Constants.DIAGNOSIS_CONCEPT;
 
 public class DoctorHttpService extends HttpService {
 
-	public HttpRequestActionBuilder getVisitsOfPatient(String patientUuid) {
-		String customRepresentation = "custom:(uuid,location,encounters:(uuid,diagnoses:(uuid,display,rank,diagnosis,voided),"
-		        + "form:(uuid,display),encounterDatetime,orders:full,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),"
-		        + "display,groupMembers:(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),"
-		        + "encounterType:(uuid,display,viewPrivilege,editPrivilege),encounterProviders:(uuid,display,encounterRole:(uuid,display),"
-		        + "provider:(uuid,person:(uuid,display)))),visitType:(uuid,name,display),startDatetime,stopDatetime,patient,"
-		        + "attributes:(attributeType:ref,display,uuid,value)";
-
-		return http("Get Visits of Patient")
-		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
-	}
-
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
 		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
@@ -277,6 +265,7 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder discontinueDrugOrder() {
 		return http("Discontinue the drug order").post("/openmrs/ws/rest/v1/order").body(StringBody(session -> {
 			Map<String, Object> order = new HashMap<>();
+
 			order.put("action", "DISCONTINUE");
 			order.put("type", "drugorder");
 			order.put("previousOrder", null);
@@ -287,6 +276,7 @@ public class DoctorHttpService extends HttpService {
 			order.put("concept", ASPRIN_CONCEPT_UUID);
 			order.put("orderReasonNonCoded", "reason");
 			order.put("encounter", session.getString("orderUuid"));
+
 			try {
 				return new ObjectMapper().writeValueAsString(order);
 			}

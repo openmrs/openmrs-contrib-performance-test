@@ -59,9 +59,24 @@ public abstract class Registry<H extends HttpService> {
 		    httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
 	}
 
+
 	public ChainBuilder searchPatient() {
 		return exec(httpService.getPatients("jay")).doIf(session -> session.contains("patientIDs"))
 		        .then(foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
 		            httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))));
+  
+	public ChainBuilder startVisit(String patientUuid) {
+		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
+		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
+		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointmentsOfPatient(patientUuid))
+		        .pause(5)
+		        .exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
+		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
+	}
+
+	public ChainBuilder endVisit(String patientUuid) {
+		return exec(httpService.submitEndVisit("#{visitUuid}")).exec(httpService.getCurrentVisit(patientUuid))
+		        .exec(httpService.getVisitsOfPatient(patientUuid));
+
 	}
 }
