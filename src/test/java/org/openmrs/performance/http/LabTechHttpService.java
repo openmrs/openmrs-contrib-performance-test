@@ -138,7 +138,7 @@ public class LabTechHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder addLabOrder() {
-		return http("Add a lab order").post("/openmrs/ws/rest/v1/order/").body(StringBody(session -> {
+		return http("Add a lab order").post("/openmrs/ws/rest/v1/encounter").body(StringBody(session -> {
 			Map<String, Object> payload = new HashMap<>();
 
 			payload.put("patient", session.getString("patient_uuid"));
