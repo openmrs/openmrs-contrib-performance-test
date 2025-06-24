@@ -17,6 +17,6 @@ public class ClerkPersona extends Persona<ClerkRegistry> {
 	@Override
 	public List<Scenario<ClerkRegistry>> getScenarios() {
 		return List.of(new PatientRegistrationScenario(0.4F), new PatientAppointmentCreationScenario(0.4F),
-				new PatientListCreationScenario(0.2F));
+		    new PatientListCreationScenario(0.2F));
 	}
 }
