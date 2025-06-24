@@ -16,15 +16,33 @@ public class Constants {
 
 	public static final String OUTPATIENT_CLINIC_LOCATION_UUID = "44c3efb0-2583-4c80-a79e-1f756a03c0a1";
 
+	public static final String INPATEINT_CLINIC_LOCATION_UUID = "ba685651-ed3b-4e63-9b35-78893060758a";
+
+	public static final String TEST_ORDER_TYPE_UUID = "52a447d3-a64a-11e3-9aeb-50e549534c5e";
+
+	public static final String ADMISSION_ENCOUNTER_TYPE_UUID = "e22e39fd-7db2-45e7-80f1-60fa0d5a4378";
+
+	public static final String DISCHARGE_ENCOUNTER_TYPE_UUID = "181820aa-88c9-479b-9077-af92f5364329";
+
 	public static final String FACULTY_VISIT_TYPE_UUID = "7b0f5697-27e3-40c4-8bae-f4049abfb4ed";
 
+	public static final String BED_ASSIGNMENT_UUID = "f47ac10b-58cc-4372-a567-0e02b2c3d479";
+
+	public static final String WARD1_CLINIC_LOCATION_UUID = "184ac7d9-225a-41f8-bac7-c87b1327e1b0";
+
+	public static final String TRANSFER_PATIENT_REQUEST = "b2c4d5e6-7f8a-4e9b-8c1d-2e3f8e4a3b8f";
+
 	public static final String CARE_SETTING_UUID = "6f0c9a92-6f24-11e3-af88-005056821db0";
+
+	public static final String CLINICAL_NOTES = "159395AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	public static final String DRUG_ORDER = "131168f4-15f5-102d-96e4-000c29c2a5d7";
 
 	public static final String PATIENT_IDENTIFICATION_PHOTO = "736e8771-e501-4615-bfa7-570c03f4bef5";
 
 	public static final String GENERAL_MEDICINE_SERVICE_UUID = "7ba3aa21-cc56-47ca-bb4d-a60549f666c0";
+
+	public static final String WARD_ADMISSION_NOTE_UUID = "161011AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	// Observation Types
 	public static final String VITAL_SIGNS_CONCEPT_SET = "1114AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
@@ -66,6 +84,12 @@ public class Constants {
 	public static final String BLOODWORK = "8904fa2b-6a8f-437d-89ec-6fce3cd99093";
 
 	public static final String HIV_VIRAL_LOAD = "856AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
+
+	public static final String TRANSFER_LOCATION = "731318a6-9fa9-4f68-97a9-5bd4cbc707f7";
+
+	public static final String TRANSFER_DISPOSITION = "ce085d74-323c-4c9a-9fdf-051de81dd020";
+
+	public static final String TRANSFER_OBSERVATION = "9ceedfb7-60e4-42ce-a11e-f2dbabc82112";
 
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";

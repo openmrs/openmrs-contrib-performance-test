@@ -3,10 +3,10 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.DoctorHttpService;
 
-import java.util.List;
 import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
+import static io.gatling.javaapi.core.CoreDsl.foreach;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
 import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
@@ -29,8 +29,6 @@ import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.Constants.BLOODWORK;
 import static org.openmrs.performance.Constants.HEMATOLOGY;
 import static org.openmrs.performance.Constants.HIV_VIRAL_LOAD;
-
-import static org.openmrs.performance.utils.CommonUtils.extractConceptIds;
 
 public class DoctorRegistry extends Registry<DoctorHttpService> {
 
@@ -70,13 +68,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.getObservationTree(patientUuid, HEMATOLOGY))
 		        .exec(httpService.getObservationTree(patientUuid, BLOODWORK))
 		        .exec(httpService.getObservationTree(patientUuid, HIV_VIRAL_LOAD))
-		        .exec(httpService.getLabResults(patientUuid)).exec(session -> {
-			        // Extract concept IDs from the lab results response
-			        String response = session.getString("labResultsResponse");
-			        List<String> conceptIds = extractConceptIds(response);
-			        // Save concept IDs in the session
-			        return session.set("labResultConceptIds", conceptIds);
-		        }).foreach("#{labResultConceptIds}", "conceptId").on(exec(httpService.getConcept("#{conceptId}")));
+		        .exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
+		        .then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
 	}
 
 	public ChainBuilder openAllergiesTab(String patientUuid) {
@@ -116,11 +109,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder openVisitsTab(String patientUuid) {
 		return exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getPatientEncounters())
-		        .exec(httpService.getLabResults(patientUuid)).exec(session -> {
-			        String response = session.getString("labResultsResponse");
-			        List<String> conceptIds = extractConceptIds(response);
-			        return session.set("labResultConceptIds", conceptIds);
-		        }).foreach("#{labResultConceptIds}", "conceptId").on(exec(httpService.getConcept("#{conceptId}")));
+		        .exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
+		        .then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
 	}
 
 	public ChainBuilder openAppointmentsTab(String patientUuid) {

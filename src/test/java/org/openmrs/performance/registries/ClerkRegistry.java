@@ -3,13 +3,9 @@ package org.openmrs.performance.registries;
 import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.ClerkHttpService;
 
-import java.util.List;
-
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.pause;
 import static org.openmrs.performance.Constants.*;
-import static org.openmrs.performance.utils.CommonUtils.extractPatientIds;
-import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 
 public class ClerkRegistry extends Registry<ClerkHttpService> {
 
@@ -61,14 +57,5 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		return exec(httpService.submitEndVisit("#{visitUuid}"), httpService.getVisitTypes(),
 		    httpService.getLocationsThatSupportVisits(),
 		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "Completed"));
-	}
-
-	public ChainBuilder searchPatient() {
-		return exec(httpService.getPatients("jay")).exec(session -> {
-			String response = session.getString("patientSearchResults");
-			List<String> patientIDs = extractPatientIds(response);
-			return session.set("patientIDs", patientIDs);
-		}).foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
-		    httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}")));
 	}
 }

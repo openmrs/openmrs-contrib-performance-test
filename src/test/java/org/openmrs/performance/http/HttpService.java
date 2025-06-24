@@ -11,9 +11,11 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
+import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.PATIENT_IDENTIFICATION_PHOTO;
 import static org.openmrs.performance.Constants.VITAL_SIGNS_CONCEPT_SET;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
@@ -217,6 +219,32 @@ public abstract class HttpService {
 		        + "?v=custom:(setMembers:(uuid,display,hiNormal,hiAbsolute,hiCritical,lowNormal,lowAbsolute,lowCritical,units))");
 	}
 
+	public HttpRequestActionBuilder getLocationsByTag(String tagName) {
+		return http("Get Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=" + tagName)
+		        .check(bodyString().saveAs("visitLocationsByTag"));
+	}
+
+	public HttpRequestActionBuilder getLocationsThatSupportVisits() {
+		return http("Get Locations That Support Visits")
+		        .get("/openmrs/ws/rest/v1/emrapi/locationThatSupportsVisits?location=" + OUTPATIENT_CLINIC_LOCATION_UUID)
+		        .check(bodyString().saveAs("locationsThatSupportVisits"));
+	}
+
+	public HttpRequestActionBuilder getPatients(String searchQuery) {
+		String customRepresentation = "custom:(patientId,uuid,identifiers,display,patientIdentifier:(uuid,identifier),"
+		        + "person:(gender,age,birthdate,birthdateEstimated,personName,addresses,display,dead,deathDate),attributes:"
+		        + "(value,attributeType:(uuid,display)))";
+		return http("Get Patients")
+		        .get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
+		                + "&includeDead=false&limit=50&totalCount=true")
+		        .check(jsonPath("$.results[*].uuid").findAll().optional().saveAs("patientIDs"));
+	}
+
+	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
+		return http("Get patient identification photo").get(
+		    "/openmrs/ws/rest/v1/obs?patient=" + patientUuid + "&concept=" + PATIENT_IDENTIFICATION_PHOTO + "&v=full");
+	}
+
 	public HttpRequestActionBuilder getSpecificVisitDetails(String visitUuid) {
 		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,encounters:"
 		        + "(uuid,display,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,encounterProviders:"
@@ -237,6 +265,7 @@ public abstract class HttpService {
 
 		return http("Get Visits of Patient")
 		        .get("/openmrs/ws/rest/v1/visit?patient=" + patientUuid + "&v=" + customRepresentation + "&limit=5");
+
 	}
 
 }
