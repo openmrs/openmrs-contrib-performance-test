@@ -89,6 +89,8 @@ public class Constants {
 
 	public static final String TRANSFER_DISPOSITION = "ce085d74-323c-4c9a-9fdf-051de81dd020";
 
+	public static final String TRANSFER_OBSERVATION = "9ceedfb7-60e4-42ce-a11e-f2dbabc82112";
+
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 

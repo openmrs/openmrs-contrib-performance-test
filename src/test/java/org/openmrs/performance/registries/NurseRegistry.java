@@ -24,6 +24,7 @@ import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.TRANSFER_DISPOSITION;
 import static org.openmrs.performance.Constants.TRANSFER_LOCATION;
+import static org.openmrs.performance.Constants.TRANSFER_OBSERVATION;
 import static org.openmrs.performance.Constants.TRANSFER_PATIENT_REQUEST;
 import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
 import static org.openmrs.performance.Constants.WARD1_CLINIC_LOCATION_UUID;
@@ -67,7 +68,7 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 	public ChainBuilder transferPatient() {
 		Map<String, Object> obs = new HashMap<>();
 
-		obs.put("concept", "9ceedfb7-60e4-42ce-a11e-f2dbabc82112");
+		obs.put("concept", TRANSFER_OBSERVATION);
 
 		Map<String, Object> transferLocationConcept = new HashMap<>();
 		transferLocationConcept.put("concept", TRANSFER_LOCATION);
