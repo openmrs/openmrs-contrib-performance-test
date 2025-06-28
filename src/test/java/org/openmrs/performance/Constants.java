@@ -147,4 +147,13 @@ public class Constants {
 	public static final String ALKALINE_PHOSPHATE_CONCEPT = "785AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	public static final String ORDERABLE_LAB_TESTS = "1748a953-d12e-4be1-914c-f6b096c6cdef";
+
+	// Clinical forms
+	public static final String SOAP_NOTE_TEMPLATE = "289417aa-31d5-3a06-bae8-a22d870bcf1d";
+
+	public static final String SUBJECTIVE_FINDINGS = "81a60a0dbc0c478caa714d372ac533d5";
+
+	public static final String OBJECTIVE_FINDINGS = "aeec913c-9a36-4153-9a44-12bc255d7f60";
+
+	public static final String PLAN = "2ad20b043cf54dd48e698e1c8e231c99";
 }
