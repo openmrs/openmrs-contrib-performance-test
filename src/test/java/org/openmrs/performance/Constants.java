@@ -91,6 +91,10 @@ public class Constants {
 
 	public static final String TRANSFER_OBSERVATION = "9ceedfb7-60e4-42ce-a11e-f2dbabc82112";
 
+	public static final String PATIENT_IDENTIFIER_UUID = "05a29f94-c0ed-11e2-94be-8c13b969e334";
+
+	public static final String HIV_CARE_TREATMENT = "64f950e6-1b07-4ac0-8e7e-f3e148f3463f";
+
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 

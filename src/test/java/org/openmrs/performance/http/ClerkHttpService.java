@@ -73,15 +73,6 @@ public class ClerkHttpService extends HttpService {
 		        .body(StringBody(registrationRequestTemplate)).check(jsonPath("$.uuid").saveAs("patientUuid"));
 	}
 
-	public HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
-		return http("Get Person Attribute Type").get("/openmrs/ws/rest/v1/personattributetype/" + personAttributeTypeUuid);
-	}
-
-	public HttpRequestActionBuilder getOrderedAddressHierarchyLevels() {
-		return http("Get Ordered Address Hierarchy Levels")
-		        .get("/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form");
-	}
-
 	public HttpRequestActionBuilder getDefaultAppointmentService() {
 		return http("Get all default appointment services").get("/openmrs/ws/rest/v1/appointmentService/all/default");
 	}

@@ -24,6 +24,8 @@ import static org.openmrs.performance.Constants.ASPRIN_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.ASPRIN_DRUG_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
+import static org.openmrs.performance.Constants.HIV_CARE_TREATMENT;
+import static org.openmrs.performance.Constants.INPATEINT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.OTHER_NON_CODED_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.DAYS;
 import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
@@ -35,6 +37,7 @@ import static org.openmrs.performance.Constants.ONCE_DAILY;
 import static org.openmrs.performance.Constants.ORAL;
 import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
+import static org.openmrs.performance.Constants.PATIENT_IDENTIFIER_UUID;
 import static org.openmrs.performance.Constants.PULSE;
 import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SEVERITY_UUID;
@@ -374,4 +377,123 @@ public class DoctorHttpService extends HttpService {
 		}
 	}
 
+	public HttpRequestActionBuilder getPatientAttributes(String personUuid) {
+		String customRepresentation = "custom:(uuid,display,attributeType:(uuid,display,format),value)";
+		return http("Get Person Attributes")
+		        .get("/openmrs/ws/rest/v1/person/" + personUuid + "/attribute?v=" + customRepresentation);
+	}
+
+	public HttpRequestActionBuilder getPatientIdentifiers(String patientUuid) {
+		String customRepresentation = "custom:(uuid,identifier,identifierType:(uuid,required,name),preferred)";
+		return http("Get Patient Identifiers")
+		        .get("/openmrs/ws/rest/v1/patient/" + patientUuid + "/identifier?v=" + customRepresentation);
+	}
+
+	public HttpRequestActionBuilder getPatientRelationships(String personUuid) {
+		String customRepresentation = "custom:(display,uuid,personA:(age,display,birthdate,uuid),personB:(age,display,birthdate,uuid),relationshipType:(uuid,display,description,aIsToB,bIsToA))";
+		return http("Get Relationships of Person")
+		        .get("/openmrs/ws/rest/v1/relationship?v=" + customRepresentation + "&person=" + personUuid);
+	}
+
+	public HttpRequestActionBuilder editPatientDetails(String patientUuid) {
+		return http("Edit patient details").post("/openmrs/ws/rest/v1/patient/" + patientUuid).body(StringBody(session -> {
+			Map<String, Object> payload = new HashMap<>();
+
+			payload.put("uuid", session.get("patient_uuid"));
+
+			Map<String, Object> person = new HashMap<>();
+			person.put("uuid", session.get("patient_uuid"));
+
+			List<Map<String, Object>> names = new ArrayList<>();
+			Map<String, Object> nameItem = new HashMap<>();
+			nameItem.put("uuid", session.getString("patientNameId"));
+			nameItem.put("preferred", true);
+			nameItem.put("givenName", "Mark");
+			nameItem.put("familyName", "Williams");
+			names.add(nameItem);
+			person.put("names", names);
+
+			person.put("gender", "M");
+			person.put("birthdate", "1962-4-5");
+			person.put("birthdateEstimated", false);
+			person.put("attributes", new ArrayList<>());
+
+			List<Map<String, Object>> addresses = new ArrayList<>();
+			Map<String, Object> address = new HashMap<>();
+			address.put("address1", "Address16582");
+			address.put("cityVillage", "City6582");
+			address.put("stateProvince", "State6582");
+			address.put("postalCode", "898989");
+			address.put("country", "Country6582");
+			addresses.add(address);
+			person.put("addresses", addresses);
+
+			person.put("dead", false);
+
+			payload.put("person", person);
+
+			List<Map<String, Object>> identifiers = new ArrayList<>();
+			Map<String, Object> identifier = new HashMap<>();
+			identifier.put("uuid", session.getString("patientIdentifierId"));
+			identifier.put("identifier", session.getString("patientIdentifierValue"));
+			identifier.put("identifierType", PATIENT_IDENTIFIER_UUID);
+			identifier.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+			identifier.put("preferred", true);
+			identifiers.add(identifier);
+
+			payload.put("identifiers", identifiers);
+
+			try {
+				return new ObjectMapper().writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException("Error converting identifiers to JSON", e);
+			}
+		}));
+	}
+
+	public HttpRequestActionBuilder addProgramEnrollment() {
+		return http("Add new program to patient").post("/openmrs/ws/rest/v1/programenrollment").body(StringBody(session -> {
+			Map<String, Object> payload = new HashMap<>();
+
+			payload.put("program", HIV_CARE_TREATMENT);
+			payload.put("patient", session.getString("patient_uuid"));
+			payload.put("dateEnrolled", CommonUtils.getAdjustedDateTimeAsString(-1));
+			payload.put("dateCompleted", null);
+			payload.put("location", INPATEINT_CLINIC_LOCATION_UUID);
+
+			List<Object> states = new ArrayList<>();
+			payload.put("states", states);
+
+			try {
+				return new ObjectMapper().writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException("Error converting states to JSON", e);
+			}
+		})).check(jsonPath("$.uuid").saveAs("programUuid"));
+	}
+
+	public HttpRequestActionBuilder completeProgramEnrollment(String programUuid) {
+		return http("Complete the program").post("/openmrs/ws/rest/v1/programenrollment/" + programUuid)
+		        .body(StringBody(session -> {
+			        Map<String, Object> payload = new HashMap<>();
+
+			        payload.put("dateEnrolled", CommonUtils.getAdjustedDateTimeAsString(-1));
+			        payload.put("dateCompleted", CommonUtils.getCurrentDateTimeAsString());
+			        payload.put("location", INPATEINT_CLINIC_LOCATION_UUID);
+
+			        List<Object> states = new ArrayList<>();
+			        payload.put("states", states);
+
+			        try {
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException("Error converting states to JSON", e);
+			        }
+		        }));
+	}
 }
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))
+//https://dev3.openmrs.org/openmrs/ws/rest/v1/programenrollment?patient=c291b384-0c73-49a5-80f5-0b2952d39779&v=custom:(uuid,display,program,dateEnrolled,dateCompleted,location:(uuid,display),states:(startDate,endDate,voided,state:(uuid,concept:(display))))

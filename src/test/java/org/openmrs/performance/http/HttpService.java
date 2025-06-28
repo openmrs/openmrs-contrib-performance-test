@@ -106,7 +106,9 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientSummaryData(String patientUuid) {
-		return http("Get Patient Summary Data").get("/openmrs/ws/fhir2/R4/Patient/" + patientUuid + "?_summary=data");
+		return http("Get Patient Summary Data").get("/openmrs/ws/fhir2/R4/Patient/" + patientUuid + "?_summary=data").check(
+		    jsonPath("$.identifier[0].value").saveAs("patientIdentifierValue"),
+		    jsonPath("$.identifier[0].id").saveAs("patientIdentifierId"), jsonPath("$.name[0].id").saveAs("patientNameId"));
 	}
 
 	public HttpRequestActionBuilder getVisitTypes() {
@@ -268,4 +270,12 @@ public abstract class HttpService {
 
 	}
 
+	public HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
+		return http("Get Person Attribute Type").get("/openmrs/ws/rest/v1/personattributetype/" + personAttributeTypeUuid);
+	}
+
+	public HttpRequestActionBuilder getOrderedAddressHierarchyLevels() {
+		return http("Get Ordered Address Hierarchy Levels")
+		        .get("/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form");
+	}
 }
