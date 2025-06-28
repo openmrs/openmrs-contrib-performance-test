@@ -88,7 +88,7 @@ public abstract class HttpService {
 				"(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
 
 		return http("Get Patient Encounters").get("/openmrs/ws/rest/v1/encounter?patient=" + patientUuid + "&v="
-		        + customString + "order=desc&limit=20&startIndex=0&totalCount=true");
+		        + customString + "&order=desc&limit=20&startIndex=0&totalCount=true");
 	}
 
 	public HttpRequestActionBuilder getVisitQueueEntry(String patientUuid) {
