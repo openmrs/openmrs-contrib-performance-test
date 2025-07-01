@@ -261,7 +261,7 @@ public class ClerkHttpService extends HttpService {
 		})).check(jsonPath("$.uuid").saveAs("patientListUuid"));
 	}
 
-	public HttpRequestActionBuilder getPatientListDetails(String patientListUuid) {
+	public HttpRequestActionBuilder getPatientList(String patientListUuid) {
 		String customRepresentation = "custom:(uuid,name,description,display,size,attributes,startDate,endDate,cohortType)";
 
 		return http("Get patient list details")

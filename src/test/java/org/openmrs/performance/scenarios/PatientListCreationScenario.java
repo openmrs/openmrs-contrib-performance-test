@@ -22,7 +22,7 @@ public class PatientListCreationScenario extends Scenario<ClerkRegistry> {
                 .pause(3)
                 .exec(registry.createNewPatientList())
                 .pause(3)
-		        .exec(registry.openSpecificPatientList());
+		        .exec(registry.openSpecificPatientList("#{patientListUuid}"));
         // @formatter:on
 	}
 }

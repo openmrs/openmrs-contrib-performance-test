@@ -68,8 +68,7 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 		return exec(httpService.createPatientList(), httpService.getAllPatientsList());
 	}
 
-	public ChainBuilder openSpecificPatientList() {
-		return exec(httpService.getPatientListDetails("#{patientListUuid}"),
-		    httpService.getMembersOfPatientList("#{patientListUuid}"));
+	public ChainBuilder openSpecificPatientList(String patientListUuid) {
+		return exec(httpService.getPatientList(patientListUuid), httpService.getMembersOfPatientList(patientListUuid));
 	}
 }
