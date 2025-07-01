@@ -82,10 +82,10 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientEncounters(String patientUuid) {
-		String customString = "custom:(uuid,display,diagnoses:(uuid,display,rank,diagnosis,certainty,voided),encounterDatetime," +
-				"form:(uuid,display,name,description,encounterType,version,resources:(uuid,display,name,valueReference))," +
-				"encounterType,visit,patient,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:" +
-				"(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
+		String customString = "custom:(uuid,display,diagnoses:(uuid,display,rank,diagnosis,certainty,voided),encounterDatetime,"
+		        + "form:(uuid,display,name,description,encounterType,version,resources:(uuid,display,name,valueReference)),"
+		        + "encounterType,visit,patient,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:"
+		        + "(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
 
 		return http("Get Patient Encounters").get("/openmrs/ws/rest/v1/encounter?patient=" + patientUuid + "&v="
 		        + customString + "&order=desc&limit=20&startIndex=0&totalCount=true");

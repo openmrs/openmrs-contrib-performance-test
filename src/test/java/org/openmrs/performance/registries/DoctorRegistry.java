@@ -5,7 +5,6 @@ import org.openmrs.performance.http.DoctorHttpService;
 
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.foreach;
@@ -168,30 +167,30 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.completeProgramEnrollment("#{programUuid}"), httpService.getProgramEnrollments(patientUuid));
 	}
 
-	public ChainBuilder openClinicalForm(String patientUuid) {
+	public ChainBuilder openClinicalFormWorkspace(String patientUuid) {
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.getSpecificVisitDetails("#{visitUuid}"),
 		    httpService.getPatientFormEncounters(patientUuid), httpService.getAllClinicalForms());
 	}
 
-	public ChainBuilder addClinicalForm(String patientUuid) {
+	public ChainBuilder openSoapTemplateForm(String patientUuid) {
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.getSpecificVisitDetails("#{visitUuid}"),
-		    httpService.getSpecificClinicalForm(SOAP_NOTE_TEMPLATE), httpService.getPatientSummaryData(patientUuid),
-		    httpService.getEncounterRoles(), httpService.getLatestVisitNoteEncounter(patientUuid),
-		    httpService.getEncounterByUuid("#{clinicalEncounterUuid}")).exec(session -> {
+				httpService.getSpecificClinicalForm(SOAP_NOTE_TEMPLATE), httpService.getPatientSummaryData(patientUuid),
+				httpService.getEncounterRoles(), httpService.getLatestVisitNoteEncounter(patientUuid),
+				httpService.getEncounterByUuid("#{clinicalEncounterUuid}")).exec(session -> {
 
-			    List<String> clinicalFormUuids = session.get("clinicalFormUuid");
-			    if (clinicalFormUuids != null) {
-				    String clinicalConceptRef = String.join(",", clinicalFormUuids);
-				    session.remove("clinicalFormUuid");
-				    session.set("clinicalConceptRef", clinicalConceptRef);
-			    }
-			    return session;
-		    }).doIf(session -> session.contains("clinicalConceptRef"))
-		        .then(exec(httpService.getConcepts("#{clinicalConceptRef}")));
+					List<String> clinicalFormUuids = session.get("clinicalFormUuid");
+					if (clinicalFormUuids != null) {
+						String clinicalConceptRef = String.join(",", clinicalFormUuids);
+						session.remove("clinicalFormUuid");
+						session.set("clinicalConceptRef", clinicalConceptRef);
+					}
+					return session;
+				}).doIf(session -> session.contains("clinicalConceptRef"))
+				.then(exec(httpService.getConcepts("#{clinicalConceptRef}")));
 	}
 
-	public ChainBuilder submitClinicalForm(String patientUuid) {
-		return exec(httpService.saveClinicalForm(), httpService.getActiveVisitOfPatient(patientUuid),
+	public ChainBuilder saveSoapTemplateForm(String patientUuid) {
+		return exec(httpService.saveSoapTemplateClinicalForm(), httpService.getActiveVisitOfPatient(patientUuid),
 		    httpService.getSpecificVisitDetails("#{visitUuid}"));
 	}
 

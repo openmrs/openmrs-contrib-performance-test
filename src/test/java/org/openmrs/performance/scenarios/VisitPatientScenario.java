@@ -1,6 +1,5 @@
 package org.openmrs.performance.scenarios;
 
-import io.gatling.javaapi.core.FeederBuilder;
 import io.gatling.javaapi.core.ScenarioBuilder;
 import org.openmrs.performance.registries.DoctorRegistry;
 import org.openmrs.performance.utils.SharedPoolFeeder;
@@ -30,7 +29,12 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 		        .exec(registry.startVisit("#{patient_uuid}"))
 				.pause(5)
-				.exec(registry.openClinicalForm("#{patient_uuid}"))
+				.exec(registry.openClinicalFormWorkspace("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.openSoapTemplateForm("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.saveSoapTemplateForm("#{patient_uuid}"))
+				.pause(3)
 				.exec(registry.openVisitsTab("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.openEditPatientTab("#{patient_uuid}"))
@@ -79,8 +83,6 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 		        .exec(registry.addVisitNote("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
-				.exec(registry.addClinicalForm("#{patient_uuid}"))
-				.exec(registry.submitClinicalForm("#{patient_uuid}"))
 		        .exec(registry.endVisit("#{patient_uuid}"))
 				.exec(session -> {
 					String uuid = session.getString("patient_uuid");

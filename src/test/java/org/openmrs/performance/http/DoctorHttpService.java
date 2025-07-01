@@ -550,7 +550,7 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/concept?references=" + references + "&v=" + customRepresentation + "&limit=100");
 	}
 
-	public HttpRequestActionBuilder saveClinicalForm() {
+	public HttpRequestActionBuilder saveSoapTemplateClinicalForm() {
 		String customRepresentation = "custom:(uuid,encounterDatetime,encounterType:(uuid,name,description),location:"
 		        + "(uuid,name),patient:(uuid,display),encounterProviders:(uuid,provider:(uuid,name),encounterRole:(uuid,name)),"
 		        + "orders:(uuid,display,concept:(uuid,display),voided),diagnoses:(uuid,certainty,condition,formFieldPath,"
@@ -616,12 +616,3 @@ public class DoctorHttpService extends HttpService {
 		        }));
 	}
 }
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/encounter?v=custom:(uuid,encounterDatetime,encounterType:(uuid,name,viewPrivilege,editPrivilege),form:(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/form?v=custom:(uuid,name,display,encounterType:(uuid,name,viewPrivilege,editPrivilege),version,published,retired,resources:(uuid,name,dataType,valueReference))
-
-//https://dev3.openmrs.org/openmrs/ws/fhir2/R4/Encounter?patient=a94ba0f8-41b6-4dd8-af56-695b7129805f&_sort=-date&_count=1&type=d7151f82-c1f3-4152-a605-2f9ea7414a79&_summary=data
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/o3/forms/289417aa-31d5-3a06-bae8-a22d870bcf1d
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/encounterrole?v=custom:(uuid,display,name)
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/concept?references=81a60a0dbc0c478caa714d372ac533d5,aeec913c-9a36-4153-9a44-12bc255d7f60,13f82aece2cd4e3bbb950140e6cbffce,2ad20b043cf54dd48e698e1c8e231c99&v=custom:(uuid,display,conceptClass:(uuid,display),answers:(uuid,display),conceptMappings:(conceptReferenceTerm:(conceptSource:(name),code)))&limit=100
-//https://dev3.openmrs.org/openmrs/ws/fhir2/R4/Encounter?patient=a94ba0f8-41b6-4dd8-af56-695b7129805f&_sort=-date&_count=1&type=d7151f82-c1f3-4152-a605-2f9ea7414a79&_summary=data
-//https://dev3.openmrs.org/openmrs/ws/rest/v1/encounter/aadc26f2-6c55-4e0d-b876-774a0b5f8b4f?v=custom:(uuid,encounterDatetime,encounterType:(uuid,name,description),location:(uuid,name),patient:(uuid,display),encounterProviders:(uuid,provider:(uuid,name),encounterRole:(uuid,name)),orders:(uuid,display,concept:(uuid,display),voided),diagnoses:(uuid,certainty,condition,formFieldPath,formFieldNamespace,display,rank,voided,diagnosis:(coded:(uuid,display))),obs:(uuid,obsDatetime,comment,voided,groupMembers,formFieldNamespace,formFieldPath,concept:(uuid,name:(uuid,name)),value:(uuid,name:(uuid,name),names:(uuid,conceptNameType,name))))
