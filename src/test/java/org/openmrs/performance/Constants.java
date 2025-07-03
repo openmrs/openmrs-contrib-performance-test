@@ -91,6 +91,10 @@ public class Constants {
 
 	public static final String TRANSFER_OBSERVATION = "9ceedfb7-60e4-42ce-a11e-f2dbabc82112";
 
+	public static final String USER_GENERATED_PATIENT_LIST = "e71857cb-33af-4f2c-86ab-7223bcfa37ad";
+
+	public static final String SYSTEM_GENERATED_PATIENT_LIST = "eee9970e-7ca0-4e8c-a280-c33e9d5f6a04";
+
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 

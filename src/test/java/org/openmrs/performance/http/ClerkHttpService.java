@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
@@ -19,6 +20,7 @@ import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ADMIN_SUPER_USER_UUID;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.GENERAL_MEDICINE_SERVICE_UUID;
+import static org.openmrs.performance.Constants.USER_GENERATED_PATIENT_LIST;
 import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 import static org.openmrs.performance.utils.CommonUtils.getCurrentTimeZone;
@@ -216,5 +218,58 @@ public class ClerkHttpService extends HttpService {
 				        throw new RuntimeException(e);
 			        }
 		        }));
+	}
+
+	public HttpRequestActionBuilder getAllPatientsList() {
+		return getAllPatientsList("");
+	}
+
+	public HttpRequestActionBuilder getAllPatientsList(String cohortType) {
+		String customRepresentation = "custom:(uuid,name,description,display,size,attributes,cohortType)";
+		String url = "/openmrs/ws/rest/v1/cohortm/cohort?v=" + customRepresentation + "&totalCount=true";
+
+		if (cohortType != null && !cohortType.isEmpty()) {
+			String encodedCohortType = URLEncoder.encode(cohortType, StandardCharsets.UTF_8);
+			url += "&cohortType=" + encodedCohortType;
+		}
+
+		return http("Get all patient lists").get(url);
+	}
+
+	public HttpRequestActionBuilder createPatientList() {
+		return http("Create a patient list").post("/openmrs/ws/rest/v1/cohortm/cohort/").body(StringBody(session -> {
+			String random = new Random().ints(7, 'a', 'z' + 1)
+			        .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
+
+			Map<String, Object> payload = new HashMap<>();
+
+			payload.put("name", random);
+			payload.put("description", "Test");
+			payload.put("cohortType", USER_GENERATED_PATIENT_LIST);
+			payload.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
+			payload.put("startDate", getCurrentDateTimeAsString());
+			payload.put("groupCohort", false);
+			payload.put("definitionHandlerClassname",
+			    "org.openmrs.module.cohort.definition.handler.DefaultCohortDefinitionHandler");
+
+			try {
+				return new ObjectMapper().writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		})).check(jsonPath("$.uuid").saveAs("patientListUuid"));
+	}
+
+	public HttpRequestActionBuilder getPatientList(String patientListUuid) {
+		String customRepresentation = "custom:(uuid,name,description,display,size,attributes,startDate,endDate,cohortType)";
+
+		return http("Get patient list details")
+		        .get("/openmrs/ws/rest/v1/cohortm/cohort/" + patientListUuid + "?v=" + customRepresentation);
+	}
+
+	public HttpRequestActionBuilder getMembersOfPatientList(String patientListUuid) {
+		return http("Fetch members of patient list").get(
+		    "/openmrs/ws/rest/v1/cohortm/cohortmember?cohort=" + patientListUuid + "&startIndex=0&limit=10&v=full&q=");
 	}
 }
