@@ -25,21 +25,15 @@ import static org.openmrs.performance.Constants.ASPRIN_DRUG_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.OTHER_NON_CODED_ALLERGEN_UUID;
-import static org.openmrs.performance.Constants.DAYS;
-import static org.openmrs.performance.Constants.DEFAULT_DOSING_TYPE;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
 import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
-import static org.openmrs.performance.Constants.ONCE_DAILY;
-import static org.openmrs.performance.Constants.ORAL;
-import static org.openmrs.performance.Constants.ORDER;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.PULSE;
 import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SEVERITY_UUID;
 import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.TABLET;
 import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
@@ -56,15 +50,6 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
 		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
-	}
-
-	public HttpRequestActionBuilder getOrderTypes() {
-		return http("Get Order Types").get("/openmrs/ws/rest/v1/ordertype");
-	}
-
-	public HttpRequestActionBuilder getAllActiveOrders(String patientUuid) {
-		return http("Get Active Orders").get(
-		    "/openmrs/ws/rest/v1/order?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=ACTIVE");
 	}
 
 	public HttpRequestActionBuilder getDrugOrdersExceptCancelledAndExpired(String patientUuid) {
@@ -190,11 +175,6 @@ public class DoctorHttpService extends HttpService {
 		        + "&searchType=fuzzy&class=" + DIAGNOSIS_CONCEPT + "&v=custom:(uuid,display)");
 	}
 
-	public HttpRequestActionBuilder searchForDrug(String searchQuery) {
-		String customRepresentation = "custom:(uuid,display,name,strength,dosageForm:(display,uuid),concept:(display,uuid))";
-		return http("Search for Drug").get("/openmrs/ws/rest/v1/drug?name=" + searchQuery + "&v=" + customRepresentation);
-	}
-
 	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
 		String recordedDate = CommonUtils.getCurrentDateTimeAsString();
 		String onSetDate = CommonUtils.getAdjustedDateTimeAsString(-2);
@@ -215,75 +195,6 @@ public class DoctorHttpService extends HttpService {
 		catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public HttpRequestActionBuilder saveOrder() {
-
-		return http("Save Drug Order").post("/openmrs/ws/rest/v1/encounter").body(StringBody(session -> {
-			Map<String, Object> order = new HashMap<>();
-			order.put("action", "NEW");
-			order.put("asNeeded", false);
-			order.put("asNeededCondition", null);
-			order.put("careSetting", CARE_SETTING_UUID);
-			order.put("concept", ASPRIN_CONCEPT_UUID);
-			order.put("dose", 1);
-			order.put("doseUnits", TABLET);
-			order.put("dosingInstructions", "");
-			order.put("dosingType", DEFAULT_DOSING_TYPE);
-			order.put("drug", ASPRIN_DRUG_UUID);
-			order.put("duration", null);
-			order.put("durationUnits", DAYS);
-			order.put("encounter", null);
-			order.put("frequency", ONCE_DAILY);
-			order.put("numRefills", 0);
-			order.put("orderReasonNonCoded", "reason");
-			order.put("orderer", session.getString("currentUserUuid"));
-			order.put("patient", session.getString("patient_uuid"));
-			order.put("quantity", 1);
-			order.put("quantityUnits", TABLET);
-			order.put("route", ORAL);
-			order.put("type", "drugorder");
-
-			Map<String, Object> encounter = new HashMap<>();
-
-			encounter.put("encounterType", ORDER);
-			encounter.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
-			encounter.put("patient", session.getString("patient_uuid"));
-			encounter.put("visit", session.getString("visitUuid"));
-			encounter.put("obs", new Object[0]);
-			encounter.put("orders", new Object[] { order });
-			encounter.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
-			try {
-				return new ObjectMapper().writeValueAsString(encounter);
-			}
-			catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
-		})).check(jsonPath("$.uuid").saveAs("orderUuid"));
-	}
-
-	public HttpRequestActionBuilder discontinueDrugOrder() {
-		return http("Discontinue the drug order").post("/openmrs/ws/rest/v1/order").body(StringBody(session -> {
-			Map<String, Object> order = new HashMap<>();
-
-			order.put("action", "DISCONTINUE");
-			order.put("type", "drugorder");
-			order.put("previousOrder", null);
-			order.put("orderer", session.getString("currentUserUuid"));
-			order.put("patient", session.getString("patient_uuid"));
-			order.put("careSetting", CARE_SETTING_UUID);
-			order.put("drug", ASPRIN_DRUG_UUID);
-			order.put("concept", ASPRIN_CONCEPT_UUID);
-			order.put("orderReasonNonCoded", "reason");
-			order.put("encounter", session.getString("orderUuid"));
-
-			try {
-				return new ObjectMapper().writeValueAsString(order);
-			}
-			catch (JsonProcessingException e) {
-				throw new RuntimeException(e);
-			}
-		}));
 	}
 
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {

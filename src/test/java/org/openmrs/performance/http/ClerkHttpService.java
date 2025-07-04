@@ -141,10 +141,6 @@ public class ClerkHttpService extends HttpService {
 		        + "&totalCount=true&patient=" + patientUuid + "&isEnded=false");
 	}
 
-	public HttpRequestActionBuilder getAllProviders() {
-		return http("Get All Providers").get("/openmrs/ws/rest/v1/provider");
-	}
-
 	public HttpRequestActionBuilder checkAppointmentConflicts() {
 
 		return http("Check Appointment Conflicts").post("/openmrs/ws/rest/v1/appointments/conflicts")
