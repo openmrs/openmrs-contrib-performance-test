@@ -95,6 +95,10 @@ public class Constants {
 
 	public static final String HIV_CARE_TREATMENT = "64f950e6-1b07-4ac0-8e7e-f3e148f3463f";
 
+	public static final String USER_GENERATED_PATIENT_LIST = "e71857cb-33af-4f2c-86ab-7223bcfa37ad";
+
+	public static final String SYSTEM_GENERATED_PATIENT_LIST = "eee9970e-7ca0-4e8c-a280-c33e9d5f6a04";
+
 	//Conditions
 	public static final String BACK_PAIN = "114403AAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
