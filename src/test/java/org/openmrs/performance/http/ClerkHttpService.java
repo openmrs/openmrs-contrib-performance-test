@@ -186,7 +186,7 @@ public class ClerkHttpService extends HttpService {
 			List<Map<String, String>> providers = Collections.singletonList(provider);
 			payload.put("providers", providers);
 			payload.put("patientUuid", session.get("patient_uuid"));
-			payload.put("comments", "Hi");
+			payload.put("comments", "Test comments");
 			payload.put("dateAppointmentScheduled", getCurrentDateTimeAsString());
 			try {
 				return new ObjectMapper().writeValueAsString(payload);
