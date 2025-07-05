@@ -18,9 +18,15 @@ import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ADMIN_SUPER_USER_UUID;
+import static org.openmrs.performance.Constants.NOT_URGENT_PRIORITY;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.GENERAL_MEDICINE_SERVICE_UUID;
+import static org.openmrs.performance.Constants.OUTPATIENT_CONSULTATION;
+import static org.openmrs.performance.Constants.OUTPATIENT_TRIAGE;
+import static org.openmrs.performance.Constants.TRIAGE_SERVICE;
+import static org.openmrs.performance.Constants.URGENT_PRIORITY;
 import static org.openmrs.performance.Constants.USER_GENERATED_PATIENT_LIST;
+import static org.openmrs.performance.Constants.WAITING_STATUS;
 import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
 import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 import static org.openmrs.performance.utils.CommonUtils.getCurrentTimeZone;
@@ -131,16 +137,6 @@ public class ClerkHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getAllAppointmentServices() {
 		return http("Get All Appointment Services(full)").get("/openmrs/ws/rest/v1/appointmentService/all/full");
-	}
-
-	public HttpRequestActionBuilder getPatientQueueEntry(String patientUuid) {
-		String customRepresentation = "custom:(uuid,display,queue,status,patient:(uuid,display,person,identifiers:(uuid,display,identifier,identifierType)),"
-		        + "visit:(uuid,display,startDatetime,encounters:(uuid,display,diagnoses,encounterDatetime,encounterType,obs,encounterProviders,voided),"
-		        + "attributes:(uuid,display,value,attributeType)),priority,priorityComment,sortWeight,startedAt,endedAt,locationWaitingFor,queueComingFrom,"
-		        + "providerWaitingFor,previousQueueEntry)";
-
-		return http("Get Queue Entry").get("/openmrs/ws/rest/v1/queue-entry?v=" + customRepresentation
-		        + "&totalCount=true&patient=" + patientUuid + "&isEnded=false");
 	}
 
 	public HttpRequestActionBuilder getAllProviders() {
@@ -271,5 +267,101 @@ public class ClerkHttpService extends HttpService {
 	public HttpRequestActionBuilder getMembersOfPatientList(String patientListUuid) {
 		return http("Fetch members of patient list").get(
 		    "/openmrs/ws/rest/v1/cohortm/cohortmember?cohort=" + patientListUuid + "&startIndex=0&limit=10&v=full&q=");
+	}
+
+	public HttpRequestActionBuilder getQueueEntryNumber(String visitUuid) {
+		return http("Get queue entry number")
+		        .get("/openmrs/ws/rest/v1/queue-entry-number?location=" + OUTPATIENT_CLINIC_LOCATION_UUID + "&queue="
+		                + OUTPATIENT_CONSULTATION + "&visit=" + visitUuid + "&visitAttributeType=");
+	}
+
+	public HttpRequestActionBuilder submitVisitQueueEntry() {
+		return http("Submit visit queue entry").post("/openmrs/ws/rest/v1/visit-queue-entry").body(StringBody(session -> {
+			Map<String, Object> payload = new HashMap<>();
+
+			Map<String, Object> visit = new HashMap<>();
+			visit.put("uuid", session.getString("visitUuid"));
+			payload.put("visit", visit);
+
+			Map<String, Object> queueEntry = new HashMap<>();
+
+			Map<String, Object> status = new HashMap<>();
+			status.put("uuid", WAITING_STATUS);
+			queueEntry.put("status", status);
+
+			Map<String, Object> priority = new HashMap<>();
+			priority.put("uuid", NOT_URGENT_PRIORITY);
+			queueEntry.put("priority", priority);
+
+			Map<String, Object> queue = new HashMap<>();
+			queue.put("uuid", OUTPATIENT_CONSULTATION);
+			queueEntry.put("queue", queue);
+
+			Map<String, Object> patient = new HashMap<>();
+			patient.put("uuid", session.getString("patient_uuid"));
+			queueEntry.put("patient", patient);
+
+			queueEntry.put("startedAt", getCurrentDateTimeAsString());
+			queueEntry.put("sortWeight", 0);
+
+			payload.put("queueEntry", queueEntry);
+
+			try {
+				return new ObjectMapper().writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		})).check(jsonPath("$.uuid").saveAs("serviceQueueEntryUuid"));
+	}
+
+	public HttpRequestActionBuilder submitTransitionRequest() {
+		return http("Submit transition request").post("/openmrs/ws/rest/v1/queue-entry/transition")
+		        .body(StringBody(session -> {
+			        Map<String, Object> payload = new HashMap<>();
+
+			        payload.put("queueEntryToTransition", session.getString("serviceQueueEntryUuid"));
+			        payload.put("newQueue", OUTPATIENT_TRIAGE);
+			        payload.put("newStatus", WAITING_STATUS);
+			        payload.put("newPriority", URGENT_PRIORITY);
+			        payload.put("newPriorityComment", "Emergency");
+
+			        try {
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
+	}
+
+	public HttpRequestActionBuilder getServiceConceptSet() {
+		return http("Get service concept set")
+		        .get("/openmrs/ws/rest/v1/systemsetting/queue.serviceConceptSetName?v=custom:(value)")
+		        .check(jsonPath("$.value").saveAs("serviceConceptSetUuid"));
+	}
+
+	public HttpRequestActionBuilder submitNewServiceQueue() {
+		return http("Submit new Service queue").post("/openmrs/ws/rest/v1/queue").body(StringBody(session -> {
+			Map<String, Object> payload = new HashMap<>();
+
+			payload.put("name", "Test Triage");
+			payload.put("description", "");
+
+			Map<String, Object> service = new HashMap<>();
+			service.put("uuid", TRIAGE_SERVICE);
+			payload.put("service", service);
+
+			Map<String, Object> location = new HashMap<>();
+			location.put("uuid", OUTPATIENT_CLINIC_LOCATION_UUID);
+			payload.put("location", location);
+
+			try {
+				return new ObjectMapper().writeValueAsString(payload);
+			}
+			catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		})).check(jsonPath("$.uuid").saveAs("newServiceQueueUuid"));
 	}
 }

@@ -268,4 +268,29 @@ public abstract class HttpService {
 
 	}
 
+	public HttpRequestActionBuilder getQueueDetails() {
+		String CustomRepresentation = "custom:(uuid,display,name,description,service:(uuid,display),allowedPriorities:"
+		        + "(uuid,display),allowedStatuses:(uuid,display),location:(uuid,display))";
+
+		return http("Get queue details").get("/openmrs/ws/rest/v1/queue?v=" + CustomRepresentation);
+	}
+
+	public HttpRequestActionBuilder getQueueEntry() {
+		return getPatientQueueEntry("");
+	}
+
+	public HttpRequestActionBuilder getPatientQueueEntry(String patientUuid) {
+		String customRepresentation = "custom:(uuid,display,queue,status,patient:(uuid,display,person,identifiers:(uuid,display,identifier,identifierType)),"
+		        + "visit:(uuid,display,startDatetime,encounters:(uuid,display,diagnoses,encounterDatetime,encounterType,obs,encounterProviders,voided),"
+		        + "attributes:(uuid,display,value,attributeType)),priority,priorityComment,sortWeight,startedAt,endedAt,locationWaitingFor,queueComingFrom,"
+		        + "providerWaitingFor,previousQueueEntry)";
+
+		return http("Get Queue Entry").get("/openmrs/ws/rest/v1/queue-entry?v=" + customRepresentation
+		        + "&totalCount=true&patient=" + patientUuid + "&isEnded=false");
+	}
+
+	public HttpRequestActionBuilder getConcept(String conceptUuid) {
+		return http("Get Concept").get("/openmrs/ws/rest/v1/concept/" + conceptUuid + "?v=full");
+	}
+
 }

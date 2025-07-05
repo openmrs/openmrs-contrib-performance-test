@@ -71,4 +71,25 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 	public ChainBuilder openSpecificPatientList(String patientListUuid) {
 		return exec(httpService.getPatientList(patientListUuid), httpService.getMembersOfPatientList(patientListUuid));
 	}
+
+	public ChainBuilder addPatientToQueue(String patientUuid) {
+		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
+		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
+		    httpService.getAppointmentsOfPatient(patientUuid),
+		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID),
+		    httpService.getPatientIdPhoto(patientUuid), httpService.getPrimaryIdentifierTermMapping(),
+		    httpService.getPatientSummaryData(patientUuid), httpService.getActiveVisitOfPatient(patientUuid),
+		    httpService.getPatientQueueEntry(patientUuid), httpService.getPatientLifeStatus(patientUuid),
+		    httpService.getQueueEntryNumber("#{visitUuid}"), httpService.submitVisitQueueEntry(),
+		    httpService.getQueueEntry());
+	}
+
+	public ChainBuilder addNewServiceQueue() {
+		return exec(httpService.getServiceConceptSet(), httpService.getConcept("#{serviceConceptSetUuid}"),
+		    httpService.submitNewServiceQueue());
+	}
+
+	public ChainBuilder transitionPatient() {
+		return exec(httpService.submitTransitionRequest(), httpService.getQueueEntry());
+	}
 }
