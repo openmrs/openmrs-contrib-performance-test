@@ -115,7 +115,7 @@ public class NurseHttpService extends HttpService {
 		String url = "/openmrs/ws/rest/v1/conceptreferencerange/?patient=" + patientUuid + "&concept=" + codesParam
 		        + "&v=full";
 
-		return http("Get Patient Observations").get(url);
+		return http("Get Vitals concept reference ranges").get(url);
 	}
 
 	public HttpRequestActionBuilder getCustomTransferLocationsConfiguration() {

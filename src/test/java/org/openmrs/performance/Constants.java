@@ -91,6 +91,10 @@ public class Constants {
 
 	public static final String TRANSFER_OBSERVATION = "9ceedfb7-60e4-42ce-a11e-f2dbabc82112";
 
+	public static final String PATIENT_IDENTIFIER_UUID = "05a29f94-c0ed-11e2-94be-8c13b969e334";
+
+	public static final String HIV_CARE_TREATMENT = "64f950e6-1b07-4ac0-8e7e-f3e148f3463f";
+
 	public static final String USER_GENERATED_PATIENT_LIST = "e71857cb-33af-4f2c-86ab-7223bcfa37ad";
 
 	public static final String SYSTEM_GENERATED_PATIENT_LIST = "eee9970e-7ca0-4e8c-a280-c33e9d5f6a04";
@@ -147,4 +151,13 @@ public class Constants {
 	public static final String ALKALINE_PHOSPHATE_CONCEPT = "785AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
 	public static final String ORDERABLE_LAB_TESTS = "1748a953-d12e-4be1-914c-f6b096c6cdef";
+
+	// Clinical forms
+	public static final String SOAP_NOTE_TEMPLATE = "289417aa-31d5-3a06-bae8-a22d870bcf1d";
+
+	public static final String SUBJECTIVE_FINDINGS = "81a60a0dbc0c478caa714d372ac533d5";
+
+	public static final String OBJECTIVE_FINDINGS = "aeec913c-9a36-4153-9a44-12bc255d7f60";
+
+	public static final String PLAN = "2ad20b043cf54dd48e698e1c8e231c99";
 }
