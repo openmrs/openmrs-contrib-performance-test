@@ -11,6 +11,7 @@ import org.openmrs.performance.personas.NursePersona;
 import org.openmrs.performance.personas.LabTechPersona;
 
 import org.openmrs.performance.personas.Persona;
+import org.openmrs.performance.personas.PharmacistPersona;
 import org.openmrs.performance.scenarios.Scenario;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,8 +55,8 @@ public class OpenMRSClinic extends Simulation {
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
 		    preset, userIncrementPerTier, tierDurationMinutes, tierCount);
 
-		List<Persona<?>> personas = List.of(new ClerkPersona(0.4), new DoctorPersona(0.2), new LabTechPersona(0.2),
-		    new NursePersona(0.2));
+		List<Persona<?>> personas = List.of(new ClerkPersona(0.2), new DoctorPersona(0.2), new LabTechPersona(0.2),
+		    new NursePersona(0.2), new PharmacistPersona(0.2));
 
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 		    tierCount);

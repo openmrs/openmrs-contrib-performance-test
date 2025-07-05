@@ -19,30 +19,29 @@ public class PatientLabScenario extends Scenario<LabTechRegistry> {
 	public ScenarioBuilder getScenarioBuilder() {
 		Iterator<Map<String, Object>> patientUuidFeeder = SharedPoolFeeder.feeder();
 		// @formatter:off
-        return scenario("Lab Tech - Lab report completion").feed(patientUuidFeeder)
-                .exec(registry.login())
-                .exec(registry.openHomePage())
-                .pause(5)
-                .exec(registry.openPatientChartPage("#{patient_uuid}"))
-                .pause(5)
-                .exec(registry.startVisit("#{patient_uuid}"))
-                .pause(5)
-                .exec(registry.addLabOrder("#{patient_uuid}"))
-                .pause(5)
-                .exec(registry.loadLaboratory())
-                .pause(5)
-                .exec(registry.pickUpLabOrder())
-                .exec(registry.loadLaboratory())
-                .pause(5)
-                .exec(registry.completeLabOrder("#{patient_uuid}"))
-                .exec(registry.loadLaboratory())
-                .pause(5)
-                .exec(registry.endVisit("#{patient_uuid}"))
-                .exec(session -> {
-                    String uuid = session.getString("patient_uuid");
-                    SharedPoolFeeder.returnUuid(uuid);
-                    return session;
-                });
-        // @formatter:on
+		return scenario("Lab Tech - Lab report completion").feed(patientUuidFeeder).exec(registry.login())
+				.exec(registry.openHomePage())
+				.pause(5)
+				.exec(registry.openPatientChartPage("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.startVisit("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.addLabOrder("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.loadLaboratory())
+				.pause(5)
+				.exec(registry.pickUpLabOrder())
+				.exec(registry.loadLaboratory())
+				.pause(5)
+				.exec(registry.completeLabOrder("#{patient_uuid}"))
+				.exec(registry.loadLaboratory())
+				.pause(5)
+				.exec(registry.endVisit("#{patient_uuid}"))
+				.exec(session -> {
+					String uuid = session.getString("patient_uuid");
+					SharedPoolFeeder.returnUuid(uuid);
+					return session;
+				});
+		// @formatter:on
 	}
 }

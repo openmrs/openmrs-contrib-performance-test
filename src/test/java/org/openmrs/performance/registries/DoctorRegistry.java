@@ -15,11 +15,9 @@ import static org.openmrs.performance.Constants.DIABETIC_KETOSIS_CONCEPT;
 import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DRUG_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.ENVIRONMENTAL_ALLERGEN_UUID;
-import static org.openmrs.performance.Constants.FACULTY_VISIT_TYPE_UUID;
 import static org.openmrs.performance.Constants.FOOD_ALLERGEN_UUID;
 import static org.openmrs.performance.Constants.HEIGHT_CM;
 import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
-import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.PULSE;
 import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
@@ -58,10 +56,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.getDrugOrdersExceptCancelledAndExpired(patientUuid))
 		        .exec(httpService.getDrugOrdersExceptDiscontinuedOrders(patientUuid))
 		        .exec(httpService.getActiveVisitOfPatient(patientUuid));
-	}
-
-	public ChainBuilder openOrdersTab(String patientUuid) {
-		return exec(httpService.getOrderTypes()).exec(httpService.getAllActiveOrders(patientUuid));
 	}
 
 	public ChainBuilder openLabResultsTab(String patientUuid) {
@@ -115,16 +109,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder openAppointmentsTab(String patientUuid) {
 		return exec(httpService.getAppointmentsOfPatient(patientUuid));
-	}
-
-	public ChainBuilder addDrugOrder(String patientUuid) {
-		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.searchForDrug("asprin"),
-		    httpService.searchForDrug("Tylenol"), httpService.saveOrder());
-
-	}
-
-	public ChainBuilder discontinueDrugOrder() {
-		return exec(httpService.discontinueDrugOrder());
 	}
 
 	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {

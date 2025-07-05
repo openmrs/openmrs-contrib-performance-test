@@ -21,12 +21,12 @@ public class PatientAppointmentCreationScenario extends Scenario<ClerkRegistry> 
 	public ScenarioBuilder getScenarioBuilder() {
 		Iterator<Map<String, Object>> patientUuidFeeder = SharedPoolFeeder.feeder();
 		// @formatter:off
-        return  scenario("Clerk - Appointment creation Scenario").feed(patientUuidFeeder)
-                .exec(registry.login())
-                .exec(registry.openHomePage())
-                .pause(3)
+		return  scenario("Clerk - Appointment creation Scenario").feed(patientUuidFeeder)
+				.exec(registry.login())
+				.exec(registry.openHomePage())
+				.pause(3)
 				.exec(registry.searchPatient())
-                .exec(registry.openAppointmentPage())
+				.exec(registry.openAppointmentPage())
 				.pause(3)
 				.exec(registry.openAppointmentFormPage("#{patient_uuid}"))
 				.pause(5)
@@ -41,6 +41,6 @@ public class PatientAppointmentCreationScenario extends Scenario<ClerkRegistry> 
 					SharedPoolFeeder.returnUuid(uuid);
 					return session;
 				});
-        // @formatter:on
+		// @formatter:on
 	}
 }
