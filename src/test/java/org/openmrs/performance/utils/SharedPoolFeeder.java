@@ -21,8 +21,7 @@ public class SharedPoolFeeder {
 		try (Stream<String> lines = Files.lines(Paths.get("src/test/resources/patient_uuids.csv"))) {
 			List<String> uuidList = lines.skip(1).toList();
 			uuidPool.addAll(uuidList);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -39,9 +38,8 @@ public class SharedPoolFeeder {
 					throw new RuntimeException("UUID pool exhausted: no more UUIDs available");
 				}
 
-				return Map.<String, Object> of("patient_uuid", uuid);
-			}
-			catch (InterruptedException e) {
+				return Map.<String, Object>of("patient_uuid", uuid);
+			} catch (InterruptedException e) {
 				Thread.currentThread().interrupt();
 				logger.severe("Feeder interrupted while waiting for UUID: " + e.getMessage());
 				throw new RuntimeException("Feeder interrupted", e);

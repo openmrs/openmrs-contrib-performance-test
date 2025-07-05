@@ -31,53 +31,53 @@ public abstract class Registry<H extends HttpService> {
 
 	public ChainBuilder login() {
 		return exec(httpService.loginRequest(), pause(1), httpService.getLocations(), pause(5),
-		    httpService.selectLocation());
+				httpService.selectLocation());
 	}
 
 	public ChainBuilder openHomePage() {
 		return exec(httpService.getAddressTemplate(), httpService.getRelationshipTypes(),
-		    httpService.getAppointmentsForSpecificDate("2024-05-15T00:00:00.000+0530"), httpService.getModuleInformation(),
-		    httpService.getPatientIdentifierTypes(), httpService.getPrimaryIdentifierTermMapping(),
-		    httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID), httpService.getAutoGenerationOptions(),
-		    httpService.getIdentifierSources());
+				httpService.getAppointmentsForSpecificDate("2024-05-15T00:00:00.000+0530"), httpService.getModuleInformation(),
+				httpService.getPatientIdentifierTypes(), httpService.getPrimaryIdentifierTermMapping(),
+				httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID), httpService.getAutoGenerationOptions(),
+				httpService.getIdentifierSources());
 	}
 
 	public ChainBuilder openPatientChartPage(String patientUuid) {
 		Set<String> unknownObservationSet = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-		    ARTERIAL_BLOOD_OXYGEN_SATURATION, HEIGHT_CM, WEIGHT_KG, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE,
-		    MID_UPPER_ARM_CIRCUMFERENCE);
+				ARTERIAL_BLOOD_OXYGEN_SATURATION, HEIGHT_CM, WEIGHT_KG, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE,
+				MID_UPPER_ARM_CIRCUMFERENCE);
 
 		Set<String> vitals = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
+				ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
 
 		Set<String> biometrics = Set.of(HEIGHT_CM, WEIGHT_KG, MID_UPPER_ARM_CIRCUMFERENCE);
 		return exec(httpService.getPatientSummaryData(patientUuid), httpService.getActiveVisitOfPatient(patientUuid),
-		    httpService.getPrimaryIdentifierTermMapping(), httpService.getIsVisitsEnabled(),
-		    httpService.getPatientLifeStatus(patientUuid), httpService.getVitalConceptSetDetails(),
-		    httpService.getPatientObservations(patientUuid, unknownObservationSet),
-		    httpService.getPatientObservations(patientUuid, vitals),
-		    httpService.getPatientObservations(patientUuid, biometrics), httpService.getVisitQueueEntry(patientUuid),
-		    httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
+				httpService.getPrimaryIdentifierTermMapping(), httpService.getIsVisitsEnabled(),
+				httpService.getPatientLifeStatus(patientUuid), httpService.getVitalConceptSetDetails(),
+				httpService.getPatientObservations(patientUuid, unknownObservationSet),
+				httpService.getPatientObservations(patientUuid, vitals),
+				httpService.getPatientObservations(patientUuid, biometrics), httpService.getVisitQueueEntry(patientUuid),
+				httpService.getPatientConditions(patientUuid), httpService.getActiveOrders(patientUuid));
 	}
 
 	public ChainBuilder searchPatient() {
 		return exec(httpService.getPatients("jay")).doIf(session -> session.contains("patientIDs"))
-		        .then(foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
-		            httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))));
+				.then(foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
+						httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))));
 	}
 
 	public ChainBuilder startVisit(String patientUuid) {
 		return exec(httpService.getVisitTypes()).exec(httpService.getCurrentVisit(patientUuid))
-		        .exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
-		        .exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointmentsOfPatient(patientUuid))
-		        .pause(5)
-		        .exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
-		        .exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
+				.exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getProgramEnrollments(patientUuid))
+				.exec(httpService.getVisitQueueEntry(patientUuid)).exec(httpService.getAppointmentsOfPatient(patientUuid))
+				.pause(5)
+				.exec(httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID))
+				.exec(httpService.getCurrentVisit(patientUuid)).exec(httpService.getVisitsOfPatient(patientUuid));
 	}
 
 	public ChainBuilder endVisit(String patientUuid) {
 		return exec(httpService.submitEndVisit("#{visitUuid}")).exec(httpService.getCurrentVisit(patientUuid))
-		        .exec(httpService.getVisitsOfPatient(patientUuid));
+				.exec(httpService.getVisitsOfPatient(patientUuid));
 
 	}
 }

@@ -41,11 +41,11 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 	public ChainBuilder openVitalsAndBiometricsTab(String patientUuid) {
 
 		Set<String> vitals = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
+				ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
 
 		Set<String> biometrics = Set.of(HEIGHT_CM, WEIGHT_KG, MID_UPPER_ARM_CIRCUMFERENCE);
 		return exec(httpService.getPatientObservations(patientUuid, vitals))
-		        .exec(httpService.getPatientObservations(patientUuid, biometrics));
+				.exec(httpService.getPatientObservations(patientUuid, biometrics));
 	}
 
 	public ChainBuilder recordVitals(String patientUuid) {
@@ -54,16 +54,16 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder openMedicationsTab(String patientUuid) {
 		return exec(httpService.getDrugOrdersExceptCancelledAndExpired(patientUuid))
-		        .exec(httpService.getDrugOrdersExceptDiscontinuedOrders(patientUuid))
-		        .exec(httpService.getActiveVisitOfPatient(patientUuid));
+				.exec(httpService.getDrugOrdersExceptDiscontinuedOrders(patientUuid))
+				.exec(httpService.getActiveVisitOfPatient(patientUuid));
 	}
 
 	public ChainBuilder openLabResultsTab(String patientUuid) {
 		return exec(httpService.getObservationTree(patientUuid, HEMATOLOGY))
-		        .exec(httpService.getObservationTree(patientUuid, BLOODWORK))
-		        .exec(httpService.getObservationTree(patientUuid, HIV_VIRAL_LOAD))
-		        .exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
-		        .then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
+				.exec(httpService.getObservationTree(patientUuid, BLOODWORK))
+				.exec(httpService.getObservationTree(patientUuid, HIV_VIRAL_LOAD))
+				.exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
+				.then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
 	}
 
 	public ChainBuilder openAllergiesTab(String patientUuid) {
@@ -72,9 +72,9 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder openAllergiesForm() {
 		return exec(httpService.getAllergens("Drug", DRUG_ALLERGEN_UUID),
-		    httpService.getAllergens("Environment", ENVIRONMENTAL_ALLERGEN_UUID),
-		    httpService.getAllergens("Food", FOOD_ALLERGEN_UUID),
-		    httpService.getAllergens("Allergic Reactions", ALLERGY_REACTION_UUID));
+				httpService.getAllergens("Environment", ENVIRONMENTAL_ALLERGEN_UUID),
+				httpService.getAllergens("Food", FOOD_ALLERGEN_UUID),
+				httpService.getAllergens("Allergic Reactions", ALLERGY_REACTION_UUID));
 	}
 
 	public ChainBuilder recordAllergy(String patientUuid) {
@@ -103,8 +103,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder openVisitsTab(String patientUuid) {
 		return exec(httpService.getVisitsOfPatient(patientUuid)).exec(httpService.getPatientEncounters())
-		        .exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
-		        .then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
+				.exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
+				.then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
 	}
 
 	public ChainBuilder openAppointmentsTab(String patientUuid) {
@@ -113,7 +113,7 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder addCondition(String patientUuid, String currentUserUuid) {
 		return exec(httpService.getPatientConditions(patientUuid), pause(2), httpService.searchForConditions("Pa"), pause(1),
-		    httpService.searchForConditions("Pain"), pause(1), httpService.saveCondition(patientUuid, currentUserUuid));
+				httpService.searchForConditions("Pain"), pause(1), httpService.saveCondition(patientUuid, currentUserUuid));
 	}
 
 	public ChainBuilder addVisitNote(String patientUuid, String currentUserUuid) {
@@ -122,8 +122,8 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		String encounterUuid = "#{encounterUuid}";
 
 		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
-		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
-		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
+				httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
+				httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
 	}
 
 }

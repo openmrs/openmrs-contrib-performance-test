@@ -15,10 +15,10 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 
 	public ChainBuilder openRegistrationPage() {
 		return exec(httpService.getAddressTemplate(), httpService.getPatientIdentifierTypes(),
-		    httpService.getPrimaryIdentifierTermMapping(), httpService.getRelationshipTypes(),
-		    httpService.getModuleInformation(), httpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
-		    httpService.getAutoGenerationOptions(), httpService.getOrderedAddressHierarchyLevels(),
-		    httpService.getIdentifierSources());
+				httpService.getPrimaryIdentifierTermMapping(), httpService.getRelationshipTypes(),
+				httpService.getModuleInformation(), httpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
+				httpService.getAutoGenerationOptions(), httpService.getOrderedAddressHierarchyLevels(),
+				httpService.getIdentifierSources());
 	}
 
 	public ChainBuilder registerPatient() {
@@ -27,17 +27,17 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 
 	public ChainBuilder openAppointmentPage() {
 		return exec(httpService.getAllAppointmentServices(), httpService.getAppointmentsOfTheDay(),
-		    httpService.getAppointmentsSummary(), httpService.getAppointmentByStatus("Scheduled"),
-		    httpService.getAppointmentByStatus("Missed"), httpService.getAppointmentByStatus("Completed"),
-		    httpService.getAppointmentByStatus("Cancelled"), httpService.getDefaultAppointmentService(),
-		    httpService.getAllVisitsOfTheLocationWithDate(OUTPATIENT_CLINIC_LOCATION_UUID));
+				httpService.getAppointmentsSummary(), httpService.getAppointmentByStatus("Scheduled"),
+				httpService.getAppointmentByStatus("Missed"), httpService.getAppointmentByStatus("Completed"),
+				httpService.getAppointmentByStatus("Cancelled"), httpService.getDefaultAppointmentService(),
+				httpService.getAllVisitsOfTheLocationWithDate(OUTPATIENT_CLINIC_LOCATION_UUID));
 	}
 
 	public ChainBuilder openAppointmentFormPage(String patientUuid) {
 		return exec(httpService.getLocationsByTag("Appointment+Location"), httpService.getPatientLifeStatus(patientUuid),
-		    httpService.getPatientSummaryData(patientUuid), httpService.getAllAppointmentServices(),
-		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientQueueEntry(patientUuid),
-		    httpService.getAllProviders(), httpService.getActiveVisitOfPatient(patientUuid));
+				httpService.getPatientSummaryData(patientUuid), httpService.getAllAppointmentServices(),
+				httpService.getPatientIdPhoto(patientUuid), httpService.getPatientQueueEntry(patientUuid),
+				httpService.getAllProviders(), httpService.getActiveVisitOfPatient(patientUuid));
 	}
 
 	public ChainBuilder createAppointment() {
@@ -46,16 +46,16 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 
 	public ChainBuilder checkInPatient(String patientUuid) {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
-		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
-		    httpService.getAppointmentsOfPatient(patientUuid),
-		    httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
-		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID),
-		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "CheckedIn"));
+				httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
+				httpService.getAppointmentsOfPatient(patientUuid),
+				httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID),
+				httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, OUTPATIENT_CLINIC_LOCATION_UUID),
+				httpService.submitAppointmentStatusChange("#{appointmentUuid}", "CheckedIn"));
 	}
 
 	public ChainBuilder checkOutPatient() {
 		return exec(httpService.submitEndVisit("#{visitUuid}"), httpService.getVisitTypes(),
-		    httpService.getLocationsThatSupportVisits(),
-		    httpService.submitAppointmentStatusChange("#{appointmentUuid}", "Completed"));
+				httpService.getLocationsThatSupportVisits(),
+				httpService.submitAppointmentStatusChange("#{appointmentUuid}", "Completed"));
 	}
 }

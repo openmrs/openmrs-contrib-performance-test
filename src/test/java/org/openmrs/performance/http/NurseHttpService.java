@@ -27,43 +27,43 @@ public class NurseHttpService extends HttpService {
 		String startDate = getCurrentDateTimeAsString();
 		String encoded = URLEncoder.encode(startDate, StandardCharsets.UTF_8);
 		return http("Get Orders of admitted patient by Activated Date")
-		        .get("/openmrs/ws/rest/v1/order" + "?includeNullFulfillerStatus=true" + "&patient=" + patientUuid
-		                + "&orderTypes=" + TEST_ORDER_TYPE_UUID + "&activatedOnOrAfterDate=" + encoded);
+				.get("/openmrs/ws/rest/v1/order" + "?includeNullFulfillerStatus=true" + "&patient=" + patientUuid
+						+ "&orderTypes=" + TEST_ORDER_TYPE_UUID + "&activatedOnOrAfterDate=" + encoded);
 	}
 
 	public HttpRequestActionBuilder getInpatientRequest(String locationUuid) {
 		String customRepresentation = "custom:(dispositionLocation,dispositionType,disposition,dispositionEncounter:full,"
-		        + "patient:(uuid,identifiers,voided,person:(uuid,display,gender,age,birthdate,birthtime,preferredName,"
-		        + "preferredAddress,dead,deathDate)),dispositionObsGroup,visit)";
+				+ "patient:(uuid,identifiers,voided,person:(uuid,display,gender,age,birthdate,birthtime,preferredName,"
+				+ "preferredAddress,dead,deathDate)),dispositionObsGroup,visit)";
 
 		return http("Get Inpatient Request")
-		        .get("/openmrs/ws/rest/v1/emrapi/inpatient/request" + "?dispositionType=ADMIT,TRANSFER"
-		                + "&dispositionLocation=" + locationUuid + "&v=" + customRepresentation)
-		        .check(jsonPath("$.results[*].dispositionEncounter.patient.uuid").findAll().optional()
-		                .saveAs("transferPatientUuid"));
+				.get("/openmrs/ws/rest/v1/emrapi/inpatient/request" + "?dispositionType=ADMIT,TRANSFER"
+						+ "&dispositionLocation=" + locationUuid + "&v=" + customRepresentation)
+				.check(jsonPath("$.results[*].dispositionEncounter.patient.uuid").findAll().optional()
+						.saveAs("transferPatientUuid"));
 	}
 
 	public HttpRequestActionBuilder getAdmittedPatientInfo(String locationUuid) {
 		String customRepresentation = "custom:(visit,patient:(uuid,identifiers:(uuid,display,identifier,identifierType),voided,"
-		        + "person:(uuid,display,gender,age,birthdate,birthtime,preferredName,preferredAddress,dead,deathDate)),"
-		        + "encounterAssigningToCurrentInpatientLocation:(encounterDatetime),"
-		        + "currentInpatientRequest:(dispositionLocation,dispositionType,disposition:(uuid,display),"
-		        + "dispositionEncounter:(uuid,display),dispositionObsGroup:(uuid,display),visit:(uuid),patient:(uuid)),"
-		        + "firstAdmissionOrTransferEncounter:(encounterDatetime),currentInpatientLocation)";
+				+ "person:(uuid,display,gender,age,birthdate,birthtime,preferredName,preferredAddress,dead,deathDate)),"
+				+ "encounterAssigningToCurrentInpatientLocation:(encounterDatetime),"
+				+ "currentInpatientRequest:(dispositionLocation,dispositionType,disposition:(uuid,display),"
+				+ "dispositionEncounter:(uuid,display),dispositionObsGroup:(uuid,display),visit:(uuid),patient:(uuid)),"
+				+ "firstAdmissionOrTransferEncounter:(encounterDatetime),currentInpatientLocation)";
 
 		return http("Get Admission Info")
-		        .get("/openmrs/ws/rest/v1/emrapi/inpatient/admission" + "?currentInpatientLocation=" + locationUuid + "&v="
-		                + customRepresentation)
-		        .check(jsonPath("$.results[*].visit.patient.uuid").findAll().optional().saveAs("admittedPatientUuid"));
+				.get("/openmrs/ws/rest/v1/emrapi/inpatient/admission" + "?currentInpatientLocation=" + locationUuid + "&v="
+						+ customRepresentation)
+				.check(jsonPath("$.results[*].visit.patient.uuid").findAll().optional().saveAs("admittedPatientUuid"));
 	}
 
 	public HttpRequestActionBuilder getAdmissionLocationInfo(String locationUuid) {
 		String customRepresentation = "custom:(ward,totalBeds,occupiedBeds,"
-		        + "bedLayouts:(rowNumber,columnNumber,bedNumber,bedId,bedUuid,status,location,"
-		        + "patients:(person:full,identifiers,uuid)))";
+				+ "bedLayouts:(rowNumber,columnNumber,bedNumber,bedId,bedUuid,status,location,"
+				+ "patients:(person:full,identifiers,uuid)))";
 
 		return http("Get Admission Location Info")
-		        .get("/openmrs/ws/rest/v1/admissionLocation/" + locationUuid + "?v=" + customRepresentation);
+				.get("/openmrs/ws/rest/v1/admissionLocation/" + locationUuid + "?v=" + customRepresentation);
 	}
 
 	public HttpRequestActionBuilder getBedsByPatientUuid(String patientUuid) {
@@ -71,7 +71,7 @@ public class NurseHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveWardEncounter(String wardEncounterType, List<Map<String, Object>> obs,
-	        String wardEncounterTypeUuid, String locationUuid) {
+	                                                  String wardEncounterTypeUuid, String locationUuid) {
 		return http("Save Ward Encounter").post("/openmrs/ws/rest/v1/encounter").body(StringBody(session -> {
 			Map<String, Object> payload = new HashMap<>();
 
@@ -98,8 +98,7 @@ public class NurseHttpService extends HttpService {
 			payload.put("visit", session.getString("visitUuid"));
 			try {
 				return new ObjectMapper().writeValueAsString(payload);
-			}
-			catch (JsonProcessingException e) {
+			} catch (JsonProcessingException e) {
 				throw new RuntimeException(e);
 			}
 		}));
@@ -113,36 +112,36 @@ public class NurseHttpService extends HttpService {
 		String codesParam = joiner.toString();
 
 		String url = "/openmrs/ws/rest/v1/conceptreferencerange/?patient=" + patientUuid + "&concept=" + codesParam
-		        + "&v=full";
+				+ "&v=full";
 
 		return http("Get Patient Observations").get(url);
 	}
 
 	public HttpRequestActionBuilder getCustomTransferLocationsConfiguration() {
 		String customRepresentation = "custom:metadataSourceName:ref,orderingProviderEncounterRole:ref,supportsTransferLocationTag:"
-		        + "(uuid,display,name,links),unknownLocation:ref,denyAdmissionConcept:ref,admissionForm:ref,"
-		        + "exitFromInpatientEncounterType:ref,extraPatientIdentifierTypes:ref,consultFreeTextCommentsConcept:ref,"
-		        + "sameAsConceptMapType:ref,testPatientPersonAttributeType:ref,admissionDecisionConcept:ref,"
-		        + "supportsAdmissionLocationTag:(uuid,display,name,links),checkInEncounterType:ref,transferWithinHospitalEncounterType:"
-		        + "ref,suppressedDiagnosisConcepts:ref,primaryIdentifierType:ref,nonDiagnosisConceptSets:ref,"
-		        + "fullPrivilegeLevel:ref,unknownProvider:ref,diagnosisSets:ref,personImageDirectory:ref,visitNoteEncounterType:ref,"
-		        + "inpatientNoteEncounterType:ref,transferRequestEncounterType:ref,consultEncounterType:ref,diagnosisMetadata:ref,"
-		        + "narrowerThanConceptMapType:ref,clinicianEncounterRole:ref,conceptSourcesForDiagnosisSearch:ref,patientDiedConcept:ref"
-		        + ",emrApiConceptSource:ref,lastViewedPatientSizeLimit:ref,identifierTypesToSearch:ref,telephoneAttributeType:ref,"
-		        + "checkInClerkEncounterRole:ref,dischargeForm:ref,unknownCauseOfDeathConcept:ref,"
-		        + "visitAssignmentHandlerAdjustEncounterTimeOfDayIfNecessary:ref,atFacilityVisitType:ref,visitExpireHours:ref,"
-		        + "admissionEncounterType:ref,motherChildRelationshipType:ref,dispositions:ref,dispositionDescriptor:ref,"
-		        + "highPrivilegeLevel:ref,supportsLoginLocationTag:(uuid,display,name,links),unknownPatientPersonAttributeType:ref,"
-		        + "supportsVisitsLocationTag:(uuid,display,name,links),transferForm:ref,bedAssignmentEncounterType:ref,"
-		        + "cancelADTRequestEncounterType:ref,admissionDecisionConcept:ref,denyAdmissionConcept:ref";
+				+ "(uuid,display,name,links),unknownLocation:ref,denyAdmissionConcept:ref,admissionForm:ref,"
+				+ "exitFromInpatientEncounterType:ref,extraPatientIdentifierTypes:ref,consultFreeTextCommentsConcept:ref,"
+				+ "sameAsConceptMapType:ref,testPatientPersonAttributeType:ref,admissionDecisionConcept:ref,"
+				+ "supportsAdmissionLocationTag:(uuid,display,name,links),checkInEncounterType:ref,transferWithinHospitalEncounterType:"
+				+ "ref,suppressedDiagnosisConcepts:ref,primaryIdentifierType:ref,nonDiagnosisConceptSets:ref,"
+				+ "fullPrivilegeLevel:ref,unknownProvider:ref,diagnosisSets:ref,personImageDirectory:ref,visitNoteEncounterType:ref,"
+				+ "inpatientNoteEncounterType:ref,transferRequestEncounterType:ref,consultEncounterType:ref,diagnosisMetadata:ref,"
+				+ "narrowerThanConceptMapType:ref,clinicianEncounterRole:ref,conceptSourcesForDiagnosisSearch:ref,patientDiedConcept:ref"
+				+ ",emrApiConceptSource:ref,lastViewedPatientSizeLimit:ref,identifierTypesToSearch:ref,telephoneAttributeType:ref,"
+				+ "checkInClerkEncounterRole:ref,dischargeForm:ref,unknownCauseOfDeathConcept:ref,"
+				+ "visitAssignmentHandlerAdjustEncounterTimeOfDayIfNecessary:ref,atFacilityVisitType:ref,visitExpireHours:ref,"
+				+ "admissionEncounterType:ref,motherChildRelationshipType:ref,dispositions:ref,dispositionDescriptor:ref,"
+				+ "highPrivilegeLevel:ref,supportsLoginLocationTag:(uuid,display,name,links),unknownPatientPersonAttributeType:ref,"
+				+ "supportsVisitsLocationTag:(uuid,display,name,links),transferForm:ref,bedAssignmentEncounterType:ref,"
+				+ "cancelADTRequestEncounterType:ref,admissionDecisionConcept:ref,denyAdmissionConcept:ref";
 
 		return http("Get Transfer Locations configuration data")
-		        .get("/openmrs/ws/rest/v1/emrapi/configuration?v=" + customRepresentation);
+				.get("/openmrs/ws/rest/v1/emrapi/configuration?v=" + customRepresentation);
 	}
 
 	public HttpRequestActionBuilder getTransferableLocations() {
 		return http("Get Transferable locations").get("/openmrs/ws/fhir2/R4/Location?_tag=Transfer+Location&partof:below="
-		        + BED_ASSIGNMENT_UUID + "&_count=15&_getpagesoffset=0");
+				+ BED_ASSIGNMENT_UUID + "&_count=15&_getpagesoffset=0");
 	}
 
 	public HttpRequestActionBuilder getAllLocationsSearchSet() {
@@ -156,10 +155,10 @@ public class NurseHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getPatientAdmissionNote(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,obsDatetime,value,concept:(uuid,display),"
-		        + "encounter:(uuid,display,encounterType,encounterDatetime,visit:(uuid,display)))";
+				+ "encounter:(uuid,display,encounterType,encounterDatetime,visit:(uuid,display)))";
 
 		return http("Get patient admission note").get("/openmrs/ws/rest/v1/obs?patient=" + patientUuid + "&concept="
-		        + WARD_ADMISSION_NOTE_UUID + "&v=" + customRepresentation);
+				+ WARD_ADMISSION_NOTE_UUID + "&v=" + customRepresentation);
 	}
 
 }

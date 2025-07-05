@@ -35,12 +35,12 @@ public class OpenMRSClinic extends Simulation {
 
 	{
 		Map<String, Map<String, Integer>> presetsMap = Map.of("standard",
-		    Map.of("tierCount", 6, "tierDurationMinutes", 30, "userIncrementPerTier", 32), "commit",
-		    Map.of("tierCount", 1, "tierDurationMinutes", 1, "userIncrementPerTier", 20), "pull_request",
-		    Map.of("tierCount", 1, "tierDurationMinutes", 1, "userIncrementPerTier", 20), "dev",
-		    Map.of("tierCount", Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_COUNT, "1")), "tierDurationMinutes",
-		        Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_DURATION, "1")), "userIncrementPerTier",
-		        Integer.parseInt(System.getenv().getOrDefault(ENV_USER_INCREMENT_PER_TIER, "10"))));
+				Map.of("tierCount", 6, "tierDurationMinutes", 30, "userIncrementPerTier", 32), "commit",
+				Map.of("tierCount", 1, "tierDurationMinutes", 1, "userIncrementPerTier", 20), "pull_request",
+				Map.of("tierCount", 1, "tierDurationMinutes", 1, "userIncrementPerTier", 20), "dev",
+				Map.of("tierCount", Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_COUNT, "1")), "tierDurationMinutes",
+						Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_DURATION, "1")), "userIncrementPerTier",
+						Integer.parseInt(System.getenv().getOrDefault(ENV_USER_INCREMENT_PER_TIER, "10"))));
 
 		String preset = System.getenv(ENV_SIMULATION_PRESET);
 
@@ -53,13 +53,13 @@ public class OpenMRSClinic extends Simulation {
 		HttpProtocolBuilder httpProtocol = getHttpProtocol();
 
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
-		    preset, userIncrementPerTier, tierDurationMinutes, tierCount);
+				preset, userIncrementPerTier, tierDurationMinutes, tierCount);
 
 		List<Persona<?>> personas = List.of(new ClerkPersona(0.2), new DoctorPersona(0.2), new LabTechPersona(0.2),
-		    new NursePersona(0.2), new PharmacistPersona(0.2));
+				new NursePersona(0.2), new PharmacistPersona(0.2));
 
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
-		    tierCount);
+				tierCount);
 
 		setUp(populations).protocols(httpProtocol).assertions(global().successfulRequests().percent().shouldBe(100.0));
 
@@ -81,26 +81,26 @@ public class OpenMRSClinic extends Simulation {
 			tierCount = loadSimulationType.get("tierCount");
 		} else {
 			throw new IllegalArgumentException(
-			        "Invalid value for environment variable " + ENV_SIMULATION_PRESET + ": " + preset);
+					"Invalid value for environment variable " + ENV_SIMULATION_PRESET + ": " + preset);
 		}
 
-		return new int[] { userIncrementPerTier, tierDurationMinutes, tierCount };
+		return new int[]{userIncrementPerTier, tierDurationMinutes, tierCount};
 	}
 
 	private List<PopulationBuilder> buildPopulations(List<Persona<?>> personas, int userIncrementPerTier,
-	        int tierDurationMinutes, int tierCount) {
+	                                                 int tierDurationMinutes, int tierCount) {
 		List<PopulationBuilder> populations = new ArrayList<>();
 		int rampDurationMinutes = 1;
 
 		for (Persona<?> persona : personas) {
 			int personaUserIncrementPerTier = (int) Math.ceil(userIncrementPerTier * persona.loadShare);
 			logger.info("building persona: {}, user increment per tier: {}", persona.getClass().getSimpleName(),
-			    personaUserIncrementPerTier);
+					personaUserIncrementPerTier);
 
 			for (Scenario<?> scenario : persona.getScenarios()) {
 				int scenarioUserIncrementPerTier = (int) Math.ceil(personaUserIncrementPerTier * scenario.scenarioLoadShare);
 				logger.info("\t building scenario: {}, users increment for the scenario: {}",
-				    scenario.getClass().getSimpleName(), scenarioUserIncrementPerTier);
+						scenario.getClass().getSimpleName(), scenarioUserIncrementPerTier);
 
 				int userCount = 0;
 				List<ClosedInjectionStep> steps = new ArrayList<>();
@@ -110,16 +110,16 @@ public class OpenMRSClinic extends Simulation {
 					int endUserCount = userCount + scenarioUserIncrementPerTier;
 
 					ClosedInjectionStep rampPhase = rampConcurrentUsers(startUserCount).to(endUserCount)
-					        .during(rampDurationMinutes * 60L);
+							.during(rampDurationMinutes * 60L);
 					ClosedInjectionStep constantPhase = constantConcurrentUsers(endUserCount)
-					        .during(tierDurationMinutes * 60L);
+							.during(tierDurationMinutes * 60L);
 					// Inject both phases into the scenario
 					steps.add(rampPhase);
 					steps.add(constantPhase);
 
 					logger.info(
-					    "\t\t Tier: {}, Start Users: {}, End Users: {}, Ramp Duration: {} minutes, Constant Duration: {} minutes",
-					    i + 1, startUserCount, endUserCount, rampDurationMinutes, tierDurationMinutes);
+							"\t\t Tier: {}, Start Users: {}, End Users: {}, Ramp Duration: {} minutes, Constant Duration: {} minutes",
+							i + 1, startUserCount, endUserCount, rampDurationMinutes, tierDurationMinutes);
 
 					// Update the user count for the next tier
 					userCount = endUserCount;
@@ -133,8 +133,8 @@ public class OpenMRSClinic extends Simulation {
 
 	private HttpProtocolBuilder getHttpProtocol() {
 		return http.baseUrl(org.openmrs.performance.Constants.BASE_URL).acceptHeader("application/json, text/plain, */*")
-		        .acceptLanguageHeader("en-US,en;q=0.5")
-		        .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0")
-		        .header("Authorization", "Bearer YWRtaW46QWRtaW4xMjM=").header("Content-Type", "application/json");
+				.acceptLanguageHeader("en-US,en;q=0.5")
+				.userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0")
+				.header("Authorization", "Bearer YWRtaW46QWRtaW4xMjM=").header("Content-Type", "application/json");
 	}
 }

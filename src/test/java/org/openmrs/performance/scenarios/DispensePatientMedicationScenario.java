@@ -19,21 +19,21 @@ public class DispensePatientMedicationScenario extends Scenario<PharmacistRegist
 	public ScenarioBuilder getScenarioBuilder() {
 		Iterator<Map<String, Object>> patientUuidFeeder = SharedPoolFeeder.feeder();
 		// @formatter:off
-        return  scenario("Pharmacist - Dispensing medication Scenario").feed(patientUuidFeeder)
-                .exec(registry.login())
-                .exec(registry.openHomePage())
-                .pause(3)
-                .exec(registry.startVisit("#{patient_uuid}"))
+		return  scenario("Pharmacist - Dispensing medication Scenario").feed(patientUuidFeeder)
+				.exec(registry.login())
+				.exec(registry.openHomePage())
 				.pause(3)
-                .exec(registry.openOrdersTab("#{patient_uuid}"))
+				.exec(registry.startVisit("#{patient_uuid}"))
+				.pause(3)
+				.exec(registry.openOrdersTab("#{patient_uuid}"))
 				.pause(5)
-                .exec(registry.addDrugOrder("#{patient_uuid}"))
+				.exec(registry.addDrugOrder("#{patient_uuid}"))
 				.pause(5)
-                .exec(registry.openDispensingApp())
+				.exec(registry.openDispensingApp())
 				.pause(3)
-                .exec(registry.selectPatientWithPrescription("#{patient_uuid}"))
+				.exec(registry.selectPatientWithPrescription("#{patient_uuid}"))
 				.pause(3)
-                .exec(registry.openDispensePrescription("#{patient_uuid}"))
+				.exec(registry.openDispensePrescription("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.dispenseMedication())
 				.pause(3)
@@ -41,12 +41,12 @@ public class DispensePatientMedicationScenario extends Scenario<PharmacistRegist
 				.pause(3)
 				.exec(registry.closeMedication())
 				.exec(registry.discontinueDrugOrder())
-                .exec(registry.endVisit("#{patient_uuid}"))
-                .exec(session -> {
-                    String uuid = session.getString("patient_uuid");
-                    SharedPoolFeeder.returnUuid(uuid);
-                    return session;
-                });
-        // @formatter:on
+				.exec(registry.endVisit("#{patient_uuid}"))
+				.exec(session -> {
+					String uuid = session.getString("patient_uuid");
+					SharedPoolFeeder.returnUuid(uuid);
+					return session;
+				});
+		// @formatter:on
 	}
 }
