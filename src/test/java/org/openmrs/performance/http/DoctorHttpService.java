@@ -49,38 +49,38 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
-				.get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
+		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
 	}
 
 	public HttpRequestActionBuilder getDrugOrdersExceptCancelledAndExpired(String patientUuid) {
 		String customRepresentation = "custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,careSetting"
-				+ ":ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,"
-				+ "encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,"
-				+ "orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid)"
-				+ ",concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,"
-				+ "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
+		        + ":ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,orderType:ref,"
+		        + "encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,"
+		        + "orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid)"
+		        + ",concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,"
+		        + "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
 
 		return http("Get Drug Orders except the cancelled and expired").get(
-				"/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
-						+ "&status=any&orderType=" + DRUG_ORDER + "&excludeCanceledAndExpired=true&v=" + customRepresentation);
+		    "/openmrs/ws/rest/v1/order" + "?patient=" + patientUuid + "&careSetting=" + CARE_SETTING_UUID
+		            + "&status=any&orderType=" + DRUG_ORDER + "&excludeCanceledAndExpired=true&v=" + customRepresentation);
 	}
 
 	public HttpRequestActionBuilder getDrugOrdersExceptDiscontinuedOrders(String patientUuid) {
 		String customRepresentation = "custom:(uuid,dosingType,orderNumber,accessionNumber,patient:ref,action,"
-				+ "careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,"
-				+ "orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,"
-				+ "orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),"
-				+ "concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,"
-				+ "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
+		        + "careSetting:ref,previousOrder:ref,dateActivated,scheduledDate,dateStopped,autoExpireDate,"
+		        + "orderType:ref,encounter:ref,orderer:(uuid,display,person:(display)),orderReason,orderReasonNonCoded,"
+		        + "orderType,urgency,instructions,commentToFulfiller,drug:(uuid,display,strength,dosageForm:(display,uuid),"
+		        + "concept),dose,doseUnits:ref,frequency:ref,asNeeded,asNeededCondition,quantity,quantityUnits:ref,"
+		        + "numRefills,dosingInstructions,duration,durationUnits:ref,route:ref,brandName,dispenseAsWritten)";
 
 		return http("Get Drug Orders except the discontinued orders").get("/openmrs/ws/rest/v1/order" + "?patient="
-				+ patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v="
-				+ customRepresentation + "&excludeDiscontinueOrders=true");
+		        + patientUuid + "&careSetting=" + CARE_SETTING_UUID + "&status=any&orderType=" + DRUG_ORDER + "&v="
+		        + customRepresentation + "&excludeDiscontinueOrders=true");
 	}
 
 	public HttpRequestActionBuilder getAllergies(String patientUuid) {
 		return http("Get Allergies of Patient")
-				.get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
+		        .get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
 	}
 
 	public HttpRequestActionBuilder getAllergens(String allergenType, String allergenUuid) {
@@ -90,69 +90,70 @@ public class DoctorHttpService extends HttpService {
 	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
 		// Using the 'OTHER' allergen type to create a unique entry and avoid duplication
 		return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
-				.body(StringBody(session -> {
-					try {
-						String random = new Random().ints(7, 'a', 'z' + 1)
-								.collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
-						Map<String, Object> payload = new HashMap<>();
-						Map<String, String> codedAllergen = new HashMap<>();
+		        .body(StringBody(session -> {
+			        try {
+				        String random = new Random().ints(7, 'a', 'z' + 1)
+				                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
+				        Map<String, Object> payload = new HashMap<>();
+				        Map<String, String> codedAllergen = new HashMap<>();
 
-						codedAllergen.put("uuid", OTHER_NON_CODED_ALLERGEN_UUID);
-						Map<String, Object> allergen = new HashMap<>();
+				        codedAllergen.put("uuid", OTHER_NON_CODED_ALLERGEN_UUID);
+				        Map<String, Object> allergen = new HashMap<>();
 
-						allergen.put("allergenType", "OTHER");
-						allergen.put("codedAllergen", codedAllergen);
-						allergen.put("nonCodedAllergen", random);
+				        allergen.put("allergenType", "OTHER");
+				        allergen.put("codedAllergen", codedAllergen);
+				        allergen.put("nonCodedAllergen", random);
 
-						Map<String, String> severity = new HashMap<>();
-						severity.put("uuid", SEVERITY_UUID);
+				        Map<String, String> severity = new HashMap<>();
+				        severity.put("uuid", SEVERITY_UUID);
 
-						Map<String, String> reactionUuid = new HashMap<>();
-						reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
+				        Map<String, String> reactionUuid = new HashMap<>();
+				        reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
 
-						Map<String, Object> reaction = new HashMap<>();
-						reaction.put("reaction", reactionUuid);
+				        Map<String, Object> reaction = new HashMap<>();
+				        reaction.put("reaction", reactionUuid);
 
-						List<Map<String, Object>> reactions = Collections.singletonList(reaction);
-						payload.put("allergen", allergen);
-						payload.put("severity", severity);
-						payload.put("comment", "test");
-						payload.put("reactions", reactions);
-						return new ObjectMapper().writeValueAsString(payload);
-					} catch (JsonProcessingException e) {
-						throw new RuntimeException(e);
-					}
-				}));
+				        List<Map<String, Object>> reactions = Collections.singletonList(reaction);
+				        payload.put("allergen", allergen);
+				        payload.put("severity", severity);
+				        payload.put("comment", "test");
+				        payload.put("reactions", reactions);
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
 	}
 
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
 		return http("Get Attachments of Patient")
-				.get("/openmrs/ws/rest/v1/attachment?patient=" + patientUuid + "&includeEncounterless=true");
+		        .get("/openmrs/ws/rest/v1/attachment?patient=" + patientUuid + "&includeEncounterless=true");
 	}
 
 	public HttpRequestActionBuilder getAllowedFileExtensions() {
 		return http("Get Allowed File Extensions")
-				.get("/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions");
+		        .get("/openmrs/ws/rest/v1/systemsetting?&v=custom:(value)&q=attachments.allowedFileExtensions");
 	}
 
 	public HttpRequestActionBuilder uploadAttachment(String patientUuid) {
 		return http("Upload Attachment Request").post("/openmrs/ws/rest/v1/attachment")
-				.bodyPart(StringBodyPart("fileCaption", "Test Image")).bodyPart(StringBodyPart("patient", patientUuid))
-				.bodyPart(RawFileBodyPart("file", "Sample_1MB_image.jpg").contentType("image/jpg")
-						.fileName("Sample_1MB_image.jpg"))
-				.asMultipartForm();
+		        .bodyPart(StringBodyPart("fileCaption", "Test Image")).bodyPart(StringBodyPart("patient", patientUuid))
+		        .bodyPart(RawFileBodyPart("file", "Sample_1MB_image.jpg").contentType("image/jpg")
+		                .fileName("Sample_1MB_image.jpg"))
+		        .asMultipartForm();
 	}
 
 	public HttpRequestActionBuilder getLabResults(String patientUuid) {
 		return http("Get Lab Results of Patient")
-				.get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid
-						+ "&_count=100&_summary=data")
-				.check(jsonPath("$.entry[*].resource.code.coding[0].code").findAll().optional().saveAs("conceptIDs"));
+		        .get("/openmrs/ws/fhir2/R4/Observation?category=laboratory&patient=" + patientUuid
+		                + "&_count=100&_summary=data")
+		        .check(jsonPath("$.entry[*].resource.code.coding[0].code").findAll().optional().saveAs("conceptIDs"));
 	}
 
 	public HttpRequestActionBuilder getObservationTree(String patientUuid, String observationTreeUuid) {
 		return http("Get Observation Tree Details")
-				.get("/openmrs/ws/rest/v1/obstree?patient=" + patientUuid + "&concept=" + observationTreeUuid);
+		        .get("/openmrs/ws/rest/v1/obstree?patient=" + patientUuid + "&concept=" + observationTreeUuid);
 	}
 
 	public HttpRequestActionBuilder getConcept(String conceptUuid) {
@@ -161,17 +162,17 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getImmunizations(String patientUuid) {
 		return http("Get Immunizations of Patient")
-				.get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
+		        .get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
 	}
 
 	public HttpRequestActionBuilder getPrograms() {
 		return http("Get Programs")
-				.get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
+		        .get("/openmrs/ws/rest/v1/program?v=custom:(uuid,display,allWorkflows,concept:(uuid,display))");
 	}
 
 	public HttpRequestActionBuilder searchForConditions(String searchQuery) {
 		return http("Search for Condition").get("/openmrs/ws/rest/v1/concept?name=" + searchQuery
-				+ "&searchType=fuzzy&class=" + DIAGNOSIS_CONCEPT + "&v=custom:(uuid,display)");
+		        + "&searchType=fuzzy&class=" + DIAGNOSIS_CONCEPT + "&v=custom:(uuid,display)");
 	}
 
 	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
@@ -179,7 +180,7 @@ public class DoctorHttpService extends HttpService {
 		String onSetDate = CommonUtils.getAdjustedDateTimeAsString(-2);
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("clinicalStatus", Map.of("coding",
-				List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
+		    List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
 		condition.put("code", Map.of("coding", List.of(Map.of("code", BACK_PAIN, "display", "Back Pain"))));
 		condition.put("abatementDateTime", null);
 		condition.put("onsetDateTime", onSetDate);
@@ -189,8 +190,9 @@ public class DoctorHttpService extends HttpService {
 		condition.put("subject", Map.of("reference", "Patient/" + patientUuid));
 		try {
 			return http("Save Conditions").post("/openmrs/ws/fhir2/R4/Condition?_summary=data")
-					.body(StringBody(new ObjectMapper().writeValueAsString(condition)));
-		} catch (JsonProcessingException e) {
+			        .body(StringBody(new ObjectMapper().writeValueAsString(condition)));
+		}
+		catch (JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -220,14 +222,15 @@ public class DoctorHttpService extends HttpService {
 			String body = new ObjectMapper().writeValueAsString(visitNote); // Convert Map to JSON
 
 			return http("Save Visit Note").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body))
-					.check(jsonPath("$.uuid").saveAs("encounterUuid")); // Store encounter UUID
-		} catch (JsonProcessingException e) {
+			        .check(jsonPath("$.uuid").saveAs("encounterUuid")); // Store encounter UUID
+		}
+		catch (JsonProcessingException e) {
 			throw new RuntimeException("Error converting visitNote to JSON", e);
 		}
 	}
 
 	public HttpRequestActionBuilder saveDiagnosis(String patientUuid, String encounterUuid, String diagnosisUuid,
-	                                              String certainty, int rank) {
+	        String certainty, int rank) {
 		Map<String, Object> patientDiagnosis = new HashMap<>();
 		patientDiagnosis.put("patient", patientUuid);
 		patientDiagnosis.put("encounter", encounterUuid);
@@ -241,10 +244,11 @@ public class DoctorHttpService extends HttpService {
 
 		try {
 			String body = new ObjectMapper().setSerializationInclusion(JsonInclude.Include.ALWAYS)
-					.writeValueAsString(patientDiagnosis);
+			        .writeValueAsString(patientDiagnosis);
 
 			return http("Save Patient Diagnosis").post("/openmrs/ws/rest/v1/patientdiagnoses").body(StringBody(body));
-		} catch (JsonProcessingException e) {
+		}
+		catch (JsonProcessingException e) {
 			throw new RuntimeException("Error converting patientDiagnosis to JSON", e);
 		}
 	}
@@ -275,7 +279,8 @@ public class DoctorHttpService extends HttpService {
 		try {
 			String body = new ObjectMapper().writeValueAsString(encounter); // Convert Map to JSON
 			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
-		} catch (JsonProcessingException e) {
+		}
+		catch (JsonProcessingException e) {
 			throw new RuntimeException("Error converting visitNote to JSON", e);
 		}
 	}

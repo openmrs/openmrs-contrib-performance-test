@@ -37,32 +37,32 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 
 	public ChainBuilder openWardPage(String locationUuid) {
 		return exec(httpService.getAdmissionLocationInfo(locationUuid), httpService.getAdmittedPatientInfo(locationUuid),
-				httpService.getInpatientRequest(locationUuid)).doIf(session -> session.contains("admittedPatientUuid"))
-				.then(foreach("#{admittedPatientUuid}", "uuid")
-						.on(exec(httpService.getOrdersWithNullFulfillerStatusAndActivatedDate("#{uuid}"))));
+		    httpService.getInpatientRequest(locationUuid)).doIf(session -> session.contains("admittedPatientUuid"))
+		        .then(foreach("#{admittedPatientUuid}", "uuid")
+		                .on(exec(httpService.getOrdersWithNullFulfillerStatusAndActivatedDate("#{uuid}"))));
 	}
 
 	public ChainBuilder admitPatientToWardPage(String patientUuid) {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
-				httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
-				httpService.getAppointmentsOfPatient(patientUuid),
-				httpService.getVisitsOfLocation(INPATEINT_CLINIC_LOCATION_UUID),
-				httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID),
-				httpService.getBedsByPatientUuid(patientUuid), httpService.saveWardEncounter("Admission",
-						Collections.emptyList(), ADMISSION_ENCOUNTER_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID));
+		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
+		    httpService.getAppointmentsOfPatient(patientUuid),
+		    httpService.getVisitsOfLocation(INPATEINT_CLINIC_LOCATION_UUID),
+		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID),
+		    httpService.getBedsByPatientUuid(patientUuid), httpService.saveWardEncounter("Admission",
+		        Collections.emptyList(), ADMISSION_ENCOUNTER_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID));
 	}
 
 	public ChainBuilder openingPatientDetails(String patientUuid) {
 		Set<String> vitals = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-				ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
+		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
 
 		Set<String> refRangesConcept = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-				RESPIRATORY_RATE, ARTERIAL_BLOOD_OXYGEN_SATURATION);
+		    RESPIRATORY_RATE, ARTERIAL_BLOOD_OXYGEN_SATURATION);
 
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.getIsVisitsEnabled(),
-				httpService.getVitalConceptSetDetails(), httpService.getPatientObservations(patientUuid, vitals),
-				httpService.getVitalsConceptRefRanges(patientUuid, refRangesConcept),
-				httpService.getSpecificVisitDetails("#{visitUuid}"));
+		    httpService.getVitalConceptSetDetails(), httpService.getPatientObservations(patientUuid, vitals),
+		    httpService.getVitalsConceptRefRanges(patientUuid, refRangesConcept),
+		    httpService.getSpecificVisitDetails("#{visitUuid}"));
 	}
 
 	public ChainBuilder transferPatient() {
@@ -85,24 +85,24 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 		obs.put("groupMembers", List.of(transferLocationConcept, groupMember, transferLocationNote));
 
 		return exec(httpService.getCustomTransferLocationsConfiguration(), httpService.getTransferableLocations(),
-				httpService.saveWardEncounter("Transfer", List.of(obs), TRANSFER_PATIENT_REQUEST,
-						INPATEINT_CLINIC_LOCATION_UUID));
+		    httpService.saveWardEncounter("Transfer", List.of(obs), TRANSFER_PATIENT_REQUEST,
+		        INPATEINT_CLINIC_LOCATION_UUID));
 	}
 
 	public ChainBuilder moveToDifferentLocationSession() {
 		return exec(httpService.getLocations(), httpService.getAllLocationsSearchSet(),
-				httpService.changeTheSessionLocation(WARD1_CLINIC_LOCATION_UUID));
+		    httpService.changeTheSessionLocation(WARD1_CLINIC_LOCATION_UUID));
 	}
 
 	public ChainBuilder admitTheTransferPatient() {
 		return exec(httpService.getPrimaryIdentifierTermMapping()).doIf(session -> session.contains("transferPatientUuid"))
-				.then(foreach("#{transferPatientUuid}", "uuid").on(exec(httpService.getPatientAdmissionNote("#{uuid}"))))
-				.exec(httpService.getBedsByPatientUuid("#{patient_uuid}")).exec(httpService.saveWardEncounter("Admission",
-						Collections.emptyList(), ADMISSION_ENCOUNTER_TYPE_UUID, WARD1_CLINIC_LOCATION_UUID));
+		        .then(foreach("#{transferPatientUuid}", "uuid").on(exec(httpService.getPatientAdmissionNote("#{uuid}"))))
+		        .exec(httpService.getBedsByPatientUuid("#{patient_uuid}")).exec(httpService.saveWardEncounter("Admission",
+		            Collections.emptyList(), ADMISSION_ENCOUNTER_TYPE_UUID, WARD1_CLINIC_LOCATION_UUID));
 	}
 
 	public ChainBuilder dischargePatient() {
 		return exec(httpService.saveWardEncounter("Discharge", Collections.emptyList(), DISCHARGE_ENCOUNTER_TYPE_UUID,
-				WARD1_CLINIC_LOCATION_UUID)).exec(httpService.submitEndVisit("#{visitUuid}"));
+		    WARD1_CLINIC_LOCATION_UUID)).exec(httpService.submitEndVisit("#{visitUuid}"));
 	}
 }

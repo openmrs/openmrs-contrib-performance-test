@@ -14,13 +14,13 @@ public class LabTechRegistry extends Registry<LabTechHttpService> {
 
 	public ChainBuilder addLabOrder(String patientUuid) {
 		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.getSpecificVisitDetails("#{visitUuid}"),
-				httpService.getOrderTypeDetails(TEST_ORDER_TYPE), httpService.getAllLabOrderDetails(),
-				httpService.getModuleInformation(), httpService.addLabOrder());
+		    httpService.getOrderTypeDetails(TEST_ORDER_TYPE), httpService.getAllLabOrderDetails(),
+		    httpService.getModuleInformation(), httpService.addLabOrder());
 	}
 
 	public ChainBuilder loadLaboratory() {
 		return exec(httpService.getAllActiveLabOrders(), httpService.getLabOrdersByFullFillerStatus("IN_PROGRESS"),
-				httpService.getLabOrdersByFullFillerStatus("COMPLETED"), httpService.getLabOrdersByFullFillerStatus("DECLINED"));
+		    httpService.getLabOrdersByFullFillerStatus("COMPLETED"), httpService.getLabOrdersByFullFillerStatus("DECLINED"));
 	}
 
 	public ChainBuilder pickUpLabOrder() {
@@ -29,7 +29,7 @@ public class LabTechRegistry extends Registry<LabTechHttpService> {
 
 	public ChainBuilder completeLabOrder(String patientUuid) {
 		return exec(httpService.getEncounterDetails("#{labEncounterUuid}"), httpService.getAlkalineConceptDetails(),
-				httpService.updateSpecificEncounter("#{labEncounterUuid}"), httpService.updateLabOrderCompletion(),
-				httpService.updateFullFillerStatus("#{labOrderUuid}", "COMPLETED", "Test Results Entered"));
+		    httpService.updateSpecificEncounter("#{labEncounterUuid}"), httpService.updateLabOrderCompletion(),
+		    httpService.updateFullFillerStatus("#{labOrderUuid}", "COMPLETED", "Test Results Entered"));
 	}
 }
