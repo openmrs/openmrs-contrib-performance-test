@@ -81,14 +81,14 @@ public abstract class HttpService {
 		return http("Get Auto Generation Options").get("/openmrs/ws/rest/v1/idgen/autogenerationoption?v=full");
 	}
 
-	public HttpRequestActionBuilder getPatientEncounters() {
-		String customString = "custom:(uuid,display,encounterDatetime,form,encounterType,visit,patient,"
-		        + "obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:(uuid,concept:"
-		        + "(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
+	public HttpRequestActionBuilder getPatientEncounters(String patientUuid) {
+		String customString = "custom:(uuid,display,diagnoses:(uuid,display,rank,diagnosis,certainty,voided),encounterDatetime,"
+		        + "form:(uuid,display,name,description,encounterType,version,resources:(uuid,display,name,valueReference)),"
+		        + "encounterType,visit,patient,obs:(uuid,concept:(uuid,display,conceptClass:(uuid,display)),display,groupMembers:"
+		        + "(uuid,concept:(uuid,display),value:(uuid,display),display),value,obsDatetime),encounterProviders:(provider:(person)))";
 
-		return http("Get Patient Encounters")
-		        .get("/openmrs/ws/rest/v1/encounter?patient=15e1a39b-005f-4659-97ce-8dbe60a84579&v=" + customString
-		                + "order=desc&limit=20&startIndex=0&totalCount=true");
+		return http("Get Patient Encounters").get("/openmrs/ws/rest/v1/encounter?patient=" + patientUuid + "&v="
+		        + customString + "&order=desc&limit=20&startIndex=0&totalCount=true");
 	}
 
 	public HttpRequestActionBuilder getVisitQueueEntry(String patientUuid) {
@@ -106,7 +106,9 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getPatientSummaryData(String patientUuid) {
-		return http("Get Patient Summary Data").get("/openmrs/ws/fhir2/R4/Patient/" + patientUuid + "?_summary=data");
+		return http("Get Patient Summary Data").get("/openmrs/ws/fhir2/R4/Patient/" + patientUuid + "?_summary=data").check(
+		    jsonPath("$.identifier[0].value").saveAs("patientIdentifierValue"),
+		    jsonPath("$.identifier[0].id").saveAs("patientIdentifierId"), jsonPath("$.name[0].id").saveAs("patientNameId"));
 	}
 
 	public HttpRequestActionBuilder getVisitTypes() {
@@ -160,10 +162,9 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getActiveVisitOfPatient(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,voided,indication,startDatetime,stopDatetime,"
-		        + "encounters:(uuid,display,encounterDatetime," + "form:(uuid,name),location:ref," + "encounterType:ref,"
-		        + "encounterProviders:(uuid,display," + "provider:(uuid,display)))," + "patient:(uuid,display),"
-		        + "visitType:(uuid,name,display),"
-		        + "attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
+		        + "encounters:(uuid,display,encounterDatetime,form:(uuid,name),location:ref,encounterType:ref,"
+		        + "encounterProviders:(uuid,display,provider:(uuid,display))),patient:(uuid,display),"
+		        + "visitType:(uuid,name,display),attributes:(uuid,display,attributeType:(name,datatypeClassname,uuid),value),"
 		        + "location:(uuid,name,display))";
 
 		return http("Get Active Visits of Patient").get(
@@ -291,6 +292,15 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getConcept(String conceptUuid) {
 		return http("Get Concept").get("/openmrs/ws/rest/v1/concept/" + conceptUuid + "?v=full");
+
+	public HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
+		return http("Get Person Attribute Type").get("/openmrs/ws/rest/v1/personattributetype/" + personAttributeTypeUuid);
+	}
+
+	public HttpRequestActionBuilder getOrderedAddressHierarchyLevels() {
+		return http("Get Ordered Address Hierarchy Levels")
+		        .get("/openmrs/module/addresshierarchy/ajax/getOrderedAddressHierarchyLevels.form");
+
 	}
 
 }
