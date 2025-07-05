@@ -292,6 +292,7 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getConcept(String conceptUuid) {
 		return http("Get Concept").get("/openmrs/ws/rest/v1/concept/" + conceptUuid + "?v=full");
+	}
 
 	public HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
 		return http("Get Person Attribute Type").get("/openmrs/ws/rest/v1/personattributetype/" + personAttributeTypeUuid);
