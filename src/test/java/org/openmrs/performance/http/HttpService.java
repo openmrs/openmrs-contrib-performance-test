@@ -221,8 +221,7 @@ public abstract class HttpService {
 	}
 
 	public HttpRequestActionBuilder getLocationsByTag(String tagName) {
-		return http("Get Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=" + tagName)
-		        .check(bodyString().saveAs("visitLocationsByTag"));
+		return http("Get Locations by Tag and Query").get("/openmrs/ws/rest/v1/location?tag=" + tagName);
 	}
 
 	public HttpRequestActionBuilder getLocationsThatSupportVisits() {
@@ -269,6 +268,10 @@ public abstract class HttpService {
 
 	}
 
+	public HttpRequestActionBuilder getAllProviders() {
+		return http("Get All Providers").get("/openmrs/ws/rest/v1/provider");
+  }
+  
 	public HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
 		return http("Get Person Attribute Type").get("/openmrs/ws/rest/v1/personattributetype/" + personAttributeTypeUuid);
 	}

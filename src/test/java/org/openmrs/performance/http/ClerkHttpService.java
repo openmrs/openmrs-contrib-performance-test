@@ -126,16 +126,12 @@ public class ClerkHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getPatientQueueEntry(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,queue,status,patient:(uuid,display,person,identifiers:(uuid,display,identifier,identifierType)),"
-		        + "visit:(uuid,display,startDatetime,encounters:(uuid,display,diagnoses,encounterDatetime,encounterType,obs,encounterProviders,voided),"
-		        + "attributes:(uuid,display,value,attributeType)),priority,priorityComment,sortWeight,startedAt,endedAt,locationWaitingFor,queueComingFrom,"
-		        + "providerWaitingFor,previousQueueEntry)";
+				+ "visit:(uuid,display,startDatetime,encounters:(uuid,display,diagnoses,encounterDatetime,encounterType,obs,encounterProviders,voided),"
+				+ "attributes:(uuid,display,value,attributeType)),priority,priorityComment,sortWeight,startedAt,endedAt,locationWaitingFor,queueComingFrom,"
+				+ "providerWaitingFor,previousQueueEntry)";
 
 		return http("Get Queue Entry").get("/openmrs/ws/rest/v1/queue-entry?v=" + customRepresentation
 		        + "&totalCount=true&patient=" + patientUuid + "&isEnded=false");
-	}
-
-	public HttpRequestActionBuilder getAllProviders() {
-		return http("Get All Providers").get("/openmrs/ws/rest/v1/provider");
 	}
 
 	public HttpRequestActionBuilder checkAppointmentConflicts() {
@@ -183,7 +179,7 @@ public class ClerkHttpService extends HttpService {
 			List<Map<String, String>> providers = Collections.singletonList(provider);
 			payload.put("providers", providers);
 			payload.put("patientUuid", session.get("patient_uuid"));
-			payload.put("comments", "Hi");
+			payload.put("comments", "Test comments");
 			payload.put("dateAppointmentScheduled", getCurrentDateTimeAsString());
 			try {
 				return new ObjectMapper().writeValueAsString(payload);

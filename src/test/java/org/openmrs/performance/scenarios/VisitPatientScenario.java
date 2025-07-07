@@ -7,7 +7,6 @@ import org.openmrs.performance.utils.SharedPoolFeeder;
 import java.util.Iterator;
 import java.util.Map;
 
-import static io.gatling.javaapi.core.CoreDsl.csv;
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
 public class VisitPatientScenario extends Scenario<DoctorRegistry> {
@@ -49,8 +48,6 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.pause(5)
 				.exec(registry.openMedicationsTab("#{patient_uuid}"))
 				.pause(5)
-				.exec(registry.openOrdersTab("#{patient_uuid}"))
-				.pause(5)
 				.exec(registry.openLabResultsTab("#{patient_uuid}"))
 				.pause(8)
 				.exec(registry.openAllergiesTab("#{patient_uuid}"))
@@ -76,10 +73,6 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.exec(registry.addAttachment("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.openAppointmentsTab("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.addDrugOrder("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.discontinueDrugOrder()) // Delete drug order end-point was introduces to overcome the drug duplication issue
 				.pause(5)
 				.exec(registry.addVisitNote("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
