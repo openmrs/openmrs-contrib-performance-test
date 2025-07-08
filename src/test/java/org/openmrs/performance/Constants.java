@@ -165,6 +165,15 @@ public class Constants {
 
 	public static final String TRIAGE_SERVICE = "d62d58e9-ec91-4108-9643-00f5f23bf51c";
 
+	// Dispensing app
+	public static final String SUBSTITUTION_TYPE_VALUE_SET = "b9c5bca0-d026-4245-a4d2-e4c0a8999082";
+
+	public static final String SUBSTITUTION_REASON_VALUE_SET = "2de6e1be-f2dd-4ba0-9516-8a611aa2af9b";
+
+	public static final String REASON_TO_CLOSE_VALUE_SET = "2462a9d7-61fb-4bf5-9359-aedecb8d03cb";
+
+	public static final String ORDER_DISCONTINUED_CODE = "741c21bc-c293-4373-b41d-e976829c923e";
+
 	// Clinical forms
 	public static final String SOAP_NOTE_TEMPLATE = "289417aa-31d5-3a06-bae8-a22d870bcf1d";
 

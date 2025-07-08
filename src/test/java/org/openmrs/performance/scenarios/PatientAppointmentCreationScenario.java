@@ -22,25 +22,25 @@ public class PatientAppointmentCreationScenario extends Scenario<ClerkRegistry> 
 		Iterator<Map<String, Object>> patientUuidFeeder = SharedPoolFeeder.feeder();
 		// @formatter:off
 		return  scenario("Clerk - Appointment creation Scenario").feed(patientUuidFeeder)
-		        .exec(registry.login())
-		        .exec(registry.openHomePage())
-		        .pause(3)
-		        .exec(registry.openAppointmentPage())
-		        .pause(3)
-		        .exec(registry.searchPatient())
-		        .exec(registry.openAppointmentFormPage("#{patient_uuid}"))
-		        .pause(5)
-		        .exec(registry.createAppointment())
-		        .pause(5)
-		        .exec(registry.checkInPatient("#{patient_uuid}"))
-		        .pause(10)
-		        .exec(registry.checkOutPatient())
-		        .exec(registry.openAppointmentPage())
-		        .exec(session -> {
+				.exec(registry.login())
+				.exec(registry.openHomePage())
+				.pause(3)
+				.exec(registry.searchPatient())
+				.exec(registry.openAppointmentPage())
+				.pause(3)
+				.exec(registry.openAppointmentFormPage("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.createAppointment())
+				.pause(5)
+				.exec(registry.checkInPatient("#{patient_uuid}"))
+				.pause(10)
+				.exec(registry.checkOutPatient())
+				.exec(registry.openAppointmentPage())
+				.exec(session -> {
 					String uuid = session.getString("patient_uuid");
 					SharedPoolFeeder.returnUuid(uuid);
 					return session;
 				});
-        // @formatter:on
+		// @formatter:on
 	}
 }

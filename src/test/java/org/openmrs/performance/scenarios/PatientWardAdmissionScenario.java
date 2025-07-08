@@ -20,7 +20,7 @@ public class PatientWardAdmissionScenario extends Scenario<NurseRegistry> {
 	@Override
 	public ScenarioBuilder getScenarioBuilder() {
 		Iterator<Map<String, Object>> patientUuidFeeder = SharedPoolFeeder.feeder();
-	// @formatter:off
+		// @formatter:off
         return scenario("Nurse - Patient Ward Admission").feed(patientUuidFeeder)
 		        .exec(registry.login())
 		        .exec(registry.openHomePage())
