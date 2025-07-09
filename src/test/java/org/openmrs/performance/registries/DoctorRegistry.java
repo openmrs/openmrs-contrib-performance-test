@@ -41,20 +41,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.getVisitWithDiagnosesAndNotes(patientUuid));
 	}
 
-	public ChainBuilder openVitalsAndBiometricsTab(String patientUuid) {
-
-		Set<String> vitals = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
-
-		Set<String> biometrics = Set.of(HEIGHT_CM, WEIGHT_KG, MID_UPPER_ARM_CIRCUMFERENCE);
-		return exec(httpService.getPatientObservations(patientUuid, vitals))
-		        .exec(httpService.getPatientObservations(patientUuid, biometrics));
-	}
-
-	public ChainBuilder recordVitals(String patientUuid) {
-		return exec(httpService.saveVitalsData(patientUuid));
-	}
-
 	public ChainBuilder openMedicationsTab(String patientUuid) {
 		return exec(httpService.getDrugOrdersExceptCancelledAndExpired(patientUuid))
 		        .exec(httpService.getDrugOrdersExceptDiscontinuedOrders(patientUuid))
@@ -67,21 +53,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		        .exec(httpService.getObservationTree(patientUuid, HIV_VIRAL_LOAD))
 		        .exec(httpService.getLabResults(patientUuid)).doIf(session -> session.contains("conceptIDs"))
 		        .then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
-	}
-
-	public ChainBuilder openAllergiesTab(String patientUuid) {
-		return exec(httpService.getAllergies(patientUuid));
-	}
-
-	public ChainBuilder openAllergiesForm() {
-		return exec(httpService.getAllergens("Drug", DRUG_ALLERGEN_UUID),
-		    httpService.getAllergens("Environment", ENVIRONMENTAL_ALLERGEN_UUID),
-		    httpService.getAllergens("Food", FOOD_ALLERGEN_UUID),
-		    httpService.getAllergens("Allergic Reactions", ALLERGY_REACTION_UUID));
-	}
-
-	public ChainBuilder recordAllergy(String patientUuid) {
-		return exec(httpService.saveAllergy(patientUuid));
 	}
 
 	public ChainBuilder openConditionsTab(String patientUuid) {
@@ -127,21 +98,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
-	}
-
-	public ChainBuilder openEditPatientTab(String patientUuid) {
-		return exec(httpService.getAddressTemplate(), httpService.getPatientIdentifierTypes(),
-		    httpService.getPrimaryIdentifierTermMapping(), httpService.getRelationshipTypes(),
-		    httpService.getModuleInformation(), httpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
-		    httpService.getAutoGenerationOptions(), httpService.getOrderedAddressHierarchyLevels(),
-		    httpService.getIdentifierSources(), httpService.getPatientLifeStatus(patientUuid),
-		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientSummaryData(patientUuid),
-		    httpService.getPatientAttributes(patientUuid), httpService.getPatientIdentifiers(patientUuid),
-		    httpService.getPatientRelationships(patientUuid));
-	}
-
-	public ChainBuilder editPatientDetails(String patientUuid) {
-		return exec(httpService.editPatientDetails(patientUuid));
 	}
 
 	public ChainBuilder addProgramEnrollment(String patientUuid) {
