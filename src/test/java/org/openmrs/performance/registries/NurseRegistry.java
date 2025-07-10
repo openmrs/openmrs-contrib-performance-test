@@ -46,7 +46,6 @@ public class NurseRegistry extends Registry<NurseHttpService> {
 		return exec(httpService.getVisitTypes(), httpService.getLocationsThatSupportVisits(),
 		    httpService.getProgramEnrollments(patientUuid), httpService.getLocationsByTag("Visit+Location"),
 		    httpService.getAppointmentsOfPatient(patientUuid),
-		    httpService.getVisitsOfLocation(INPATEINT_CLINIC_LOCATION_UUID),
 		    httpService.submitVisitForm(patientUuid, FACULTY_VISIT_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID),
 		    httpService.getBedsByPatientUuid(patientUuid), httpService.saveWardEncounter("Admission",
 		        Collections.emptyList(), ADMISSION_ENCOUNTER_TYPE_UUID, INPATEINT_CLINIC_LOCATION_UUID));
