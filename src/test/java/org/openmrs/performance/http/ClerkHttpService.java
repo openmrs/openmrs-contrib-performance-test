@@ -131,10 +131,9 @@ public class ClerkHttpService extends HttpService {
 		return http("Get All Appointment Services(full)").get("/openmrs/ws/rest/v1/appointmentService/all/full");
 	}
 
-
 	public HttpRequestActionBuilder getAllProviders() {
 		return http("Get All Providers").get("/openmrs/ws/rest/v1/provider");
-  }
+	}
 
 	public HttpRequestActionBuilder getPatientQueueEntry(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,queue,status,patient:(uuid,display,person,identifiers:(uuid,display,identifier,identifierType)),"
