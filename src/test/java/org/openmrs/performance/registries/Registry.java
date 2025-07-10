@@ -38,8 +38,9 @@ public abstract class Registry<H extends HttpService> {
 		return exec(httpService.getAddressTemplate(), httpService.getRelationshipTypes(),
 		    httpService.getAppointmentsForSpecificDate("2024-05-15T00:00:00.000+0530"), httpService.getModuleInformation(),
 		    httpService.getPatientIdentifierTypes(), httpService.getPrimaryIdentifierTermMapping(),
+		    httpService.getIdentifierSources(), httpService.getLocationsByTag("queue location"),
 		    httpService.getVisitsOfLocation(OUTPATIENT_CLINIC_LOCATION_UUID), httpService.getAutoGenerationOptions(),
-		    httpService.getIdentifierSources());
+		    httpService.getIdentifierSources(), httpService.getQueueEntry());
 	}
 
 	public ChainBuilder openPatientChartPage(String patientUuid) {

@@ -116,10 +116,6 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/obstree?patient=" + patientUuid + "&concept=" + observationTreeUuid);
 	}
 
-	public HttpRequestActionBuilder getConcept(String conceptUuid) {
-		return http("Get Concept").get("/openmrs/ws/rest/v1/concept/" + conceptUuid + "?v=full");
-	}
-
 	public HttpRequestActionBuilder getImmunizations(String patientUuid) {
 		return http("Get Immunizations of Patient")
 		        .get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
