@@ -152,6 +152,19 @@ public class Constants {
 
 	public static final String ORDERABLE_LAB_TESTS = "1748a953-d12e-4be1-914c-f6b096c6cdef";
 
+	//Service Queue
+	public static final String OUTPATIENT_CONSULTATION = "13b656d3-e141-11ee-bad2-0242ac120002";
+
+	public static final String OUTPATIENT_TRIAGE = "d692a223-e140-11ee-bad2-0242ac120002";
+
+	public static final String NOT_URGENT_PRIORITY = "f4620bfa-3625-4883-bd3f-84c2cce14470";
+
+	public static final String WAITING_STATUS = "51ae5e4d-b72b-4912-bf31-a17efb690aeb";
+
+	public static final String URGENT_PRIORITY = "dc3492ef-24a5-4fd9-b58d-4fd2acf7071f";
+
+	public static final String TRIAGE_SERVICE = "d62d58e9-ec91-4108-9643-00f5f23bf51c";
+
 	// Dispensing app
 	public static final String SUBSTITUTION_TYPE_VALUE_SET = "b9c5bca0-d026-4245-a4d2-e4c0a8999082";
 
