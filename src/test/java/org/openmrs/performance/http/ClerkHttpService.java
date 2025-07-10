@@ -126,9 +126,9 @@ public class ClerkHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getPatientQueueEntry(String patientUuid) {
 		String customRepresentation = "custom:(uuid,display,queue,status,patient:(uuid,display,person,identifiers:(uuid,display,identifier,identifierType)),"
-				+ "visit:(uuid,display,startDatetime,encounters:(uuid,display,diagnoses,encounterDatetime,encounterType,obs,encounterProviders,voided),"
-				+ "attributes:(uuid,display,value,attributeType)),priority,priorityComment,sortWeight,startedAt,endedAt,locationWaitingFor,queueComingFrom,"
-				+ "providerWaitingFor,previousQueueEntry)";
+		        + "visit:(uuid,display,startDatetime,encounters:(uuid,display,diagnoses,encounterDatetime,encounterType,obs,encounterProviders,voided),"
+		        + "attributes:(uuid,display,value,attributeType)),priority,priorityComment,sortWeight,startedAt,endedAt,locationWaitingFor,queueComingFrom,"
+		        + "providerWaitingFor,previousQueueEntry)";
 
 		return http("Get Queue Entry").get("/openmrs/ws/rest/v1/queue-entry?v=" + customRepresentation
 		        + "&totalCount=true&patient=" + patientUuid + "&isEnded=false");

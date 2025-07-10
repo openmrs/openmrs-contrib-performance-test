@@ -28,6 +28,7 @@ import static org.openmrs.performance.Constants.ENV_SIMULATION_PRESET;
 import static org.openmrs.performance.Constants.ENV_TIER_COUNT;
 import static org.openmrs.performance.Constants.ENV_TIER_DURATION;
 import static org.openmrs.performance.Constants.ENV_USER_INCREMENT_PER_TIER;
+import static org.openmrs.performance.utils.LoadConfigUtils.getPersonaLoad;
 
 public class OpenMRSClinic extends Simulation {
 
@@ -55,8 +56,8 @@ public class OpenMRSClinic extends Simulation {
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
 		    preset, userIncrementPerTier, tierDurationMinutes, tierCount);
 
-		List<Persona<?>> personas = List.of(new ClerkPersona(0.2), new DoctorPersona(0.2), new LabTechPersona(0.2),
-		    new NursePersona(0.2), new PharmacistPersona(0.2));
+		List<Persona<?>> personas = List.of(new ClerkPersona(getPersonaLoad("clerk")), new DoctorPersona(0.2),
+		    new LabTechPersona(0.2), new NursePersona(0.2), new PharmacistPersona(0.2));
 
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 		    tierCount);
