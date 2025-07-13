@@ -92,4 +92,19 @@ public class ClerkRegistry extends Registry<ClerkHttpService> {
 	public ChainBuilder transitionPatient() {
 		return exec(httpService.submitTransitionRequest(), httpService.getQueueEntry());
 	}
+
+	public ChainBuilder openEditPatientTab(String patientUuid) {
+		return exec(httpService.getAddressTemplate(), httpService.getPatientIdentifierTypes(),
+		    httpService.getPrimaryIdentifierTermMapping(), httpService.getRelationshipTypes(),
+		    httpService.getModuleInformation(), httpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
+		    httpService.getAutoGenerationOptions(), httpService.getOrderedAddressHierarchyLevels(),
+		    httpService.getIdentifierSources(), httpService.getPatientLifeStatus(patientUuid),
+		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientSummaryData(patientUuid),
+		    httpService.getPatientAttributes(patientUuid), httpService.getPatientIdentifiers(patientUuid),
+		    httpService.getPatientRelationships(patientUuid));
+	}
+
+	public ChainBuilder editPatientDetails(String patientUuid) {
+		return exec(httpService.editPatientDetails(patientUuid));
+	}
 }
