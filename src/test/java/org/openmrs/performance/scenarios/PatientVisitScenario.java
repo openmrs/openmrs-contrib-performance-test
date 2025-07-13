@@ -9,9 +9,9 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
-public class VisitPatientScenario extends Scenario<DoctorRegistry> {
+public class PatientVisitScenario extends Scenario<DoctorRegistry> {
 
-	public VisitPatientScenario(float scenarioLoadShare) {
+	public PatientVisitScenario(float scenarioLoadShare) {
 		super(scenarioLoadShare, new DoctorRegistry());
 	}
 
@@ -47,6 +47,10 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.exec(registry.addCondition("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
 				.exec(registry.openImmunizationsTab("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.openImmunizationForm("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.addImmunization("#{currentUserUuid}"))
 				.pause(5)
 				.exec(registry.openAttachmentsTab("#{patient_uuid}"))
 				.pause(5)

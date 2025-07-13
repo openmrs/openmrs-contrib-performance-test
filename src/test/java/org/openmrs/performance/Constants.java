@@ -182,4 +182,9 @@ public class Constants {
 	public static final String OBJECTIVE_FINDINGS = "aeec913c-9a36-4153-9a44-12bc255d7f60";
 
 	public static final String PLAN = "2ad20b043cf54dd48e698e1c8e231c99";
+
+	//Immunization
+	public static final String IMMUNIZATION_CONCEPT_SET = "CIEL:984";
+
+	public static final String POLIO_VACCINATION = "783AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA";
 }
