@@ -5,6 +5,9 @@ import org.openmrs.performance.scenarios.PatientMedicationDispenseScenario;
 import org.openmrs.performance.scenarios.Scenario;
 
 import java.util.List;
+import java.util.Map;
+
+import static org.openmrs.performance.utils.LoadConfigUtils.getScenarioLoads;
 
 public class PharmacistPersona extends Persona<PharmacistRegistry> {
 
@@ -14,6 +17,7 @@ public class PharmacistPersona extends Persona<PharmacistRegistry> {
 
 	@Override
 	public List<Scenario<PharmacistRegistry>> getScenarios() {
-		return List.of(new PatientMedicationDispenseScenario(1));
+		Map<String, Float> scenarioLoads = getScenarioLoads("pharmacist");
+		return List.of(new PatientMedicationDispenseScenario(scenarioLoads.get("patientMedicationDispense")));
 	}
 }
