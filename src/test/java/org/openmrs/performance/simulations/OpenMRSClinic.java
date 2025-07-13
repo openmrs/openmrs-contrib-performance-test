@@ -18,34 +18,23 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers;
 import static io.gatling.javaapi.core.CoreDsl.global;
 import static io.gatling.javaapi.core.CoreDsl.rampConcurrentUsers;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ENV_SIMULATION_PRESET;
-import static org.openmrs.performance.Constants.ENV_TIER_COUNT;
-import static org.openmrs.performance.Constants.ENV_TIER_DURATION;
-import static org.openmrs.performance.Constants.ENV_USER_INCREMENT_PER_TIER;
 import static org.openmrs.performance.utils.LoadConfigUtils.getPersonaLoad;
+import static org.openmrs.performance.utils.PresetConfigUtil.getPresetValues;
 
 public class OpenMRSClinic extends Simulation {
 
 	private static final Logger logger = LoggerFactory.getLogger(OpenMRSClinic.class.getName());
 
 	{
-		Map<String, Map<String, Integer>> presetsMap = Map.of("standard",
-		    Map.of("tierCount", 6, "tierDurationMinutes", 30, "userIncrementPerTier", 32), "commit",
-		    Map.of("tierCount", 1, "tierDurationMinutes", 1, "userIncrementPerTier", 20), "pull_request",
-		    Map.of("tierCount", 1, "tierDurationMinutes", 1, "userIncrementPerTier", 20), "dev",
-		    Map.of("tierCount", Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_COUNT, "1")), "tierDurationMinutes",
-		        Integer.parseInt(System.getenv().getOrDefault(ENV_TIER_DURATION, "1")), "userIncrementPerTier",
-		        Integer.parseInt(System.getenv().getOrDefault(ENV_USER_INCREMENT_PER_TIER, "10"))));
-
 		String preset = System.getenv(ENV_SIMULATION_PRESET);
 
-		int[] loadParams = getSimulationParameters(preset, presetsMap);
+		int[] loadParams = getPresetValues(preset);
 
 		int userIncrementPerTier = loadParams[0];
 		int tierDurationMinutes = loadParams[1];
@@ -65,28 +54,6 @@ public class OpenMRSClinic extends Simulation {
 
 		setUp(populations).protocols(httpProtocol).assertions(global().successfulRequests().percent().shouldBe(100.0));
 
-	}
-
-	private int[] getSimulationParameters(String preset, Map<String, Map<String, Integer>> loadSimulationTypeMap) {
-		int userIncrementPerTier;
-		int tierDurationMinutes;
-		int tierCount;
-
-		if (preset == null) {
-			throw new IllegalArgumentException(ENV_SIMULATION_PRESET + " variable is not set");
-		}
-
-		if (loadSimulationTypeMap.containsKey(preset)) {
-			Map<String, Integer> loadSimulationType = loadSimulationTypeMap.get(preset);
-			userIncrementPerTier = loadSimulationType.get("userIncrementPerTier");
-			tierDurationMinutes = loadSimulationType.get("tierDurationMinutes");
-			tierCount = loadSimulationType.get("tierCount");
-		} else {
-			throw new IllegalArgumentException(
-			        "Invalid value for environment variable " + ENV_SIMULATION_PRESET + ": " + preset);
-		}
-
-		return new int[] { userIncrementPerTier, tierDurationMinutes, tierCount };
 	}
 
 	private List<PopulationBuilder> buildPopulations(List<Persona<?>> personas, int userIncrementPerTier,
