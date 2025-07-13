@@ -4,29 +4,13 @@ import io.gatling.javaapi.core.ChainBuilder;
 import org.openmrs.performance.http.DoctorHttpService;
 
 import java.util.List;
-import java.util.Set;
 
 import static io.gatling.javaapi.core.CoreDsl.exec;
 import static io.gatling.javaapi.core.CoreDsl.foreach;
 import static io.gatling.javaapi.core.CoreDsl.pause;
-import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
-import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
 import static org.openmrs.performance.Constants.DIABETIC_FOOT_ULCER_CONCEPT;
 import static org.openmrs.performance.Constants.DIABETIC_KETOSIS_CONCEPT;
-import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.DRUG_ALLERGEN_UUID;
-import static org.openmrs.performance.Constants.ENVIRONMENTAL_ALLERGEN_UUID;
-import static org.openmrs.performance.Constants.FOOD_ALLERGEN_UUID;
-import static org.openmrs.performance.Constants.HEIGHT_CM;
-import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
-import static org.openmrs.performance.Constants.PERSON_ATTRIBUTE_PHONE_NUMBER;
-import static org.openmrs.performance.Constants.PULSE;
-import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
 import static org.openmrs.performance.Constants.SOAP_NOTE_TEMPLATE;
-import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.TEMPERATURE_C;
-import static org.openmrs.performance.Constants.UNKNOWN_OBSERVATION_TYPE;
-import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.Constants.BLOODWORK;
 import static org.openmrs.performance.Constants.HEMATOLOGY;
 import static org.openmrs.performance.Constants.HIV_VIRAL_LOAD;
@@ -39,20 +23,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 
 	public ChainBuilder getVisitsFromNewEndpoint(String patientUuid) {
 		return exec(httpService.getVisitWithDiagnosesAndNotes(patientUuid));
-	}
-
-	public ChainBuilder openVitalsAndBiometricsTab(String patientUuid) {
-
-		Set<String> vitals = Set.of(SYSTOLIC_BLOOD_PRESSURE, DIASTOLIC_BLOOD_PRESSURE, PULSE, TEMPERATURE_C,
-		    ARTERIAL_BLOOD_OXYGEN_SATURATION, RESPIRATORY_RATE, UNKNOWN_OBSERVATION_TYPE);
-
-		Set<String> biometrics = Set.of(HEIGHT_CM, WEIGHT_KG, MID_UPPER_ARM_CIRCUMFERENCE);
-		return exec(httpService.getPatientObservations(patientUuid, vitals))
-		        .exec(httpService.getPatientObservations(patientUuid, biometrics));
-	}
-
-	public ChainBuilder recordVitals(String patientUuid) {
-		return exec(httpService.saveVitalsData(patientUuid));
 	}
 
 	public ChainBuilder openMedicationsTab(String patientUuid) {
@@ -69,27 +39,22 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		        .then(foreach("#{conceptIDs}", "conceptId").on(exec(httpService.getConcept("#{conceptId}"))));
 	}
 
-	public ChainBuilder openAllergiesTab(String patientUuid) {
-		return exec(httpService.getAllergies(patientUuid));
-	}
-
-	public ChainBuilder openAllergiesForm() {
-		return exec(httpService.getAllergens("Drug", DRUG_ALLERGEN_UUID),
-		    httpService.getAllergens("Environment", ENVIRONMENTAL_ALLERGEN_UUID),
-		    httpService.getAllergens("Food", FOOD_ALLERGEN_UUID),
-		    httpService.getAllergens("Allergic Reactions", ALLERGY_REACTION_UUID));
-	}
-
-	public ChainBuilder recordAllergy(String patientUuid) {
-		return exec(httpService.saveAllergy(patientUuid));
-	}
-
 	public ChainBuilder openConditionsTab(String patientUuid) {
 		return exec(httpService.getPatientConditions(patientUuid));
 	}
 
 	public ChainBuilder openImmunizationsTab(String patientUuid) {
-		return exec(httpService.getImmunizations(patientUuid));
+		return exec(httpService.getPatientImmunizations(patientUuid), httpService.getActiveVisitOfPatient(patientUuid),
+		    httpService.getSpecificVisitDetails("#{visitUuid}"));
+	}
+
+	public ChainBuilder openImmunizationForm(String patientUuid) {
+		return exec(httpService.getActiveVisitOfPatient(patientUuid), httpService.getSpecificVisitDetails("#{visitUuid}"),
+		    httpService.getPatientImmunizations(patientUuid), httpService.getAllImmunizations());
+	}
+
+	public ChainBuilder addImmunization(String patientUuid) {
+		return exec(httpService.submitImmunizationForm(), httpService.getPatientImmunizations(patientUuid));
 	}
 
 	public ChainBuilder openAttachmentsTab(String patientUuid) {
@@ -127,21 +92,6 @@ public class DoctorRegistry extends Registry<DoctorHttpService> {
 		return exec(httpService.saveVisitNote(patientUuid, currentUserUuid, visitNoteText),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_KETOSIS_CONCEPT, certainty, 1),
 		    httpService.saveDiagnosis(patientUuid, encounterUuid, DIABETIC_FOOT_ULCER_CONCEPT, certainty, 2));
-	}
-
-	public ChainBuilder openEditPatientTab(String patientUuid) {
-		return exec(httpService.getAddressTemplate(), httpService.getPatientIdentifierTypes(),
-		    httpService.getPrimaryIdentifierTermMapping(), httpService.getRelationshipTypes(),
-		    httpService.getModuleInformation(), httpService.getPersonAttributeType(PERSON_ATTRIBUTE_PHONE_NUMBER),
-		    httpService.getAutoGenerationOptions(), httpService.getOrderedAddressHierarchyLevels(),
-		    httpService.getIdentifierSources(), httpService.getPatientLifeStatus(patientUuid),
-		    httpService.getPatientIdPhoto(patientUuid), httpService.getPatientSummaryData(patientUuid),
-		    httpService.getPatientAttributes(patientUuid), httpService.getPatientIdentifiers(patientUuid),
-		    httpService.getPatientRelationships(patientUuid));
-	}
-
-	public ChainBuilder editPatientDetails(String patientUuid) {
-		return exec(httpService.editPatientDetails(patientUuid));
 	}
 
 	public ChainBuilder addProgramEnrollment(String patientUuid) {

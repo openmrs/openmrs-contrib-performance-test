@@ -2,7 +2,7 @@ package org.openmrs.performance.personas;
 
 import org.openmrs.performance.registries.DoctorRegistry;
 import org.openmrs.performance.scenarios.Scenario;
-import org.openmrs.performance.scenarios.VisitPatientScenario;
+import org.openmrs.performance.scenarios.PatientVisitScenario;
 
 import java.util.List;
 
@@ -14,6 +14,6 @@ public class DoctorPersona extends Persona<DoctorRegistry> {
 
 	@Override
 	public List<Scenario<DoctorRegistry>> getScenarios() {
-		return List.of(new VisitPatientScenario(1));
+		return List.of(new PatientVisitScenario(1));
 	}
 }

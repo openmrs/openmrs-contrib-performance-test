@@ -9,9 +9,9 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
-public class VisitPatientScenario extends Scenario<DoctorRegistry> {
+public class PatientVisitScenario extends Scenario<DoctorRegistry> {
 
-	public VisitPatientScenario(float scenarioLoadShare) {
+	public PatientVisitScenario(float scenarioLoadShare) {
 		super(scenarioLoadShare, new DoctorRegistry());
 	}
 
@@ -35,32 +35,22 @@ public class VisitPatientScenario extends Scenario<DoctorRegistry> {
 				.exec(registry.saveSoapTemplateForm("#{patient_uuid}"))
 				.pause(3)
 				.exec(registry.openVisitsTab("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.openEditPatientTab("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.editPatientDetails("#{patient_uuid}"))
 				.pause(2)
 				.exec(registry.getVisitsFromNewEndpoint("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.openVitalsAndBiometricsTab("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.recordVitals("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.openMedicationsTab("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.openLabResultsTab("#{patient_uuid}"))
-				.pause(8)
-				.exec(registry.openAllergiesTab("#{patient_uuid}"))
-				.pause(5)
-				.exec(registry.openAllergiesForm())
-				.pause(5)
-				.exec(registry.recordAllergy("#{patient_uuid}"))
 				.pause(10)
 				.exec(registry.openConditionsTab("#{patient_uuid}"))
 				.pause(5)
 				.exec(registry.addCondition("#{patient_uuid}", "#{currentUserUuid}"))
 				.pause(10)
 				.exec(registry.openImmunizationsTab("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.openImmunizationForm("#{patient_uuid}"))
+				.pause(5)
+				.exec(registry.addImmunization("#{currentUserUuid}"))
 				.pause(5)
 				.exec(registry.openAttachmentsTab("#{patient_uuid}"))
 				.pause(5)

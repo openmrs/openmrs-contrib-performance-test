@@ -295,8 +295,8 @@ public abstract class HttpService {
 
 	public HttpRequestActionBuilder getAllProviders() {
 		return http("Get All Providers").get("/openmrs/ws/rest/v1/provider");
-  }
-  
+	}
+
 	public HttpRequestActionBuilder getPersonAttributeType(String personAttributeTypeUuid) {
 		return http("Get Person Attribute Type").get("/openmrs/ws/rest/v1/personattributetype/" + personAttributeTypeUuid);
 	}

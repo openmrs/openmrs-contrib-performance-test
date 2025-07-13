@@ -4,14 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
-import org.openmrs.performance.utils.CommonUtils;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
@@ -19,39 +16,25 @@ import static io.gatling.javaapi.http.HttpDsl.RawFileBodyPart;
 import static io.gatling.javaapi.http.HttpDsl.StringBodyPart;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ADMIN_SUPER_USER_UUID;
-import static org.openmrs.performance.Constants.ALLERGY_REACTION_UUID;
-import static org.openmrs.performance.Constants.ARTERIAL_BLOOD_OXYGEN_SATURATION;
-import static org.openmrs.performance.Constants.ASPRIN_CONCEPT_UUID;
-import static org.openmrs.performance.Constants.ASPRIN_DRUG_UUID;
 import static org.openmrs.performance.Constants.CARE_SETTING_UUID;
 import static org.openmrs.performance.Constants.CLINICIAN_ENCOUNTER_ROLE;
 import static org.openmrs.performance.Constants.HIV_CARE_TREATMENT;
+import static org.openmrs.performance.Constants.IMMUNIZATION_CONCEPT_SET;
 import static org.openmrs.performance.Constants.INPATEINT_CLINIC_LOCATION_UUID;
 import static org.openmrs.performance.Constants.OBJECTIVE_FINDINGS;
-import static org.openmrs.performance.Constants.OTHER_NON_CODED_ALLERGEN_UUID;
-import static org.openmrs.performance.Constants.DIASTOLIC_BLOOD_PRESSURE;
 import static org.openmrs.performance.Constants.DRUG_ORDER;
-import static org.openmrs.performance.Constants.HEIGHT_CM;
-import static org.openmrs.performance.Constants.MID_UPPER_ARM_CIRCUMFERENCE;
 import static org.openmrs.performance.Constants.OUTPATIENT_CLINIC_LOCATION_UUID;
-import static org.openmrs.performance.Constants.PATIENT_IDENTIFIER_UUID;
 import static org.openmrs.performance.Constants.PLAN;
-import static org.openmrs.performance.Constants.PULSE;
-import static org.openmrs.performance.Constants.RESPIRATORY_RATE;
-import static org.openmrs.performance.Constants.SEVERITY_UUID;
+import static org.openmrs.performance.Constants.POLIO_VACCINATION;
 import static org.openmrs.performance.Constants.SOAP_NOTE_TEMPLATE;
 import static org.openmrs.performance.Constants.SUBJECTIVE_FINDINGS;
-import static org.openmrs.performance.Constants.SYSTOLIC_BLOOD_PRESSURE;
-import static org.openmrs.performance.Constants.TEMPERATURE_C;
 import static org.openmrs.performance.Constants.VISIT_NOTE_CONCEPT_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_ENCOUNTER_TYPE_UUID;
 import static org.openmrs.performance.Constants.VISIT_NOTE_FORM_UUID;
-import static org.openmrs.performance.Constants.VITALS_ENCOUNTER_TYPE_UUID;
-import static org.openmrs.performance.Constants.VITALS_FORM_UUID;
-import static org.openmrs.performance.Constants.VITALS_LOCATION_UUID;
-import static org.openmrs.performance.Constants.WEIGHT_KG;
 import static org.openmrs.performance.Constants.BACK_PAIN;
 import static org.openmrs.performance.Constants.DIAGNOSIS_CONCEPT;
+import static org.openmrs.performance.utils.CommonUtils.getAdjustedDateTimeAsString;
+import static org.openmrs.performance.utils.CommonUtils.getCurrentDateTimeAsString;
 
 public class DoctorHttpService extends HttpService {
 
@@ -86,54 +69,6 @@ public class DoctorHttpService extends HttpService {
 		        + customRepresentation + "&excludeDiscontinueOrders=true");
 	}
 
-	public HttpRequestActionBuilder getAllergies(String patientUuid) {
-		return http("Get Allergies of Patient")
-		        .get("/openmrs/ws/fhir2/R4/AllergyIntolerance?patient=" + patientUuid + "&_summary=data");
-	}
-
-	public HttpRequestActionBuilder getAllergens(String allergenType, String allergenUuid) {
-		return http("Get " + allergenType + " Allergens").get("/openmrs/ws/rest/v1/concept/" + allergenUuid + "?v=full");
-	}
-
-	public HttpRequestActionBuilder saveAllergy(String patientUuid) {
-		// Using the 'OTHER' allergen type to create a unique entry and avoid duplication
-		return http("Save an Allergy").post("/openmrs/ws/rest/v1/patient/" + patientUuid + "/allergy")
-		        .body(StringBody(session -> {
-			        try {
-				        String random = new Random().ints(7, 'a', 'z' + 1)
-				                .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
-				        Map<String, Object> payload = new HashMap<>();
-				        Map<String, String> codedAllergen = new HashMap<>();
-
-				        codedAllergen.put("uuid", OTHER_NON_CODED_ALLERGEN_UUID);
-				        Map<String, Object> allergen = new HashMap<>();
-
-				        allergen.put("allergenType", "OTHER");
-				        allergen.put("codedAllergen", codedAllergen);
-				        allergen.put("nonCodedAllergen", random);
-
-				        Map<String, String> severity = new HashMap<>();
-				        severity.put("uuid", SEVERITY_UUID);
-
-				        Map<String, String> reactionUuid = new HashMap<>();
-				        reactionUuid.put("uuid", ALLERGY_REACTION_UUID);
-
-				        Map<String, Object> reaction = new HashMap<>();
-				        reaction.put("reaction", reactionUuid);
-
-				        List<Map<String, Object>> reactions = Collections.singletonList(reaction);
-				        payload.put("allergen", allergen);
-				        payload.put("severity", severity);
-				        payload.put("comment", "test");
-				        payload.put("reactions", reactions);
-				        return new ObjectMapper().writeValueAsString(payload);
-			        }
-			        catch (JsonProcessingException e) {
-				        throw new RuntimeException(e);
-			        }
-		        }));
-	}
-
 	public HttpRequestActionBuilder getAttachments(String patientUuid) {
 		return http("Get Attachments of Patient")
 		        .get("/openmrs/ws/rest/v1/attachment?patient=" + patientUuid + "&includeEncounterless=true");
@@ -164,9 +99,75 @@ public class DoctorHttpService extends HttpService {
 		        .get("/openmrs/ws/rest/v1/obstree?patient=" + patientUuid + "&concept=" + observationTreeUuid);
 	}
 
-	public HttpRequestActionBuilder getImmunizations(String patientUuid) {
+	public HttpRequestActionBuilder getPatientImmunizations(String patientUuid) {
 		return http("Get Immunizations of Patient")
 		        .get("/openmrs/ws/fhir2/R4/Immunization?patient=" + patientUuid + "&_summary=data");
+	}
+
+	public HttpRequestActionBuilder submitImmunizationForm() {
+		return http("Submit Patient immunization").post("/openmrs/ws/fhir2/R4/Immunization?_summary=data")
+		        .body(StringBody(session -> {
+			        Map<String, Object> payload = new HashMap<>();
+
+			        payload.put("resourceType", "Immunization");
+			        payload.put("status", "completed");
+
+			        Map<String, Object> vaccineCode = new HashMap<>();
+			        List<Map<String, Object>> codingList = new ArrayList<>();
+			        Map<String, Object> coding = new HashMap<>();
+			        coding.put("code", POLIO_VACCINATION);
+			        coding.put("display", "Polio vaccination, oral");
+			        codingList.add(coding);
+			        vaccineCode.put("coding", codingList);
+			        payload.put("vaccineCode", vaccineCode);
+
+			        Map<String, Object> patient = new HashMap<>();
+			        patient.put("type", "Patient");
+			        patient.put("reference", "Patient/" + session.getString("patient_uuid"));
+			        payload.put("patient", patient);
+
+			        Map<String, Object> encounter = new HashMap<>();
+			        encounter.put("type", "Encounter");
+			        encounter.put("reference", "Encounter/" + session.getString("visitUuid"));
+			        payload.put("encounter", encounter);
+
+			        payload.put("occurrenceDateTime", getCurrentDateTimeAsString());
+			        payload.put("expirationDate", getAdjustedDateTimeAsString(30));
+
+			        Map<String, Object> location = new HashMap<>();
+			        location.put("type", "Location");
+			        location.put("reference", "Location/" + INPATEINT_CLINIC_LOCATION_UUID);
+			        payload.put("location", location);
+
+			        List<Map<String, Object>> performerList = new ArrayList<>();
+			        Map<String, Object> performer = new HashMap<>();
+			        Map<String, Object> actor = new HashMap<>();
+			        actor.put("type", "Practitioner");
+			        actor.put("reference", "Practitioner/" + ADMIN_SUPER_USER_UUID);
+			        performer.put("actor", actor);
+			        performerList.add(performer);
+			        payload.put("performer", performerList);
+
+			        Map<String, Object> manufacturer = new HashMap<>();
+			        manufacturer.put("display", "test");
+			        payload.put("manufacturer", manufacturer);
+
+			        payload.put("lotNumber", "123");
+
+			        List<Map<String, Object>> protocolAppliedList = new ArrayList<>();
+			        Map<String, Object> protocolApplied = new HashMap<>();
+			        protocolApplied.put("doseNumberPositiveInt", 1);
+			        protocolApplied.put("series", null);
+			        protocolAppliedList.add(protocolApplied);
+			        payload.put("protocolApplied", protocolAppliedList);
+
+			        try {
+				        return new ObjectMapper().writeValueAsString(payload);
+			        }
+			        catch (JsonProcessingException e) {
+				        throw new RuntimeException(e);
+			        }
+		        }));
 	}
 
 	public HttpRequestActionBuilder getPrograms() {
@@ -180,8 +181,8 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveCondition(String patientUuid, String currentUserUuid) {
-		String recordedDate = CommonUtils.getCurrentDateTimeAsString();
-		String onSetDate = CommonUtils.getAdjustedDateTimeAsString(-2);
+		String recordedDate = getCurrentDateTimeAsString();
+		String onSetDate = getAdjustedDateTimeAsString(-2);
 		Map<String, Object> condition = new HashMap<>();
 		condition.put("clinicalStatus", Map.of("coding",
 		    List.of(Map.of("system", "http://terminology.hl7.org/CodeSystem/condition-clinical", "code", "active"))));
@@ -202,7 +203,7 @@ public class DoctorHttpService extends HttpService {
 	}
 
 	public HttpRequestActionBuilder saveVisitNote(String patientUuid, String currentUser, String value) {
-		String encounterDatetime = CommonUtils.getCurrentDateTimeAsString();
+		String encounterDatetime = getCurrentDateTimeAsString();
 
 		Map<String, Object> visitNote = new HashMap<>();
 		visitNote.put("form", VISIT_NOTE_FORM_UUID);
@@ -257,120 +258,13 @@ public class DoctorHttpService extends HttpService {
 		}
 	}
 
-	public HttpRequestActionBuilder saveVitalsData(String patientUuid) {
-		String encounterDatetime = CommonUtils.getCurrentDateTimeAsString();
-
-		Map<String, Object> encounter = new HashMap<>();
-		encounter.put("form", VITALS_FORM_UUID);
-		encounter.put("patient", patientUuid);
-		encounter.put("location", VITALS_LOCATION_UUID);
-		encounter.put("encounterType", VITALS_ENCOUNTER_TYPE_UUID);
-		encounter.put("encounterDatetime", encounterDatetime);
-
-		List<Map<String, Object>> observations = new ArrayList<>();
-		observations.add(Map.of("concept", SYSTOLIC_BLOOD_PRESSURE, "value", 34));
-		observations.add(Map.of("concept", DIASTOLIC_BLOOD_PRESSURE, "value", 44));
-		observations.add(Map.of("concept", RESPIRATORY_RATE, "value", 20));
-		observations.add(Map.of("concept", ARTERIAL_BLOOD_OXYGEN_SATURATION, "value", 20));
-		observations.add(Map.of("concept", PULSE, "value", 120));
-		observations.add(Map.of("concept", TEMPERATURE_C, "value", 28));
-		observations.add(Map.of("concept", WEIGHT_KG, "value", 60));
-		observations.add(Map.of("concept", HEIGHT_CM, "value", 121));
-		observations.add(Map.of("concept", MID_UPPER_ARM_CIRCUMFERENCE, "value", 34));
-
-		encounter.put("obs", observations);
-
-		try {
-			String body = new ObjectMapper().writeValueAsString(encounter); // Convert Map to JSON
-			return http("Save Vitals").post("/openmrs/ws/rest/v1/encounter").body(StringBody(body));
-		}
-		catch (JsonProcessingException e) {
-			throw new RuntimeException("Error converting visitNote to JSON", e);
-		}
-	}
-
-	public HttpRequestActionBuilder getPatientAttributes(String personUuid) {
-		String customRepresentation = "custom:(uuid,display,attributeType:(uuid,display,format),value)";
-		return http("Get Person Attributes")
-		        .get("/openmrs/ws/rest/v1/person/" + personUuid + "/attribute?v=" + customRepresentation);
-	}
-
-	public HttpRequestActionBuilder getPatientIdentifiers(String patientUuid) {
-		String customRepresentation = "custom:(uuid,identifier,identifierType:(uuid,required,name),preferred)";
-		return http("Get Patient Identifiers")
-		        .get("/openmrs/ws/rest/v1/patient/" + patientUuid + "/identifier?v=" + customRepresentation);
-	}
-
-	public HttpRequestActionBuilder getPatientRelationships(String personUuid) {
-		String customRepresentation = "custom:(display,uuid,personA:(age,display,birthdate,uuid),personB:(age,display,birthdate,uuid),relationshipType:(uuid,display,description,aIsToB,bIsToA))";
-		return http("Get Relationships of Person")
-		        .get("/openmrs/ws/rest/v1/relationship?v=" + customRepresentation + "&person=" + personUuid);
-	}
-
-	public HttpRequestActionBuilder editPatientDetails(String patientUuid) {
-		return http("Edit patient details").post("/openmrs/ws/rest/v1/patient/" + patientUuid).body(StringBody(session -> {
-			Map<String, Object> payload = new HashMap<>();
-
-			payload.put("uuid", session.get("patient_uuid"));
-
-			Map<String, Object> person = new HashMap<>();
-			person.put("uuid", session.get("patient_uuid"));
-
-			List<Map<String, Object>> names = new ArrayList<>();
-			Map<String, Object> nameItem = new HashMap<>();
-			nameItem.put("uuid", session.getString("patientNameId"));
-			nameItem.put("preferred", true);
-			nameItem.put("givenName", "Mark");
-			nameItem.put("familyName", "Williams");
-			names.add(nameItem);
-			person.put("names", names);
-
-			person.put("gender", "M");
-			person.put("birthdate", "1962-4-5");
-			person.put("birthdateEstimated", false);
-			person.put("attributes", new ArrayList<>());
-
-			List<Map<String, Object>> addresses = new ArrayList<>();
-			Map<String, Object> address = new HashMap<>();
-			address.put("address1", "Address16582");
-			address.put("cityVillage", "City6582");
-			address.put("stateProvince", "State6582");
-			address.put("postalCode", "898989");
-			address.put("country", "Country6582");
-			addresses.add(address);
-			person.put("addresses", addresses);
-
-			person.put("dead", false);
-
-			payload.put("person", person);
-
-			List<Map<String, Object>> identifiers = new ArrayList<>();
-			Map<String, Object> identifier = new HashMap<>();
-			identifier.put("uuid", session.getString("patientIdentifierId"));
-			identifier.put("identifier", session.getString("patientIdentifierValue"));
-			identifier.put("identifierType", PATIENT_IDENTIFIER_UUID);
-			identifier.put("location", OUTPATIENT_CLINIC_LOCATION_UUID);
-			identifier.put("preferred", true);
-			identifiers.add(identifier);
-
-			payload.put("identifiers", identifiers);
-
-			try {
-				return new ObjectMapper().writeValueAsString(payload);
-			}
-			catch (JsonProcessingException e) {
-				throw new RuntimeException("Error converting identifiers to JSON", e);
-			}
-		}));
-	}
-
 	public HttpRequestActionBuilder addProgramEnrollment() {
 		return http("Add new program to patient").post("/openmrs/ws/rest/v1/programenrollment").body(StringBody(session -> {
 			Map<String, Object> payload = new HashMap<>();
 
 			payload.put("program", HIV_CARE_TREATMENT);
 			payload.put("patient", session.getString("patient_uuid"));
-			payload.put("dateEnrolled", CommonUtils.getAdjustedDateTimeAsString(-1));
+			payload.put("dateEnrolled", getAdjustedDateTimeAsString(-1));
 			payload.put("dateCompleted", null);
 			payload.put("location", INPATEINT_CLINIC_LOCATION_UUID);
 
@@ -391,8 +285,8 @@ public class DoctorHttpService extends HttpService {
 		        .body(StringBody(session -> {
 			        Map<String, Object> payload = new HashMap<>();
 
-			        payload.put("dateEnrolled", CommonUtils.getAdjustedDateTimeAsString(-1));
-			        payload.put("dateCompleted", CommonUtils.getCurrentDateTimeAsString());
+			        payload.put("dateEnrolled", getAdjustedDateTimeAsString(-1));
+			        payload.put("dateCompleted", getCurrentDateTimeAsString());
 			        payload.put("location", INPATEINT_CLINIC_LOCATION_UUID);
 
 			        List<Object> states = new ArrayList<>();
@@ -470,7 +364,7 @@ public class DoctorHttpService extends HttpService {
 			        Map<String, Object> payload = new HashMap<>();
 
 			        payload.put("patient", session.get("patient_uuid"));
-			        payload.put("encounterDatetime", CommonUtils.getCurrentDateTimeAsString());
+			        payload.put("encounterDatetime", getCurrentDateTimeAsString());
 			        payload.put("location", INPATEINT_CLINIC_LOCATION_UUID);
 			        payload.put("encounterType", VISIT_NOTE_ENCOUNTER_TYPE_UUID);
 
@@ -521,5 +415,13 @@ public class DoctorHttpService extends HttpService {
 				        throw new RuntimeException(e);
 			        }
 		        }));
+	}
+
+	public HttpRequestActionBuilder getAllImmunizations() {
+		String customRepresentation = "custom:(uuid,display,answers:(uuid,display),conceptMappings:(conceptReferenceTerm:"
+		        + "(conceptSource:(name),code)))";
+
+		return http("Get all immunizations")
+		        .get("/openmrs/ws/rest/v1/concept?references=" + IMMUNIZATION_CONCEPT_SET + "&v=" + customRepresentation);
 	}
 }
