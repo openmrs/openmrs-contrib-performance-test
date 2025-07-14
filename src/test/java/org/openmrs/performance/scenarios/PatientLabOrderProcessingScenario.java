@@ -9,9 +9,9 @@ import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.scenario;
 
-public class PatientLabScenario extends Scenario<LabTechRegistry> {
+public class PatientLabOrderProcessingScenario extends Scenario<LabTechRegistry> {
 
-	public PatientLabScenario(float scenarioLoadShare) {
+	public PatientLabOrderProcessingScenario(float scenarioLoadShare) {
 		super(scenarioLoadShare, new LabTechRegistry());
 	}
 
