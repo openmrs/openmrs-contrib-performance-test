@@ -1,5 +1,7 @@
 # Performance Testing for OpenMRS
 
+[![Run Performance Tests](https://github.com/openmrs/openmrs-contrib-performance-test/actions/workflows/run-tests-on-gh.yml/badge.svg)](https://github.com/openmrs/openmrs-contrib-performance-test/actions/workflows/run-tests-on-gh.yml)
+
 This repository contains performance testing scripts and configurations for OpenMRS using Gatling.
 
 The latest report can be found
