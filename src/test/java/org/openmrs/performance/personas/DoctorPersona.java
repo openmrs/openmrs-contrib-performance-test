@@ -18,6 +18,6 @@ public class DoctorPersona extends Persona<DoctorRegistry> {
 	@Override
 	public List<Scenario<DoctorRegistry>> getScenarios() {
 		Map<String, Float> scenarioLoads = getScenarioLoads("doctor");
-		return List.of(new PatientVisitScenario(scenarioLoads.get("patientVisit")));
+		return List.of(new PatientVisitScenario(scenarioLoads.get("patientVisitScenario")));
 	}
 }

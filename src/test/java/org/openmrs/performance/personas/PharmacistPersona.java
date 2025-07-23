@@ -18,6 +18,6 @@ public class PharmacistPersona extends Persona<PharmacistRegistry> {
 	@Override
 	public List<Scenario<PharmacistRegistry>> getScenarios() {
 		Map<String, Float> scenarioLoads = getScenarioLoads("pharmacist");
-		return List.of(new PatientMedicationDispenseScenario(scenarioLoads.get("patientMedicationDispense")));
+		return List.of(new PatientMedicationDispenseScenario(scenarioLoads.get("patientMedicationDispenseScenario")));
 	}
 }

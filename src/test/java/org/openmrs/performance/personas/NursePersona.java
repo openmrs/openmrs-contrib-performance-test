@@ -19,7 +19,7 @@ public class NursePersona extends Persona<NurseRegistry> {
 	@Override
 	public List<Scenario<NurseRegistry>> getScenarios() {
 		Map<String, Float> scenarioLoads = getScenarioLoads("nurse");
-		return List.of(new PatientWardAdmissionScenario(scenarioLoads.get("patientWardAdmission")),
-		    new PatientInitialAssessmentScenario(scenarioLoads.get("patientInitialAssessment")));
+		return List.of(new PatientWardAdmissionScenario(scenarioLoads.get("patientWardAdmissionScenario")),
+		    new PatientInitialAssessmentScenario(scenarioLoads.get("patientInitialAssessmentScenario")));
 	}
 }

@@ -18,6 +18,6 @@ public class LabTechPersona extends Persona<LabTechRegistry> {
 	@Override
 	public List<Scenario<LabTechRegistry>> getScenarios() {
 		Map<String, Float> scenarioLoads = getScenarioLoads("labTech");
-		return List.of(new PatientLabOrderProcessingScenario(scenarioLoads.get("patientLabOrderProcessing")));
+		return List.of(new PatientLabOrderProcessingScenario(scenarioLoads.get("patientLabOrderProcessingScenario")));
 	}
 }
