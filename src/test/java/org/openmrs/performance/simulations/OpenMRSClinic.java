@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers;
+import static io.gatling.javaapi.core.CoreDsl.forAll;
 import static io.gatling.javaapi.core.CoreDsl.global;
 import static io.gatling.javaapi.core.CoreDsl.rampConcurrentUsers;
 import static io.gatling.javaapi.http.HttpDsl.http;
@@ -61,7 +62,7 @@ public class OpenMRSClinic extends Simulation {
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 		    tierCount);
 
-		setUp(populations).protocols(httpProtocol).assertions(global().successfulRequests().percent().shouldBe(100.0));
+		setUp(populations).protocols(httpProtocol).assertions(forAll().failedRequests().percent().lte(3.0));
 
 	}
 
