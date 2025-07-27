@@ -3,11 +3,11 @@ package org.openmrs.performance.personas;
 import org.openmrs.performance.registries.LabTechRegistry;
 import org.openmrs.performance.scenarios.PatientLabOrderProcessingScenario;
 import org.openmrs.performance.scenarios.Scenario;
+import org.openmrs.performance.utils.LoadConfigUtils;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.openmrs.performance.utils.LoadConfigUtils.getScenarioLoads;
 
 public class LabTechPersona extends Persona<LabTechRegistry> {
 
@@ -17,7 +17,7 @@ public class LabTechPersona extends Persona<LabTechRegistry> {
 
 	@Override
 	public List<Scenario<LabTechRegistry>> getScenarios() {
-		Map<String, Float> scenarioLoads = getScenarioLoads("labTech");
-		return List.of(new PatientLabOrderProcessingScenario(scenarioLoads.get("patientLabOrderProcessingScenario")));
+		Map<String, Float> scenarioLoads = LoadConfigUtils.getScenarioLoads("labTech");
+		return List.of(new PatientLabOrderProcessingScenario(scenarioLoads.get("patientLabOrderProcessing")));
 	}
 }

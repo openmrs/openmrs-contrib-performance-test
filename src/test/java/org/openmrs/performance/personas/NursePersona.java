@@ -4,11 +4,11 @@ import org.openmrs.performance.registries.NurseRegistry;
 import org.openmrs.performance.scenarios.PatientInitialAssessmentScenario;
 import org.openmrs.performance.scenarios.PatientWardAdmissionScenario;
 import org.openmrs.performance.scenarios.Scenario;
+import org.openmrs.performance.utils.LoadConfigUtils;
 
 import java.util.List;
 import java.util.Map;
 
-import static org.openmrs.performance.utils.LoadConfigUtils.getScenarioLoads;
 
 public class NursePersona extends Persona<NurseRegistry> {
 
@@ -18,8 +18,8 @@ public class NursePersona extends Persona<NurseRegistry> {
 
 	@Override
 	public List<Scenario<NurseRegistry>> getScenarios() {
-		Map<String, Float> scenarioLoads = getScenarioLoads("nurse");
-		return List.of(new PatientWardAdmissionScenario(scenarioLoads.get("patientWardAdmissionScenario")),
-		    new PatientInitialAssessmentScenario(scenarioLoads.get("patientInitialAssessmentScenario")));
+		Map<String, Float> scenarioLoads = LoadConfigUtils.getScenarioLoads("nurse");
+		return List.of(new PatientWardAdmissionScenario(scenarioLoads.get("patientWardAdmission")),
+		    new PatientInitialAssessmentScenario(scenarioLoads.get("patientInitialAssessment")));
 	}
 }
