@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.StringJoiner;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
+import static io.gatling.javaapi.core.CoreDsl.bodyBytes;
 import static io.gatling.javaapi.core.CoreDsl.bodyString;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
@@ -237,7 +238,8 @@ public abstract class HttpService {
 		return http("Get Patients")
 		        .get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
 		                + "&includeDead=false&limit=50&totalCount=true")
-		        .check(jsonPath("$.results[*].uuid").findAll().optional().saveAs("patientIDs"));
+		        .check(jsonPath("$.results[*].uuid").findAll().optional().saveAs("patientIDs"),
+		            bodyBytes().transform(bytes -> bytes.length).saveAs("PatientsResSize"));
 	}
 
 	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
