@@ -64,7 +64,11 @@ public abstract class Registry<H extends HttpService> {
 	public ChainBuilder searchPatient() {
 		return exec(httpService.getPatients("jay")).doIf(session -> session.contains("patientIDs"))
 		        .then(foreach("#{patientIDs}", "patientId").on(exec(httpService.getActiveVisitOfPatient("#{patientId}"),
-		            httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))));
+		            httpService.getPatientIdPhoto("#{patientId}"), httpService.getPatientLifeStatus("#{patientId}"))))
+		        .exec(session -> {
+			        System.out.println("Patient Response Size: " + session.get("PatientsResSize") + " bytes");
+			        return session;
+		        });
 	}
 
 	public ChainBuilder startVisit(String patientUuid) {
