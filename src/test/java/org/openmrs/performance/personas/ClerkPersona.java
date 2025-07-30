@@ -7,8 +7,10 @@ import org.openmrs.performance.scenarios.PatientProfileUpdateScenario;
 import org.openmrs.performance.scenarios.PatientRegistrationScenario;
 import org.openmrs.performance.scenarios.PatientServiceQueueScenario;
 import org.openmrs.performance.scenarios.Scenario;
+import org.openmrs.performance.utils.LoadConfigUtils;
 
 import java.util.List;
+import java.util.Map;
 
 public class ClerkPersona extends Persona<ClerkRegistry> {
 
@@ -18,8 +20,11 @@ public class ClerkPersona extends Persona<ClerkRegistry> {
 
 	@Override
 	public List<Scenario<ClerkRegistry>> getScenarios() {
-		return List.of(new PatientRegistrationScenario(0.2F), new PatientAppointmentCreationScenario(0.2F),
-		    new PatientListCreationScenario(0.2F), new PatientProfileUpdateScenario(0.2F),
-		    new PatientServiceQueueScenario(0.2F));
+		Map<String, Float> scenarioLoads = LoadConfigUtils.getScenarioLoads("clerk");
+		return List.of(new PatientRegistrationScenario(scenarioLoads.get("patientRegistration")),
+		    new PatientAppointmentCreationScenario(scenarioLoads.get("patientAppointmentCreation")),
+		    new PatientListCreationScenario(scenarioLoads.get("patientListCreation")),
+		    new PatientProfileUpdateScenario(scenarioLoads.get("patientProfileUpdate")),
+		    new PatientServiceQueueScenario(scenarioLoads.get("patientServiceQueue")));
 	}
 }

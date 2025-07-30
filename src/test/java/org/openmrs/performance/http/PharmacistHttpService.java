@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
-import org.openmrs.performance.utils.CommonUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
