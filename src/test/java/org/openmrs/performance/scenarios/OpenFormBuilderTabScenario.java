@@ -2,7 +2,6 @@ package org.openmrs.performance.scenarios;
 
 import io.gatling.javaapi.core.ScenarioBuilder;
 import org.openmrs.performance.registries.FormBuilderRegistry;
-import org.openmrs.performance.registries.LabTechRegistry;
 import org.openmrs.performance.utils.SharedPoolFeeder;
 
 import java.util.Iterator;
