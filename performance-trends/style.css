@@ -1,0 +1,128 @@
+:root {
+    --bg-color: #f0f2f5;
+    --card-bg: #ffffff;
+    --text-color: #333;
+    --primary-color: #007bff;
+    --border-color: #dee2e6;
+    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.main-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1px 20px;
+    text-align: center;
+    box-shadow: var(--shadow);
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
+
+label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+/* Unified style for dropdown buttons */
+.select-control {
+    width: 250px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background-color: white;
+    font-size: 1em;
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Custom Multiselect Dropdown Styles */
+.multiselect {
+    position: relative;
+}
+
+#request-name-list,
+#metric-options-list {
+    position: absolute;
+    z-index: 10;
+    width: 250px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+#search-input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    box-sizing: border-box;
+}
+
+#checkbox-container,
+#metric-options-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#checkbox-container label,
+#metric-options-list label {
+    display: block;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+#checkbox-container label:hover,
+#metric-options-list label:hover {
+    background-color: #f0f2f5;
+}
+
+#checkbox-container input,
+#metric-options-list input {
+    margin-right: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Chart Layout */
+#charts-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.chart-card {
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow);
+}
