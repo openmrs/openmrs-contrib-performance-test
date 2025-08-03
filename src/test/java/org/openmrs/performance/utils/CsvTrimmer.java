@@ -42,7 +42,8 @@ public class CsvTrimmer {
 			return;
 		}
 
-		System.out.println("Trimming CSV file. Found " + totalRuns + " runs, keeping the most recent " + maxRunsToKeep + ".");
+		System.out
+		        .println("Trimming CSV file. Found " + totalRuns + " runs, keeping the most recent " + maxRunsToKeep + ".");
 
 		List<String> recentTimestamps = runsByTimestamp.keySet().stream().sorted(Comparator.reverseOrder())
 		        .limit(maxRunsToKeep).toList();
