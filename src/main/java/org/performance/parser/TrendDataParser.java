@@ -1,4 +1,4 @@
-package org.openmrs.performance.utils;
+package org.performance.parser;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -21,8 +21,6 @@ import org.jsoup.select.Elements;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.openmrs.performance.Constants.MAX_RUNS_TO_KEEP;
 
 public class TrendDataParser {
 
@@ -87,7 +85,7 @@ public class TrendDataParser {
 			writeToCsv(csvRows);
 			logger.info("Successfully appended {} rows to {}", csvRows.size(), TREND_CSV_PATH);
 			try {
-				CsvTrimmer.trimToRecentRuns(TREND_CSV_PATH, MAX_RUNS_TO_KEEP);
+				CsvTrimmer.trimToRecentRuns(TREND_CSV_PATH, 30);
 			}
 			catch (IOException e) {
 				logger.error("Failed to trim CSV file.", e);

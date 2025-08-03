@@ -1,4 +1,4 @@
-package org.openmrs.performance.utils;
+package org.performance.parser;
 
 import java.io.IOException;
 import java.nio.file.Files;

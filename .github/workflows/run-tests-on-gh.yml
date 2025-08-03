@@ -91,11 +91,7 @@ jobs:
 
       - name: Parse Report and Update Trends
         if: env.SIMULATION_PRESET == 'standard'
-        run: >
-          ./mvnw clean test-compile
-          exec:java
-            -Dexec.classpathScope=test
-            -Dexec.mainClass=org.openmrs.performance.utils.TrendDataParser
+        run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
 
       - name: Stop the OpenMRS instance
         if: '!cancelled()'

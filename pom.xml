@@ -88,13 +88,6 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
         <version>3.5.3</version>
-        <dependencies>
-          <dependency>
-            <groupId>org.junit.platform</groupId>
-            <artifactId>junit-platform-surefire-provider</artifactId>
-            <version>1.3.2</version>
-          </dependency>
-        </dependencies>
       </plugin>
       <plugin>
         <groupId>net.revelc.code.formatter</groupId>
@@ -121,6 +114,11 @@
 					</dependency>
 				</dependencies>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.5.0</version>
+      </plugin>
     </plugins>
   </build>
   <repositories>
@@ -139,5 +137,10 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
+        <pluginRepository>
+            <id>central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2</url>
+        </pluginRepository>
 	</pluginRepositories>
 </project>
