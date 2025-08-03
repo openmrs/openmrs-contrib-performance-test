@@ -26,14 +26,12 @@ public class CsvTrimmer {
 
 		List<String> lines = Files.readAllLines(csvPath);
 		if (lines.size() <= 1) {
-			return; // Nothing to trim if there's only a header or it's empty.
+			return;
 		}
 
-		// 1. Separate header from data
 		String header = lines.get(0);
 		List<String> dataLines = lines.subList(1, lines.size());
 
-		// 2. Group all rows by their timestamp (the first column)
 		Map<String, List<String>> runsByTimestamp = dataLines.stream()
 		        .collect(Collectors.groupingBy(line -> line.split(",")[0]));
 
@@ -44,23 +42,18 @@ public class CsvTrimmer {
 			return;
 		}
 
-		System.out
-		        .println("Trimming CSV file. Found " + totalRuns + " runs, keeping the most recent " + maxRunsToKeep + ".");
+		System.out.println("Trimming CSV file. Found " + totalRuns + " runs, keeping the most recent " + maxRunsToKeep + ".");
 
-		// 3. Sort the timestamps in descending (newest to oldest) order and keep the top N
 		List<String> recentTimestamps = runsByTimestamp.keySet().stream().sorted(Comparator.reverseOrder())
 		        .limit(maxRunsToKeep).toList();
 
-		// 4. Build the new list of lines to write back to the file
 		List<String> trimmedLines = new ArrayList<>();
-		trimmedLines.add(header); // Add the header back first
+		trimmedLines.add(header);
 
-		// Add the records for the recent timestamps
 		for (String timestamp : recentTimestamps) {
 			trimmedLines.addAll(runsByTimestamp.get(timestamp));
 		}
 
-		// 5. Overwrite the original file with the trimmed content
 		Files.write(csvPath, trimmedLines);
 		System.out.println("Successfully trimmed CSV file to " + maxRunsToKeep + " runs.");
 	}

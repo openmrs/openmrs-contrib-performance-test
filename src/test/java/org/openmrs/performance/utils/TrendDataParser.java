@@ -22,9 +22,10 @@ import org.jsoup.select.Elements;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.openmrs.performance.Constants.MAX_RUNS_TO_KEEP;
+
 public class TrendDataParser {
 
-	// 2. Create a logger instance for this class
 	private static final Logger logger = LoggerFactory.getLogger(TrendDataParser.class);
 
 	private static final Path TREND_CSV_PATH = Paths.get("performance-trends/requests-trend.csv");
@@ -86,11 +87,9 @@ public class TrendDataParser {
 			writeToCsv(csvRows);
 			logger.info("Successfully appended {} rows to {}", csvRows.size(), TREND_CSV_PATH);
 			try {
-				// The CsvTrimmer class would also benefit from using a logger
-				CsvTrimmer.trimToRecentRuns(TREND_CSV_PATH, 30);
+				CsvTrimmer.trimToRecentRuns(TREND_CSV_PATH, MAX_RUNS_TO_KEEP);
 			}
 			catch (IOException e) {
-				// 3. Replace printStackTrace() with a structured error log
 				logger.error("Failed to trim CSV file.", e);
 			}
 		} else {
