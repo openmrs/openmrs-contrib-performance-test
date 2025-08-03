@@ -67,7 +67,7 @@ public class TrendDataParser {
 		}
 
 		List<String> csvRows = new ArrayList<>();
-		String timestamp = LocalDateTime.now().minusDays(4).format(DateTimeFormatter.ISO_DATE_TIME);
+		String timestamp = LocalDateTime.now().format(DateTimeFormatter.ISO_DATE_TIME);
 
 		for (Element row : statsTableBody.select("tr[data-parent=ROOT]")) {
 			Elements cells = row.select("td");
