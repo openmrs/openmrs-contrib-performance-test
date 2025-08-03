@@ -28,6 +28,7 @@ public class TrendDataParser {
 	private static final Logger logger = LoggerFactory.getLogger(TrendDataParser.class);
 
 	private static final Path TREND_CSV_PATH = Paths.get("performance-trends/requests-trend.csv");
+
 	private static final String CSV_HEADER = "Timestamp,RequestName,Total,OK,KO,KO_Percent,Reqs_Per_Sec,Min,p50,p75,p95,p99,Max,Mean,StdDev";
 
 	public static void main(String[] args) throws IOException {
@@ -40,7 +41,7 @@ public class TrendDataParser {
 		}
 
 		Optional<Path> lastReportDir = Files.list(gatlingReportsDir).filter(Files::isDirectory)
-				.max(Comparator.comparingLong(p -> p.toFile().lastModified()));
+		        .max(Comparator.comparingLong(p -> p.toFile().lastModified()));
 
 		if (lastReportDir.isEmpty()) {
 			logger.warn("No Gatling report directory found.");
@@ -59,7 +60,8 @@ public class TrendDataParser {
 
 		Element statsTableBody = doc.selectFirst("#container_statistics_body > tbody");
 		if (statsTableBody == null) {
-			logger.error("Could not find the stats table body with ID 'container_statistics_body'. Report format may have changed.");
+			logger.error(
+			    "Could not find the stats table body with ID 'container_statistics_body'. Report format may have changed.");
 			return;
 		}
 
@@ -86,7 +88,8 @@ public class TrendDataParser {
 			try {
 				// The CsvTrimmer class would also benefit from using a logger
 				CsvTrimmer.trimToRecentRuns(TREND_CSV_PATH, 30);
-			} catch (IOException e) {
+			}
+			catch (IOException e) {
 				// 3. Replace printStackTrace() with a structured error log
 				logger.error("Failed to trim CSV file.", e);
 			}
