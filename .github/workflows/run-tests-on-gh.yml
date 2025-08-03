@@ -121,7 +121,7 @@ jobs:
       - name: Push changes
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
-          git push origin main:report -f
+            git push origin HEAD:report -f
 
       - name: Capture Server Logs
         if: always()
