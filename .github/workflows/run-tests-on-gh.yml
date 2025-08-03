@@ -93,6 +93,13 @@ jobs:
         if: env.SIMULATION_PRESET == 'standard'
         run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
 
+      - name: Commit Updated Trend Data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(perf): Update performance trend data"
+          file_pattern: performance-trends/requests-trend.csv
+          branch: ${{ github.ref_name }}
+
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
         run: docker stop $(docker ps -a -q)
