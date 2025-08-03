@@ -90,7 +90,7 @@ jobs:
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 
       - name: Parse Report and Update Trends
-        id: parse‑and‑trend
+        if: env.SIMULATION_PRESET == 'standard'
         run: >
           ./mvnw clean test-compile
           exec:java
