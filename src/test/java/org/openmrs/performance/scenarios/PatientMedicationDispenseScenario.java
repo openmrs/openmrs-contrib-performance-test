@@ -43,6 +43,10 @@ public class PatientMedicationDispenseScenario extends Scenario<PharmacistRegist
 				.exec(registry.discontinueDrugOrder())
 				.exec(registry.endVisit("#{patient_uuid}"))
 				.exec(session -> {
+					System.out.println("Medication Response Size: " + session.get("MediEncounterResSize") + " bytes");
+					return session;
+				})
+				.exec(session -> {
 					String uuid = session.getString("patient_uuid");
 					SharedPoolFeeder.returnUuid(uuid);
 					return session;

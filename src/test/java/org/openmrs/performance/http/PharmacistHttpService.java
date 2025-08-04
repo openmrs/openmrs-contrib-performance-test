@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.gatling.javaapi.http.HttpRequestActionBuilder;
-import org.openmrs.performance.utils.CommonUtils;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import static io.gatling.javaapi.core.CoreDsl.StringBody;
+import static io.gatling.javaapi.core.CoreDsl.bodyBytes;
 import static io.gatling.javaapi.core.CoreDsl.jsonPath;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ADMIN_SUPER_USER_UUID;
@@ -124,7 +124,8 @@ public class PharmacistHttpService extends HttpService {
 		return http("Get medication request encounters")
 		        .get("/openmrs/ws/fhir2/R4/Encounter?_query=encountersWithMedicationRequests&date=ge" + encoded
 		                + "&_getpagesoffset=0&_count=10&status=active&_summary=data")
-		        .check(jsonPath("$.entry[*].resource.subject.reference").findAll().saveAs("medicalPatientEncounterUuids"));
+		        .check(jsonPath("$.entry[*].resource.subject.reference").findAll().saveAs("medicalPatientEncounterUuids"),
+		            bodyBytes().transform(bytes -> bytes.length).saveAs("MediEncounterResSize"));
 	}
 
 	public HttpRequestActionBuilder getPatientAge(String patientUuid) {
