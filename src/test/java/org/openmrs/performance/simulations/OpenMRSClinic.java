@@ -46,13 +46,9 @@ public class OpenMRSClinic extends Simulation {
 		logger.info("Setting up simulation with preset: {} user increment per tier: {}, tier duration: {}, tier count: {}",
 		    preset, userIncrementPerTier, tierDurationMinutes, tierCount);
 
-
-		List<Persona<?>> personas = List.of(new ClerkPersona(0.2), new DoctorPersona(0.2), new LabTechPersona(0.2),
-		    new NursePersona(0.2), new PharmacistPersona(0.2), new FormBuilderPersona(0.2));
-
 		List<Persona<?>> personas = List.of(new ClerkPersona(getPersonaLoad("clerk")),
 		    new DoctorPersona(getPersonaLoad("doctor")), new LabTechPersona(getPersonaLoad("labTech")),
-		    new NursePersona(getPersonaLoad("nurse")), new PharmacistPersona(getPersonaLoad("pharmacist")));
+		    new NursePersona(getPersonaLoad("nurse")), new PharmacistPersona(getPersonaLoad("pharmacist")), new FormBuilderPersona(getPersonaLoad("formBuilder")));
 
 		List<PopulationBuilder> populations = buildPopulations(personas, userIncrementPerTier, tierDurationMinutes,
 		    tierCount);
