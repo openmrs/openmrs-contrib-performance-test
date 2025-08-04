@@ -1,14 +1,15 @@
 :root {
-    --bg-color: #f0f2f5;
-    --card-bg: #ffffff;
-    --text-color: #333;
-    --primary-color: #007bff;
-    --border-color: #dee2e6;
-    --shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Gatling-inspired color palette */
+    --bg-color: #303030;
+    --card-bg: #424242;
+    --text-color: #E0E0E0;
+    --primary-color: #0D8AD4;
+    --border-color: #555555;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 body {
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     background-color: var(--bg-color);
     color: var(--text-color);
     margin: 0;
@@ -20,9 +21,9 @@ body {
     color: white;
     padding: 1px 20px;
     text-align: center;
-    box-shadow: var(--shadow);
-    border-radius: 8px;
+    border-radius: 4px;
     margin-bottom: 20px;
+    border: 1px solid var(--border-color);
 }
 
 #controls {
@@ -37,14 +38,15 @@ body {
 
 .card {
     background-color: var(--card-bg);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
 }
 
 label {
     display: block;
-    font-weight: 600;
-    margin-bottom: 5px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
 }
 
 /* Unified style for dropdown buttons */
@@ -52,8 +54,9 @@ label {
     width: 250px;
     padding: 8px;
     border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background-color: white;
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
     font-size: 1em;
     text-align: left;
     cursor: pointer;
@@ -69,9 +72,9 @@ label {
     position: absolute;
     z-index: 10;
     width: 250px;
-    background-color: white;
+    background-color: var(--card-bg);
     border: 1px solid var(--border-color);
-    border-radius: 5px;
+    border-radius: 4px;
     margin-top: 5px;
     box-sizing: border-box;
 }
@@ -82,6 +85,8 @@ label {
     border: none;
     border-bottom: 1px solid var(--border-color);
     box-sizing: border-box;
+    background-color: #3a3a3a;
+    color: var(--text-color);
 }
 
 #checkbox-container,
@@ -92,7 +97,8 @@ label {
 
 #checkbox-container label,
 #metric-options-list label {
-    display: block;
+    display: flex;
+    align-items: center;
     padding: 8px 12px;
     cursor: pointer;
     font-weight: normal;
@@ -100,7 +106,8 @@ label {
 
 #checkbox-container label:hover,
 #metric-options-list label:hover {
-    background-color: #f0f2f5;
+    background-color: var(--primary-color);
+    color: white;
 }
 
 #checkbox-container input,
@@ -112,17 +119,16 @@ label {
     display: none;
 }
 
-/* Chart Layout */
+/* Chart Layout: Modified for one chart per row */
 #charts-container {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+    grid-template-columns: 1fr; /* This forces a single column */
     gap: 20px;
-    padding: 20px;
 }
 
 .chart-card {
     padding: 20px;
     background-color: var(--card-bg);
-    border-radius: 8px;
-    box-shadow: var(--shadow);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
 }

@@ -1,12 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // Set default chart colors for dark theme
+    Chart.defaults.color = '#E0E0E0';
+    Chart.defaults.borderColor = '#555555';
+
     // DOM Elements
     const chartsContainer = document.getElementById('charts-container');
-
-    // Metric Dropdown Elements
     const metricSelectButton = document.getElementById('metric-select-button');
     const metricOptionsList = document.getElementById('metric-options-list');
-
-    // Request Dropdown Elements
     const requestSelectButton = document.getElementById('request-select-button');
     const requestNameList = document.getElementById('request-name-list');
     const searchInput = document.getElementById('search-input');
@@ -21,11 +21,9 @@ document.addEventListener('DOMContentLoaded', () => {
         try {
             const response = await fetch('requests-trend.csv');
             if (!response.ok) throw new Error('Network response was not ok.');
-
             const csvText = await response.text();
             parsedData = parseCSV(csvText);
             parsedData.sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
-
             populateRequestNameCheckboxes();
             renderDashboard();
         } catch (error) {
@@ -54,11 +52,9 @@ document.addEventListener('DOMContentLoaded', () => {
             const label = document.createElement('label');
             const radio = document.createElement('input');
             radio.type = 'radio';
-            radio.name = 'metric'; // Shared name for single selection
+            radio.name = 'metric';
             radio.value = option;
-            if (option === 'Mean') {
-                radio.checked = true; // Default selection
-            }
+            if (option === 'Mean') radio.checked = true;
             label.appendChild(radio);
             label.appendChild(document.createTextNode(option));
             metricOptionsList.appendChild(label);
@@ -82,11 +78,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderDashboard() {
         const selectedMetricRadio = metricOptionsList.querySelector('input[type=radio]:checked');
         const selectedMetric = selectedMetricRadio ? selectedMetricRadio.value : 'Mean';
+        const selectedRequests = [...checkboxContainer.querySelectorAll('input[type=checkbox]:checked')].map(checkbox => checkbox.value);
 
-        const selectedRequests = [...checkboxContainer.querySelectorAll('input[type=checkbox]:checked')]
-            .map(checkbox => checkbox.value);
-
-        // Update button text
         metricSelectButton.textContent = selectedMetric;
         requestSelectButton.textContent = selectedRequests.length > 0 ? `${selectedRequests.length} Selected` : 'None Selected';
 
@@ -95,9 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         chartsContainer.innerHTML = '';
 
         selectedRequests.forEach(requestName => {
-            const chartData = parsedData.filter(row => row.RequestName === requestName)
-                .map(row => ({ x: row.Timestamp, y: row[selectedMetric] }));
-
+            const chartData = parsedData.filter(row => row.RequestName === requestName).map(row => ({ x: row.Timestamp, y: row[selectedMetric] }));
             const card = document.createElement('div');
             card.className = 'chart-card';
             const canvas = document.createElement('canvas');
@@ -110,8 +101,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     datasets: [{
                         label: requestName,
                         data: chartData,
-                        borderColor: getRandomColor(),
-                        fill: false,
+                        borderColor: '#0D8AD4', // Gatling blue
+                        backgroundColor: 'rgba(13, 138, 212, 0.2)',
+                        fill: true,
                         tension: 0.1
                     }]
                 },
@@ -131,32 +123,33 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    function getRandomColor() {
-        const r = Math.floor(Math.random() * 200);
-        const g = Math.floor(Math.random() * 200);
-        const b = Math.floor(Math.random() * 200);
-        return `rgb(${r},${g},${b})`;
-    }
-
     // --- Event Listeners ---
-    metricOptionsList.addEventListener('change', renderDashboard);
+    metricOptionsList.addEventListener('change', () => {
+        renderDashboard();
+        metricOptionsList.classList.add('hidden'); // Close after selection
+    });
     checkboxContainer.addEventListener('change', renderDashboard);
 
     metricSelectButton.addEventListener('click', (e) => {
         metricOptionsList.classList.toggle('hidden');
-        requestNameList.classList.add('hidden'); // Close other dropdown
+        requestNameList.classList.add('hidden');
         e.stopPropagation();
     });
 
     requestSelectButton.addEventListener('click', (e) => {
         requestNameList.classList.toggle('hidden');
-        metricOptionsList.classList.add('hidden'); // Close other dropdown
+        metricOptionsList.classList.add('hidden');
         e.stopPropagation();
     });
 
-    document.addEventListener('click', () => {
-        metricOptionsList.classList.add('hidden');
-        requestNameList.classList.add('hidden');
+    // UPDATED: This listener now checks if the click was outside the dropdowns
+    document.addEventListener('click', (e) => {
+        if (!document.getElementById('metric-select-box').contains(e.target)) {
+            metricOptionsList.classList.add('hidden');
+        }
+        if (!document.getElementById('request-select-box').contains(e.target)) {
+            requestNameList.classList.add('hidden');
+        }
     });
 
     searchInput.addEventListener('input', (e) => {
