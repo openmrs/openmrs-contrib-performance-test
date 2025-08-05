@@ -2,6 +2,8 @@ package org.openmrs.performance;
 
 public class Constants {
 
+	public static final Integer MAX_RUNS_TO_KEEP = 30;
+
 	public static final String BASE_URL = "http://localhost";
 
 	public static final String ENV_SIMULATION_PRESET = "SIMULATION_PRESET";

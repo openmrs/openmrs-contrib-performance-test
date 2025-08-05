@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gatling Report Trends</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="main-header">
+    <h1>Gatling Report Trends</h1>
+</header>
+
+<div id="controls" class="card">
+    <div class="multiselect">
+        <label for="metric-select-button">1. Select Metric</label>
+        <div id="metric-select-box">
+            <button id="metric-select-button" class="select-control">Mean</button>
+            <div id="metric-options-list" class="hidden"></div>
+        </div>
+    </div>
+
+    <div class="multiselect">
+        <label for="request-select-button">2. Select Requests</label>
+        <div id="request-select-box">
+            <button id="request-select-button" class="select-control">None Selected</button>
+            <div id="request-name-list" class="hidden">
+                <input type="text" id="search-input" placeholder="Search requests...">
+                <div id="checkbox-container"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<main id="charts-container"></main>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+
+<script src="app.js"></script>
+
+</body>
+</html>

@@ -89,6 +89,17 @@ jobs:
       - name: Run performance tests
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 
+      - name: Parse Report and Update Trends
+        if: env.SIMULATION_PRESET == 'standard'
+        run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
+
+      - name: Commit Updated Trend Data
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "chore(perf): Update performance trend data"
+          file_pattern: performance-trends/requests-trend.csv
+          branch: ${{ github.ref_name }}
+
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
         run: docker stop $(docker ps -a -q)
@@ -117,7 +128,7 @@ jobs:
       - name: Push changes
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
-          git push origin main:report -f
+            git push origin HEAD:report -f
 
       - name: Capture Server Logs
         if: always()

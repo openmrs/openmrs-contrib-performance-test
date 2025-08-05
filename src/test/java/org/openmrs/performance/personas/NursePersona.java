@@ -9,7 +9,6 @@ import org.openmrs.performance.utils.LoadConfigUtils;
 import java.util.List;
 import java.util.Map;
 
-
 public class NursePersona extends Persona<NurseRegistry> {
 
 	public NursePersona(double loadShare) {

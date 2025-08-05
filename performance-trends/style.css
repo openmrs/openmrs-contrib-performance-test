@@ -1,0 +1,134 @@
+:root {
+    /* Gatling-inspired color palette */
+    --bg-color: #303030;
+    --card-bg: #424242;
+    --text-color: #E0E0E0;
+    --primary-color: #0D8AD4;
+    --border-color: #555555;
+    --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+body {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    margin: 0;
+    padding: 20px;
+}
+
+.main-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 1px 20px;
+    text-align: center;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    border: 1px solid var(--border-color);
+}
+
+#controls {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 30px;
+    padding: 20px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.card {
+    background-color: var(--card-bg);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+}
+
+/* Unified style for dropdown buttons */
+.select-control {
+    width: 250px;
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1em;
+    text-align: left;
+    cursor: pointer;
+}
+
+/* Custom Multiselect Dropdown Styles */
+.multiselect {
+    position: relative;
+}
+
+#request-name-list,
+#metric-options-list {
+    position: absolute;
+    z-index: 10;
+    width: 250px;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    margin-top: 5px;
+    box-sizing: border-box;
+}
+
+#search-input {
+    width: 100%;
+    padding: 8px;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    box-sizing: border-box;
+    background-color: #3a3a3a;
+    color: var(--text-color);
+}
+
+#checkbox-container,
+#metric-options-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+#checkbox-container label,
+#metric-options-list label {
+    display: flex;
+    align-items: center;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-weight: normal;
+}
+
+#checkbox-container label:hover,
+#metric-options-list label:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+#checkbox-container input,
+#metric-options-list input {
+    margin-right: 10px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Chart Layout: Modified for one chart per row */
+#charts-container {
+    display: grid;
+    grid-template-columns: 1fr; /* This forces a single column */
+    gap: 20px;
+}
+
+.chart-card {
+    padding: 20px;
+    background-color: var(--card-bg);
+    border-radius: 4px;
+    border: 1px solid var(--border-color);
+}

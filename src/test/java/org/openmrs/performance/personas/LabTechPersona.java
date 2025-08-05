@@ -8,7 +8,6 @@ import org.openmrs.performance.utils.LoadConfigUtils;
 import java.util.List;
 import java.util.Map;
 
-
 public class LabTechPersona extends Persona<LabTechRegistry> {
 
 	public LabTechPersona(double loadShare) {
