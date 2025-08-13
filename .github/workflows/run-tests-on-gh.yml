@@ -45,12 +45,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Checkout report branch for trend data
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         uses: actions/checkout@v4
         with:
           ref: report
           path: ./report-data
 
       - name: Prepare trend data file
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |
           TREND_FILE_SOURCE=./report-data/performance-trends/requests-trend.csv
           TREND_FILE_DEST=./performance-trends/requests-trend.csv
@@ -95,8 +97,12 @@ jobs:
       - name: Run performance tests
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 
+      - name: Stop the OpenMRS instance
+        if: '!cancelled()'
+        run: docker stop $(docker ps -a -q)
+
       - name: Parse Report and Update Trends
-        if: env.SIMULATION_PRESET == 'standard'
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
 
       - name: Set up Git
@@ -114,10 +120,6 @@ jobs:
       - name: Push changes
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: git push origin HEAD:report -f
-
-      - name: Stop the OpenMRS instance
-        if: '!cancelled()'
-        run: docker stop $(docker ps -a -q)
 
       - name: Upload test results
         if: always()
