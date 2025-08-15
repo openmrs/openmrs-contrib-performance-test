@@ -44,23 +44,6 @@ jobs:
       - name: Checkout main branch code
         uses: actions/checkout@v4
 
-      - name: Checkout report branch for trend data
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        uses: actions/checkout@v4
-        with:
-          ref: report
-          path: ./report-data
-
-      - name: Prepare trend data file
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        run: |
-          TREND_FILE_SOURCE=./report-data/performance-trends/requests-trend.csv
-          TREND_FILE_DEST=./performance-trends/requests-trend.csv
-          mkdir -p ./performance-trends
-          if [ -f "$TREND_FILE_SOURCE" ]; then
-            cp "$TREND_FILE_SOURCE" "$TREND_FILE_DEST"
-          fi
-
       - name: Update the load configuration for PRS
         if: github.event_name == 'pull_request'
         run: |
@@ -100,6 +83,23 @@ jobs:
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
         run: docker stop $(docker ps -a -q)
+
+      - name: Checkout report branch for trend data
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        uses: actions/checkout@v4
+        with:
+          ref: report
+          path: ./report-data
+
+      - name: Prepare trend data file
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: |
+          TREND_FILE_SOURCE=./report-data/performance-trends/requests-trend.csv
+          TREND_FILE_DEST=./performance-trends/requests-trend.csv
+          mkdir -p ./performance-trends
+          if [ -f "$TREND_FILE_SOURCE" ]; then
+            cp "$TREND_FILE_SOURCE" "$TREND_FILE_DEST"
+          fi
 
       - name: Parse Report and Update Trends
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
