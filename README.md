@@ -125,6 +125,7 @@ This process may take approximately 4 hours to complete and will automatically c
 ## Additional Resources
 
 - For more detailed information on using Gatling, refer to the [Gatling documentation](https://gatling.io/docs/).
+- For project documentation, refer to this [Project Documentation](https://openmrs.atlassian.net/wiki/spaces/projects/pages/517734478/OpenMRS+Performance+Testing+Documentation).
 - View a demo report of the performance tests [here](https://omrs-performance-report.surge.sh/).
 
 Feel free to contribute to this project by submitting issues or pull requests. Happy testing!
