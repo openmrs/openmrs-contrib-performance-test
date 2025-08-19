@@ -108,7 +108,7 @@ public class OpenMRSClinic extends Simulation {
 		        .header("Authorization", "Bearer YWRtaW46QWRtaW4xMjM=").header("Content-Type", "application/json")
 		        .transformResponse((response, session) -> {
 			        if (response.body() != null) {
-				        ResponseSizeLogger.log(response.request().getName(), response.body().length());
+				        ResponseSizeLogger.log(response.request().getName(), response.body().length() / 1024);
 			        }
 			        return response;
 		        });

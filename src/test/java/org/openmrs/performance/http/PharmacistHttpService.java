@@ -124,8 +124,7 @@ public class PharmacistHttpService extends HttpService {
 		return http("Get medication request encounters")
 		        .get("/openmrs/ws/fhir2/R4/Encounter?_query=encountersWithMedicationRequests&date=ge" + encoded
 		                + "&_getpagesoffset=0&_count=10&status=active&_summary=data")
-		        .check(jsonPath("$.entry[*].resource.subject.reference").findAll().saveAs("medicalPatientEncounterUuids"),
-		            bodyBytes().transform(bytes -> bytes.length).saveAs("MediEncounterResSize"));
+		        .check(jsonPath("$.entry[*].resource.subject.reference").findAll().saveAs("medicalPatientEncounterUuids"));
 	}
 
 	public HttpRequestActionBuilder getPatientAge(String patientUuid) {

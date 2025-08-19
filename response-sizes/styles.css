@@ -53,7 +53,6 @@ main {
 #reportContainer th, #reportContainer td {
     border: 1px solid var(--border-color);
     padding: 12px;
-    text-align: left;
 }
 
 #reportContainer th {

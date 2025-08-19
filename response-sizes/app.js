@@ -1,6 +1,6 @@
 let tableData = [];
 let currentSort = {
-    columnKey: null,
+    columnKey: 'name', // Start with an initial sort by name
     direction: 'asc'
 };
 
@@ -10,7 +10,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadReport() {
     const reportContainer = document.getElementById('reportContainer');
-    const csvFilePath = 'response_sizes.csv'; // Or your correct path
+    // Ensure this path is correct for your project structure
+    const csvFilePath = 'response_sizes.csv';
 
     try {
         const response = await fetch(csvFilePath);
@@ -30,7 +31,7 @@ async function loadReport() {
 
     } catch (error) {
         console.error('Failed to load report:', error);
-        reportContainer.innerHTML = `<div class="error-message">...</div>`; // Your existing error handling
+        reportContainer.innerHTML = `<div class="error-message">Failed to load report. Please check the console for details.</div>`;
     }
 }
 
@@ -41,28 +42,29 @@ function displayReport(stats) {
     const table = document.createElement('table');
     const thead = document.createElement('thead');
     const tbody = document.createElement('tbody');
-    tbody.id = 'report-tbody'; // Give tbody an ID for easy access
+    tbody.id = 'report-tbody';
 
+    // CHANGE 1: Updated header configuration with new names and 'mean' column
     const headerConfig = [
         { text: 'Request Name', key: 'name', type: 'string' },
         { text: 'Total Requests', key: 'count', type: 'number' },
         { text: 'Min', key: 'min', type: 'number' },
         { text: 'Max', key: 'max', type: 'number' },
-        { text: 'Median (P50)', key: 'p50', type: 'number' },
-        { text: 'P75', key: 'p75', type: 'number' },
-        { text: 'P95', key: 'p95', type: 'number' },
-        { text: 'P99', key: 'p99', type: 'number' }
+        { text: 'Mean', key: 'mean', type: 'number' },
+        { text: '50th pct', key: 'p50', type: 'number' },
+        { text: '75th pct', key: 'p75', type: 'number' },
+        { text: '95th pct', key: 'p95', type: 'number' },
+        { text: '99th pct', key: 'p99', type: 'number' }
     ];
 
     const headerRow = document.createElement('tr');
     headerConfig.forEach(config => {
         const th = document.createElement('th');
         th.textContent = config.text;
-        th.dataset.key = config.key; // Store the key for sorting
-        th.dataset.type = config.type; // Store the data type
-        th.classList.add('sortable'); // Add class to apply sorting styles
+        th.dataset.key = config.key;
+        th.dataset.type = config.type;
+        th.classList.add('sortable');
 
-        // Add click event listener to each header
         th.addEventListener('click', () => {
             sortTable(config.key, config.type);
         });
@@ -72,15 +74,14 @@ function displayReport(stats) {
     thead.appendChild(headerRow);
 
     table.appendChild(thead);
-    table.appendChild(tbody); // Append empty tbody
+    table.appendChild(tbody);
     reportContainer.appendChild(table);
 
-    renderTableBody(stats); // Render the initial data
-    updateHeaderStyles(); // Set initial header styles
+    renderTableBody(stats);
+    updateHeaderStyles();
 }
 
 function sortTable(key, type) {
-    // Determine sort direction
     if (currentSort.columnKey === key) {
         currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc';
     } else {
@@ -88,7 +89,6 @@ function sortTable(key, type) {
         currentSort.direction = 'asc';
     }
 
-    // Sort the global data array
     tableData.sort((a, b) => {
         const valA = a[key];
         const valB = b[key];
@@ -103,27 +103,37 @@ function sortTable(key, type) {
         return comparison * (currentSort.direction === 'asc' ? 1 : -1);
     });
 
-    // Re-render the table body with sorted data
     renderTableBody(tableData);
-    // Update the header styles to show the sort arrow
     updateHeaderStyles();
+}
+
+// CHANGE 3 (Helper Function): Formats byte values into KB strings
+function formatBytesToKB(bytes) {
+    if (typeof bytes !== 'number' || isNaN(bytes)) {
+        return 'N/A';
+    }
+    const kilobytes = bytes / 1024;
+    // Using toFixed(2) to show two decimal places for precision
+    return `${kilobytes.toFixed(2)} KB`;
 }
 
 function renderTableBody(stats) {
     const tbody = document.getElementById('report-tbody');
-    tbody.innerHTML = ''; // Clear existing rows
+    tbody.innerHTML = '';
 
     stats.forEach(stat => {
         const row = document.createElement('tr');
+        // CHANGES 2 & 3: Applied right-alignment and KB formatting
         row.innerHTML = `
             <td class="text-left">${stat.name}</td>
             <td class="text-right">${stat.count}</td>
-            <td class="text-right">${stat.min}</td>
-            <td class="text-right">${stat.max}</td>
-            <td class="text-right">${stat.p50}</td>
-            <td class="text-right">${stat.p75}</td>
-            <td class="text-right">${stat.p95}</td>
-            <td class="text-right">${stat.p99}</td>
+            <td class="text-right">${formatBytesToKB(stat.min)}</td>
+            <td class="text-right">${formatBytesToKB(stat.max)}</td>
+            <td class="text-right">${formatBytesToKB(stat.mean)}</td>
+            <td class="text-right">${formatBytesToKB(stat.p50)}</td>
+            <td class="text-right">${formatBytesToKB(stat.p75)}</td>
+            <td class="text-right">${formatBytesToKB(stat.p95)}</td>
+            <td class="text-right">${formatBytesToKB(stat.p99)}</td>
         `;
         tbody.appendChild(row);
     });
@@ -138,14 +148,6 @@ function updateHeaderStyles() {
     });
 }
 
-// --- Your existing helper functions (no changes needed) ---
-function parseCSV(text) { /* ... same as before ... */ }
-function calculateStatistics(data) { /* ... same as before ... */ }
-function calculatePercentile(sortedArr, percentile) { /* ... same as before ... */ }
-
-// --- PASTE YOUR EXISTING HELPER FUNCTIONS HERE ---
-// To keep this block clean, I've omitted them, but you should
-// ensure parseCSV, calculateStatistics, and calculatePercentile are still here.
 function parseCSV(text) {
     const lines = text.trim().split(/\r?\n/);
     if (lines.length < 2) return [];
@@ -184,18 +186,25 @@ function calculateStatistics(data) {
     const results = [];
     for (const name in groups) {
         const sizes = groups[name].sort((a, b) => a - b);
+
+        // CHANGE 1: Added calculation for mean
+        const sum = sizes.reduce((a, b) => a + b, 0);
+        const mean = sizes.length > 0 ? sum / sizes.length : 0;
+
         results.push({
             name: name,
             count: sizes.length,
             min: sizes[0],
             max: sizes[sizes.length - 1],
+            mean: mean, // Added mean to the result object
             p50: calculatePercentile(sizes, 50),
             p75: calculatePercentile(sizes, 75),
             p95: calculatePercentile(sizes, 95),
             p99: calculatePercentile(sizes, 99),
         });
     }
-    return results.sort((a, b) => a.name.localeCompare(b.name)); // Initial sort by name
+    // Initial sort by name (ascending)
+    return results.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function calculatePercentile(sortedArr, percentile) {
@@ -207,5 +216,6 @@ function calculatePercentile(sortedArr, percentile) {
     if (lower === upper) {
         return sortedArr[index];
     }
-    return Math.round(sortedArr[lower] * (upper - index) + sortedArr[upper] * (index - lower));
+    // Interpolation for more accuracy
+    return sortedArr[lower] * (upper - index) + sortedArr[upper] * (index - lower);
 }
