@@ -80,9 +80,9 @@ public class GatlingReportModifier {
 		if (docLink != null) {
 			// The href attributes have been updated to the specified URLs
 			String reportSizesButton = "<a class=\"gatling-documentation\" href=\"https://o3-performance.openmrs"
-			        + ".org/response_sizes\" target=\"_blank\">Response-Sizes</a>";
+			        + ".org/response_sizes\" target=\"_blank\">Response Sizes</a>";
 			String performanceTrendsButton = "<a class=\"gatling-documentation\" href=\"https://o3-performance.openmrs"
-			        + ".org/performance-trends\" target=\"_blank\">Performance-Trends</a>";
+			        + ".org/performance-trends\" target=\"_blank\">Performance Trends</a>";
 
 			docLink.after(performanceTrendsButton);
 			docLink.after(reportSizesButton);
