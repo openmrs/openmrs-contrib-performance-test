@@ -43,3 +43,5 @@ bin/
 # Others
 *.swp
 *~
+performance-trends/requests-trend.csv
+response-sizes/response_sizes.csv

@@ -3,7 +3,7 @@ set -e
 
 # Delete everything except the target directory
 shopt -s extglob
-rm -rf !(target|performance-trends)
+rm -rf !(target|performance-trends|response-sizes)
 
 # Identify the directory starting with test-simulation- inside target/gatling/
 report=$(find target/gatling -maxdepth 1 -type d -name "openmrsclinic-*" | head -n 1)
