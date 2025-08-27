@@ -107,7 +107,9 @@ jobs:
 
       - name: Modify the Generated Report
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
-        run: ./mvnw exec:java -Dexec.mainClass=org.performance.modifier.GatlingReportModifier
+        run: |
+          chmod +x report-mod.sh
+          ./report-mod.sh
 
       - name: Set up Git
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
