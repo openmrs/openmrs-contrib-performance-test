@@ -115,7 +115,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     },
                     scales: {
                         x: { type: 'time', time: { unit: 'day', displayFormats: { day: 'MMM d' } }, title: { display: true, text: 'Date' } },
-                        y: { title: { display: true, text: selectedMetric } }
+                        y: {
+                            title: { display: true, text: selectedMetric },
+                            min: 0 // <<< THE FIX IS HERE
+                        }
                     }
                 }
             });
