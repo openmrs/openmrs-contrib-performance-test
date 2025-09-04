@@ -105,6 +105,12 @@ jobs:
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
 
+      - name: Modify the Generated Report
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        run: |
+          chmod +x report-mod.sh
+          ./report-mod.sh
+
       - name: Set up Git
         if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: |

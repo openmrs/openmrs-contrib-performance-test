@@ -13,6 +13,7 @@ import org.openmrs.performance.personas.LabTechPersona;
 import org.openmrs.performance.personas.Persona;
 import org.openmrs.performance.personas.PharmacistPersona;
 import org.openmrs.performance.scenarios.Scenario;
+import org.openmrs.performance.utils.ResponseSizeLogger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,6 @@ import java.util.List;
 
 import static io.gatling.javaapi.core.CoreDsl.constantConcurrentUsers;
 import static io.gatling.javaapi.core.CoreDsl.forAll;
-import static io.gatling.javaapi.core.CoreDsl.global;
 import static io.gatling.javaapi.core.CoreDsl.rampConcurrentUsers;
 import static io.gatling.javaapi.http.HttpDsl.http;
 import static org.openmrs.performance.Constants.ENV_SIMULATION_PRESET;
@@ -105,6 +105,17 @@ public class OpenMRSClinic extends Simulation {
 		return http.baseUrl(org.openmrs.performance.Constants.BASE_URL).acceptHeader("application/json, text/plain, */*")
 		        .acceptLanguageHeader("en-US,en;q=0.5")
 		        .userAgentHeader("Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/119.0")
-		        .header("Authorization", "Bearer YWRtaW46QWRtaW4xMjM=").header("Content-Type", "application/json");
+		        .header("Authorization", "Bearer YWRtaW46QWRtaW4xMjM=").header("Content-Type", "application/json")
+		        .transformResponse((response, session) -> {
+			        if (response.body() != null) {
+				        ResponseSizeLogger.log(response.request().getName(), response.body().length() / 1024);
+			        }
+			        return response;
+		        });
+	}
+
+	@Override
+	public void after() {
+		ResponseSizeLogger.close();
 	}
 }

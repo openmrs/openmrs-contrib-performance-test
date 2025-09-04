@@ -1,0 +1,21 @@
+.assertions-wrapper .title {
+    cursor: pointer;
+    position: relative;
+    user-select: none; /* Prevents text selection on double-click */
+}
+
+.assertions-wrapper .title::after {
+    content: '▼';
+    position: absolute;
+    right: 15px;
+    font-size: 0.8em;
+    transition: transform 0.2s ease-in-out;
+}
+
+.assertions-wrapper.collapsed .title::after {
+    transform: rotate(-90deg);
+}
+
+.assertions-wrapper.collapsed > .statistics-in {
+    display: none;
+}

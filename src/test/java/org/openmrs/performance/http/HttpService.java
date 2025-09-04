@@ -238,8 +238,7 @@ public abstract class HttpService {
 		return http("Get Patients")
 		        .get("/openmrs/ws/rest/v1/patient?q=" + searchQuery + "&v=" + customRepresentation
 		                + "&includeDead=false&limit=50&totalCount=true")
-		        .check(jsonPath("$.results[*].uuid").findAll().optional().saveAs("patientIDs"),
-		            bodyBytes().transform(bytes -> bytes.length).saveAs("PatientsResSize"));
+		        .check(jsonPath("$.results[*].uuid").findAll().optional().saveAs("patientIDs"));
 	}
 
 	public HttpRequestActionBuilder getPatientIdPhoto(String patientUuid) {
