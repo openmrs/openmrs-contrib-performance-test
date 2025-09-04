@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 Performance Trends
             </a>`;
         const reportSizesButton = `
-            <a class="gatling-documentation" href="https://o3-performance.openmrs.org/response_sizes" target="_blank">
+            <a class="gatling-documentation" href="https://o3-performance.openmrs.org/response-sizes" target="_blank">
                 Response Sizes
             </a>`;
 
