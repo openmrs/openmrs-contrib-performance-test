@@ -67,7 +67,7 @@ jobs:
         run: ./mvnw install -DskipTests
 
       - name: Wait for the OpenMRS instance to start
-        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/alive))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/alive)"; sleep 10; done
+        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
       - name: Get System Information
         run: |
