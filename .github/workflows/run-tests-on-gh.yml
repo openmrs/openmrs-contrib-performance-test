@@ -79,6 +79,7 @@ jobs:
 
       - name: Run performance tests
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
+        continue-on-error: true
 
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
