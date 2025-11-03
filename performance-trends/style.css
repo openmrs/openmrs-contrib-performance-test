@@ -1,134 +1,174 @@
 :root {
-    /* Gatling-inspired color palette */
-    --bg-color: #303030;
-    --card-bg: #424242;
-    --text-color: #E0E0E0;
-    --primary-color: #0D8AD4;
-    --border-color: #555555;
-    --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  --bg-color: #0f1114;
+  --card-bg: #1a1e24;
+  --text-color: #fefefe;
+  --primary-color: #0d8ad4;
+  --secondary-color: #727982;
+  --border-color: #555555;
+  --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+
+  /* Chart.js defaults example */
+  --chart-line-color: rgba(13, 138, 212, 1);
+  --chart-line-bg: rgba(13, 138, 212, 0.2);
+}
+
+/* For WebKit browsers (Chrome, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--primary-color);
+  border-radius: 4px;
 }
 
 body {
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    margin: 0;
-    padding: 20px;
+  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+header {
+  > h1,
+  h3 {
+    margin: 0 !important;
+  }
 }
 
 .main-header {
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1px 20px;
-    text-align: center;
-    border-radius: 4px;
-    margin-bottom: 20px;
-    border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: white;
+  padding: 1rem 20px;
+  text-align: center;
+  border-radius: 4px;
+  margin-bottom: 0;
+  flex-shrink: 0;
 }
 
-#controls {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 30px;
-    padding: 20px;
-    margin-bottom: 20px;
-    flex-wrap: wrap;
+.main-layout {
+  display: flex;
+  flex: 1 1 auto;
+  height: calc(100vh - 56px);
+  overflow: hidden;
 }
 
-.card {
-    background-color: var(--card-bg);
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
+.sidebar {
+  background-color: var(--card-bg);
+  margin: 12px;
+  border-radius: 8px;
+  width: 320px;
+  padding: 1rem 1.5rem;
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    font-size: 0.9rem;
+.control-group {
+  margin-bottom: 2rem;
 }
 
-/* Unified style for dropdown buttons */
-.select-control {
-    width: 250px;
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-size: 1em;
-    text-align: left;
-    cursor: pointer;
-}
-
-/* Custom Multiselect Dropdown Styles */
-.multiselect {
-    position: relative;
-}
-
-#request-name-list,
-#metric-options-list {
-    position: absolute;
-    z-index: 10;
-    width: 250px;
-    background-color: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    margin-top: 5px;
-    box-sizing: border-box;
+.control-group h2 {
+  margin: 0 0 0.5rem 0;
+  font-weight: 700;
+  font-size: 1.1rem;
+  color: var(--primary-color);
 }
 
 #search-input {
-    width: 100%;
-    padding: 8px;
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    box-sizing: border-box;
-    background-color: #3a3a3a;
-    color: var(--text-color);
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 1rem;
+  border: none;
+  background-color: #3a3a3a;
+  color: var(--text-color);
+  box-sizing: border-box;
+  font-size: 1rem;
+  border-radius: 4px;
+  font-family: inherit;
 }
 
-#checkbox-container,
-#metric-options-list {
-    max-height: 200px;
-    overflow-y: auto;
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: 4px;
 }
 
-#checkbox-container label,
-#metric-options-list label {
-    display: flex;
-    align-items: center;
-    padding: 8px 12px;
-    cursor: pointer;
-    font-weight: normal;
+.options-list,
+.checkbox-container {
+  max-height: 400px;
+  overflow-y: auto;
 }
 
-#checkbox-container label:hover,
-#metric-options-list label:hover {
-    background-color: var(--primary-color);
-    color: white;
+.options-list label,
+.checkbox-container label {
+  display: flex;
+  align-items: center;
+  padding: 6px 8px;
+  cursor: pointer;
+  font-weight: 400;
+  color: var(--text-color);
+  user-select: none;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-#checkbox-container input,
-#metric-options-list input {
-    margin-right: 10px;
+.options-list label:hover,
+.checkbox-container label:hover {
+  background-color: var(--primary-color);
+  color: #fff;
 }
 
-.hidden {
-    display: none;
+.options-list input,
+.checkbox-container input {
+  margin-right: 12px;
+  cursor: pointer;
 }
 
-/* Chart Layout: Modified for one chart per row */
-#charts-container {
-    display: grid;
-    grid-template-columns: 1fr; /* This forces a single column */
-    gap: 20px;
+.charts-container {
+  flex: 1 1 auto;
+  padding: 12px 12px 12px 0;
+  overflow-y: auto;
+  background-color: var(--bg-color);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  box-sizing: border-box;
 }
 
 .chart-card {
-    padding: 20px;
-    background-color: var(--card-bg);
-    border-radius: 4px;
-    border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.title-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-block: 12px;
+}
+
+@media (max-width: 768px) {
+  .main-layout {
+    flex-direction: column;
+    height: auto;
+  }
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .charts-container {
+    padding: 10px;
+    grid-template-columns: 1fr;
+  }
 }

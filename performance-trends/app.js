@@ -1,168 +1,255 @@
-document.addEventListener('DOMContentLoaded', () => {
-    // Set default chart colors for dark theme
-    Chart.defaults.color = '#E0E0E0';
-    Chart.defaults.borderColor = '#555555';
+document.addEventListener("DOMContentLoaded", () => {
+  // Chart.js dark theme defaults
+  Chart.defaults.color = "#E0E0E0";
+  Chart.defaults.borderColor = "#555555";
 
-    // DOM Elements
-    const chartsContainer = document.getElementById('charts-container');
-    const metricSelectButton = document.getElementById('metric-select-button');
-    const metricOptionsList = document.getElementById('metric-options-list');
-    const requestSelectButton = document.getElementById('request-select-button');
-    const requestNameList = document.getElementById('request-name-list');
-    const searchInput = document.getElementById('search-input');
-    const checkboxContainer = document.getElementById('checkbox-container');
+  const chartsContainer = document.getElementById("charts-container");
+  const metricOptionsList = document.getElementById("metric-options-list");
+  const requestNameContainer = document.getElementById("checkbox-container");
+  const searchInput = document.getElementById("search-input");
 
-    let parsedData = [];
-    let chartInstances = [];
-    const metricOptions = ['Total', 'OK', 'KO', 'Min', 'p50', 'p75', 'p95', 'p99', 'Max', 'Mean', 'StdDev'];
+  const metricOptions = [
+    "Total",
+    "OK",
+    "KO",
+    "Min",
+    "p50",
+    "p75",
+    "p95",
+    "p99",
+    "Max",
+    "Mean",
+    "StdDev",
+  ];
 
-    async function initialize() {
-        populateMetricRadioButtons();
-        try {
-            const response = await fetch('requests-trend.csv');
-            if (!response.ok) throw new Error('Network response was not ok.');
-            const csvText = await response.text();
-            parsedData = parseCSV(csvText);
-            parsedData.sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
-            populateRequestNameCheckboxes();
-            renderDashboard();
-        } catch (error) {
-            console.error('Failed to load or parse CSV file:', error);
-            alert('Could not load data. Please check the console for errors.');
-        }
+  let parsedData = [];
+  let chartInstances = [];
+
+  async function initialize() {
+    try {
+      populateMetricRadioButtons();
+      const response = await fetch("requests-trend.csv");
+      if (!response.ok)
+        throw new Error(
+          `Failed to load CSV: ${response.status} ${response.statusText}`
+        );
+      const csvText = await response.text();
+      parsedData = parseCSV(csvText);
+      parsedData.sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
+      populateRequestNameCheckboxes();
+      renderDashboard();
+    } catch (error) {
+      console.error(error);
+      alert("Could not load data. Please check the console for details.");
+    }
+  }
+
+  function parseCSV(text) {
+    const lines = text.trim().split("\n");
+    const headers = lines[0].split(",");
+    return lines.slice(1).map((line) => {
+      const values = line.split(",");
+      const obj = {};
+      headers.forEach((header, i) => {
+        const val = values[i].replace(/"/g, "");
+        obj[header] = isNaN(val) || val.trim() === "" ? val : parseFloat(val);
+      });
+      return obj;
+    });
+  }
+
+  function populateMetricRadioButtons() {
+    metricOptionsList.innerHTML = "";
+    metricOptions.forEach((option) => {
+      const label = document.createElement("label");
+      const radio = document.createElement("input");
+      radio.type = "radio";
+      radio.name = "metric";
+      radio.value = option;
+      if (option === "Total") radio.checked = true;
+      label.appendChild(radio);
+      label.appendChild(document.createTextNode(option));
+      metricOptionsList.appendChild(label);
+    });
+  }
+
+  function populateRequestNameCheckboxes() {
+    const uniqueRequests = [...new Set(parsedData.map((d) => d.RequestName))];
+    requestNameContainer.innerHTML = "";
+    uniqueRequests.forEach((name) => {
+      const label = document.createElement("label");
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.value = name;
+      checkbox.checked = true;
+      label.appendChild(checkbox);
+      label.appendChild(document.createTextNode(name));
+      requestNameContainer.appendChild(label);
+    });
+  }
+
+  function renderDashboard() {
+    const selectedMetricNode = metricOptionsList.querySelector(
+      "input[type=radio]:checked"
+    );
+    const selectedMetric = selectedMetricNode
+      ? selectedMetricNode.value
+      : "Total";
+
+    const selectedRequests = [
+      ...requestNameContainer.querySelectorAll("input[type=checkbox]:checked"),
+    ].map((cb) => cb.value);
+
+    chartInstances.forEach((c) => c.destroy());
+    chartInstances = [];
+    chartsContainer.innerHTML = "";
+
+    if (selectedRequests.length === 0) {
+      chartsContainer.innerHTML =
+        '<p style="color:var(--text-color); text-align:center;">No requests selected. Please choose requests to display charts.</p>';
+      return;
     }
 
-    function parseCSV(text) {
-        const lines = text.trim().split('\n');
-        const headers = lines[0].split(',');
-        return lines.slice(1).map(line => {
-            const values = line.split(',');
-            const obj = {};
-            headers.forEach((header, i) => {
-                const value = values[i].replace(/"/g, '');
-                obj[header] = isNaN(value) || value.trim() === '' ? value : parseFloat(value);
-            });
-            return obj;
-        });
-    }
+    selectedRequests.forEach((requestName) => {
+      const dataPoints = parsedData
+        .filter((d) => d.RequestName === requestName)
+        .map((d) => ({
+          x: d.Timestamp,
+          y: d[selectedMetric],
+        }));
 
-    function populateMetricRadioButtons() {
-        metricOptionsList.innerHTML = '';
-        metricOptions.forEach(option => {
-            const label = document.createElement('label');
-            const radio = document.createElement('input');
-            radio.type = 'radio';
-            radio.name = 'metric';
-            radio.value = option;
-            if (option === 'Mean') radio.checked = true;
-            label.appendChild(radio);
-            label.appendChild(document.createTextNode(option));
-            metricOptionsList.appendChild(label);
-        });
-    }
+      const card = document.createElement("div");
+      card.className = "chart-card";
+      const canvas = document.createElement("canvas");
+      card.appendChild(canvas);
+      chartsContainer.appendChild(card);
 
-    function populateRequestNameCheckboxes() {
-        const requestNames = [...new Set(parsedData.map(row => row.RequestName))];
-        checkboxContainer.innerHTML = '';
-        requestNames.forEach(name => {
-            const label = document.createElement('label');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.value = name;
-            label.appendChild(checkbox);
-            label.appendChild(document.createTextNode(name));
-            checkboxContainer.appendChild(label);
-        });
-    }
-
-    function renderDashboard() {
-        const selectedMetricRadio = metricOptionsList.querySelector('input[type=radio]:checked');
-        const selectedMetric = selectedMetricRadio ? selectedMetricRadio.value : 'Mean';
-        const selectedRequests = [...checkboxContainer.querySelectorAll('input[type=checkbox]:checked')].map(checkbox => checkbox.value);
-
-        metricSelectButton.textContent = selectedMetric;
-        requestSelectButton.textContent = selectedRequests.length > 0 ? `${selectedRequests.length} Selected` : 'None Selected';
-
-        chartInstances.forEach(chart => chart.destroy());
-        chartInstances = [];
-        chartsContainer.innerHTML = '';
-
-        selectedRequests.forEach(requestName => {
-            const chartData = parsedData.filter(row => row.RequestName === requestName).map(row => ({ x: row.Timestamp, y: row[selectedMetric] }));
-            const card = document.createElement('div');
-            card.className = 'chart-card';
-            const canvas = document.createElement('canvas');
-            card.appendChild(canvas);
-            chartsContainer.appendChild(card);
-
-            const newChart = new Chart(canvas, {
-                type: 'line',
-                data: {
-                    datasets: [{
-                        label: requestName,
-                        data: chartData,
-                        borderColor: '#0D8AD4', // Gatling blue
-                        backgroundColor: 'rgba(13, 138, 212, 0.2)',
-                        fill: true,
-                        tension: 0.1
-                    }]
+      const chart = new Chart(canvas, {
+        type: "line",
+        data: {
+          labels: dataPoints.map(({ x }) => x),
+          datasets: [
+            {
+              label: requestName,
+              data: dataPoints,
+              borderColor: getComputedStyle(document.body)
+                .getPropertyValue("--chart-line-color")
+                .trim(),
+              backgroundColor: getComputedStyle(document.body)
+                .getPropertyValue("--chart-line-bg")
+                .trim(),
+              fill: true,
+              tension: 0.2,
+            },
+          ],
+        },
+        options: {
+          animation: { duration: 2000, easing: "easeInOutQuart" },
+          responsive: true,
+          plugins: {
+            title: {
+              display: true,
+              text: `${requestName} - ${selectedMetric}`,
+              font: {
+                family:
+                  "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                size: 16,
+                weight: "bold",
+              },
+            },
+            legend: {
+              display: false,
+              labels: {
+                font: {
+                  family:
+                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  size: 12,
                 },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        title: { display: true, text: `${requestName} - ${selectedMetric}`, font: { size: 16 } },
-                        legend: { display: false }
-                    },
-                    scales: {
-                        x: { type: 'time', time: { unit: 'day', displayFormats: { day: 'MMM d' } }, title: { display: true, text: 'Date' } },
-                        y: {
-                            title: { display: true, text: selectedMetric },
-                            min: 0 // <<< THE FIX IS HERE
-                        }
-                    }
-                }
-            });
-            chartInstances.push(newChart);
-        });
-    }
+              },
+            },
+            tooltip: {
+              mode: "index",
+              intersect: false,
+              bodyFont: {
+                family:
+                  "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                size: 12,
+              },
+              titleFont: {
+                family:
+                  "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                size: 14,
+                weight: "bold",
+              },
+            },
+          },
+          interaction: { mode: "nearest", axis: "x", intersect: false },
+          scales: {
+            x: {
+              type: "time",
+              time: { unit: "day", displayFormats: { day: "MMM d" } },
+              title: {
+                display: true,
+                text: "Date",
+                font: {
+                  family:
+                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+              ticks: {
+                font: {
+                  family:
+                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  size: 12,
+                },
+                maxRotation: 0,
+                autoSkip: true,
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: selectedMetric,
+                font: {
+                  family:
+                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  size: 14,
+                  weight: "bold",
+                },
+              },
+              ticks: {
+                font: {
+                  family:
+                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  size: 12,
+                },
+              },
+              min: 0,
+            },
+          },
+        },
+      });
 
-    // --- Event Listeners ---
-    metricOptionsList.addEventListener('change', () => {
-        renderDashboard();
-        metricOptionsList.classList.add('hidden'); // Close after selection
+      chartInstances.push(chart);
     });
-    checkboxContainer.addEventListener('change', renderDashboard);
+  }
 
-    metricSelectButton.addEventListener('click', (e) => {
-        metricOptionsList.classList.toggle('hidden');
-        requestNameList.classList.add('hidden');
-        e.stopPropagation();
+  function filterRequestNames(term) {
+    const labels = requestNameContainer.querySelectorAll("label");
+    labels.forEach((label) => {
+      const text = label.textContent.toLowerCase();
+      label.style.display = text.includes(term.toLowerCase()) ? "flex" : "none";
     });
+  }
 
-    requestSelectButton.addEventListener('click', (e) => {
-        requestNameList.classList.toggle('hidden');
-        metricOptionsList.classList.add('hidden');
-        e.stopPropagation();
-    });
+  // Event listeners
+  metricOptionsList.addEventListener("change", renderDashboard);
+  requestNameContainer.addEventListener("change", renderDashboard);
+  searchInput.addEventListener("input", (e) =>
+    filterRequestNames(e.target.value)
+  );
 
-    // UPDATED: This listener now checks if the click was outside the dropdowns
-    document.addEventListener('click', (e) => {
-        if (!document.getElementById('metric-select-box').contains(e.target)) {
-            metricOptionsList.classList.add('hidden');
-        }
-        if (!document.getElementById('request-select-box').contains(e.target)) {
-            requestNameList.classList.add('hidden');
-        }
-    });
-
-    searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const labels = checkboxContainer.querySelectorAll('label');
-        labels.forEach(label => {
-            const requestName = label.textContent.toLowerCase();
-            label.style.display = requestName.includes(searchTerm) ? 'block' : 'none';
-        });
-    });
-
-    initialize();
+  initialize();
 });
