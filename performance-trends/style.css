@@ -6,13 +6,10 @@
   --secondary-color: #727982;
   --border-color: #555555;
   --shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-
-  /* Chart.js defaults example */
   --chart-line-color: rgba(13, 138, 212, 1);
   --chart-line-bg: rgba(13, 138, 212, 0.2);
 }
 
-/* For WebKit browsers (Chrome, Safari) */
 ::-webkit-scrollbar {
   width: 8px;
 }
@@ -32,13 +29,6 @@ body {
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-header {
-  > h1,
-  h3 {
-    margin: 0 !important;
-  }
 }
 
 .main-header {
@@ -135,6 +125,7 @@ header {
   flex: 1 1 auto;
   padding: 12px 12px 12px 0;
   overflow-y: auto;
+  overflow-x: hidden;
   background-color: var(--bg-color);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -155,6 +146,10 @@ header {
   justify-content: center;
   align-items: center;
   padding-block: 12px;
+}
+
+.subtitle {
+  margin: 0;
 }
 
 @media (max-width: 768px) {

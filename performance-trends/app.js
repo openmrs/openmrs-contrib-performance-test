@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // Chart.js dark theme defaults
   Chart.defaults.color = "#E0E0E0";
   Chart.defaults.borderColor = "#555555";
 
@@ -244,7 +243,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Event listeners
   metricOptionsList.addEventListener("change", renderDashboard);
   requestNameContainer.addEventListener("change", renderDashboard);
   searchInput.addEventListener("input", (e) =>
