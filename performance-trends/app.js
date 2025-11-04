@@ -6,6 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
 	const metricOptionsList = document.getElementById("metric-options-list");
 	const requestNameContainer = document.getElementById("checkbox-container");
 	const searchInput = document.getElementById("search-input");
+	const selectAllButton = document.getElementById("select-all-button");
 
 	const metricOptions = [
 		"Total",
@@ -235,6 +236,28 @@ document.addEventListener("DOMContentLoaded", () => {
 		});
 	}
 
+	function updateSelectAllButtonText() {
+		const checkboxes = requestNameContainer.querySelectorAll(
+			"input[type=checkbox]"
+		);
+		const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+		selectAllButton.textContent = allChecked ? "Reset Selection" : "Select All";
+	}
+
+	selectAllButton.addEventListener("click", () => {
+		const checkboxes = requestNameContainer.querySelectorAll(
+			"input[type=checkbox]"
+		);
+		const allChecked = Array.from(checkboxes).every((cb) => cb.checked);
+		if (allChecked) {
+			checkboxes.forEach((cb) => (cb.checked = false));
+		} else {
+			checkboxes.forEach((cb) => (cb.checked = true));
+		}
+		updateSelectAllButtonText();
+		renderDashboard();
+	});
+
 	metricOptionsList.addEventListener("change", renderDashboard);
 	requestNameContainer.addEventListener("change", renderDashboard);
 	searchInput.addEventListener("input", (e) =>
@@ -242,4 +265,5 @@ document.addEventListener("DOMContentLoaded", () => {
 	);
 
 	initialize();
+	updateSelectAllButtonText();
 });
