@@ -150,8 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
               display: true,
               text: `${requestName} - ${selectedMetric}`,
               font: {
-                family:
-                  "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                family: "'Figtree', sans-serif",
                 size: 16,
                 weight: "bold",
               },
@@ -160,8 +159,7 @@ document.addEventListener("DOMContentLoaded", () => {
               display: false,
               labels: {
                 font: {
-                  family:
-                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  family: "'Figtree', sans-serif",
                   size: 12,
                 },
               },
@@ -170,13 +168,11 @@ document.addEventListener("DOMContentLoaded", () => {
               mode: "index",
               intersect: false,
               bodyFont: {
-                family:
-                  "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                family: "'Figtree', sans-serif",
                 size: 12,
               },
               titleFont: {
-                family:
-                  "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                family: "'Figtree', sans-serif",
                 size: 14,
                 weight: "bold",
               },
@@ -191,16 +187,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 display: true,
                 text: "Date",
                 font: {
-                  family:
-                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  family: "'Figtree', sans-serif",
                   size: 14,
                   weight: "bold",
                 },
               },
               ticks: {
                 font: {
-                  family:
-                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  family: "'Figtree', sans-serif",
                   size: 12,
                 },
                 maxRotation: 0,
@@ -212,16 +206,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 display: true,
                 text: selectedMetric,
                 font: {
-                  family:
-                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  family: "'Figtree', sans-serif",
                   size: 14,
                   weight: "bold",
                 },
               },
               ticks: {
                 font: {
-                  family:
-                    "'Montserrat', 'Helvetica Neue', Helvetica, Arial, sans-serif",
+                  family: "'Figtree', sans-serif",
                   size: 12,
                 },
               },

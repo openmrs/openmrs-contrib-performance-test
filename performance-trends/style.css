@@ -1,6 +1,6 @@
 :root {
-  --bg-color: #0f1114;
-  --card-bg: #1a1e24;
+  --bg-color: #0e1011;
+  --card-bg: #191d24;
   --text-color: #fefefe;
   --primary-color: #0d8ad4;
   --secondary-color: #727982;
@@ -20,7 +20,7 @@
 }
 
 body {
-  font-family: "Montserrat", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: "Figtree", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background-color: var(--bg-color);
   color: var(--text-color);
   margin: 0;
@@ -31,16 +31,6 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.main-header {
-  background-color: var(--card-bg);
-  color: white;
-  padding: 1rem 20px;
-  text-align: center;
-  border-radius: 4px;
-  margin-bottom: 0;
-  flex-shrink: 0;
-}
-
 .main-layout {
   display: flex;
   flex: 1 1 auto;
@@ -49,17 +39,29 @@ body {
 }
 
 .sidebar {
+  display: flex;
+  flex-direction: column;
   background-color: var(--card-bg);
   margin: 12px;
   border-radius: 8px;
-  width: 320px;
+  width: 380px;
   padding: 1rem 1.5rem;
-  overflow-y: auto;
+  overflow: auto;
   box-sizing: border-box;
+  gap: 8px;
+}
+
+.sidebar::-webkit-scrollbar {
+  display: none;
 }
 
 .control-group {
-  margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  padding-block: 12px;
+  gap: 6px;
 }
 
 .control-group h2 {
@@ -92,6 +94,7 @@ body {
 
 .options-list,
 .checkbox-container {
+  width: 100%;
   max-height: 400px;
   overflow-y: auto;
 }
@@ -107,6 +110,7 @@ body {
   user-select: none;
   border-radius: 4px;
   transition: background-color 0.2s;
+  font-size: 14px;
 }
 
 .options-list label:hover,
@@ -123,19 +127,20 @@ body {
 
 .charts-container {
   flex: 1 1 auto;
-  padding: 12px 12px 12px 0;
-  overflow-y: auto;
-  overflow-x: hidden;
+  margin-top: 12px;
+  padding: 0 20px 12px 0;
+  overflow: hidden auto;
   background-color: var(--bg-color);
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 12px;
   box-sizing: border-box;
+  min-width: 0;
 }
 
 .chart-card {
   background-color: var(--card-bg);
-  padding: 20px;
+  padding: 12px;
   border-radius: 8px;
   box-shadow: var(--shadow);
 }
@@ -144,8 +149,13 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   padding-block: 12px;
+  gap: 6px;
+}
+
+.title {
+  margin: 0;
 }
 
 .subtitle {

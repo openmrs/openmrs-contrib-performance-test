@@ -1,48 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Gatling Report Trends</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap"
-      rel="stylesheet"
-    />
+    <title>OpenMRS Performance Test Trends</title>
+    <link href="https://fonts.googleapis.com/css2?family=Figtree&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="style.css" />
-  </head>
-  <body>
-    <header class="main-header">
-      <div class="title-container">
-        <h1>Performance Trends</h1>
-        <p class="subtitle">OpenMRS Performance Test</h3>
-      </div>
-    </header>
+</head>
 
+<body>
     <div class="main-layout">
-      <aside id="sidebar" class="sidebar">
-        <section class="control-group">
-          <h2>Select Metric</h2>
-          <div id="metric-options-list" class="options-list"></div>
-        </section>
+        <aside id="sidebar" class="sidebar">
+            <div class="title-container">
+                <h1 class="title">Performance Trends</h1>
+                <p class="subtitle">OpenMRS Performance Test 🚀</h3>
+            </div>
+            <section class="control-group">
+                <h2>Select Metric</h2>
+                <div id="metric-options-list" class="options-list"></div>
+            </section>
 
-        <section class="control-group">
-          <h2>Select Requests</h2>
-          <input
-            type="text"
-            id="search-input"
-            placeholder="Enter request name"
-            aria-label="Search Requests"
-          />
-          <div id="checkbox-container" class="checkbox-container"></div>
-        </section>
-      </aside>
+            <section class="control-group">
+                <h2>Select Requests</h2>
+                <input type="text" id="search-input" placeholder="Enter request name" aria-label="Search Requests" />
+                <div id="checkbox-container" class="checkbox-container"></div>
+            </section>
+        </aside>
 
-      <main id="charts-container" class="charts-container"></main>
+        <main id="charts-container" class="charts-container"></main>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
     <script src="app.js"></script>
-  </body>
+</body>
+
 </html>
