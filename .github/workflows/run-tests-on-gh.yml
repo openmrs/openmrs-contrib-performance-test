@@ -78,9 +78,7 @@ jobs:
           echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
 
       - name: Run performance tests
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
-        continue-on-error: true
 
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
