@@ -85,14 +85,14 @@ jobs:
         run: docker stop $(docker ps -a -q)
 
       - name: Checkout report branch for trend data
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         uses: actions/checkout@v4
         with:
           ref: report
           path: ./report-data
 
       - name: Prepare trend data file
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: |
           TREND_FILE_SOURCE=./report-data/performance-trends/requests-trend.csv
           TREND_FILE_DEST=./performance-trends/requests-trend.csv
@@ -102,29 +102,29 @@ jobs:
           fi
 
       - name: Parse Report and Update Trends
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
 
       - name: Modify the Generated Report
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: |
           chmod +x report-mod.sh
           ./report-mod.sh
 
       - name: Set up Git
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit the report to the report branch
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: |
           chmod +x commit-report.sh
           ./commit-report.sh
 
       - name: Push changes
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always()
         run: git push origin HEAD:report -f
 
       - name: Upload test results
