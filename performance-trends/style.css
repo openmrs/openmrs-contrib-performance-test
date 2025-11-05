@@ -132,7 +132,6 @@ body {
 	overflow: hidden auto;
 	background-color: var(--bg-color);
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
 	gap: 12px;
 	box-sizing: border-box;
 	min-width: 0;
