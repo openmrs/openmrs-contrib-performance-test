@@ -35,7 +35,7 @@ jobs:
         run: ./mvnw install -DskipTests
 
       - name: Wait for the OpenMRS instance to start
-        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/alive))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/alive)"; sleep 10; done
+        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
       - name: Set the demo patient count
         working-directory: src/test/resources
@@ -47,7 +47,7 @@ jobs:
         run: docker compose -f src/test/resources/docker-compose.yml restart
 
       - name: Wait for the OpenMRS instance to start and patients to be generated
-        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/alive))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/alive)"; sleep 10; done
+        run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
       - name: Export a DB dump
         working-directory: src/test/resources
