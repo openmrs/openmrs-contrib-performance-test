@@ -91,7 +91,7 @@ jobs:
 
       - name: Push changes
         run: |
-          git push origin main
+          git push origin ${{ github.ref_name }}
 
       - name: Capture Server Logs
         if: always()
