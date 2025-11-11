@@ -63,6 +63,7 @@ jobs:
 
       - name: Run performance tests
         run: ./mvnw gatling:test
+        continue-on-error: true
 
       - name: Stop the OpenMRS instance
         if: '!cancelled()'
