@@ -17,43 +17,9 @@
 ::-webkit-scrollbar-thumb {
 	background-color: var(--primary-color);
 	border-radius: 4px;
-	--bg-color: #0e1011;
-	--card-bg: #191d24;
-	--text-color: #fefefe;
-	--primary-color: #0d8ad4;
-	--secondary-color: #727982;
-	--border-color: #555555;
-	--shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-	--chart-line-color: rgba(13, 138, 212, 1);
-	--chart-line-bg: rgba(13, 138, 212, 0.2);
-}
-
-::-webkit-scrollbar {
-	width: 8px;
-}
-
-::-webkit-scrollbar-thumb {
-	background-color: var(--primary-color);
-	border-radius: 4px;
 }
 
 body {
-	font-family: "Figtree", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	background-color: var(--bg-color);
-	color: var(--text-color);
-	margin: 0;
-	padding: 0;
-	height: 100vh;
-	display: flex;
-	flex-direction: column;
-	transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.main-layout {
-	display: flex;
-	flex: 1 1 auto;
-	height: calc(100vh - 56px);
-	overflow: hidden;
 	font-family: "Figtree", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	background-color: var(--bg-color);
 	color: var(--text-color);
@@ -103,11 +69,6 @@ body {
 	font-weight: 700;
 	font-size: 1.1rem;
 	color: var(--primary-color);
-.control-group h2 {
-	margin: 0 0 0.5rem 0;
-	font-weight: 700;
-	font-size: 1.1rem;
-	color: var(--primary-color);
 }
 
 #search-input {
@@ -129,31 +90,8 @@ body {
 .sidebar::-webkit-scrollbar-thumb {
 	background: var(--primary-color);
 	border-radius: 4px;
-	width: 100%;
-	padding: 8px;
-	margin-bottom: 1rem;
-	border: none;
-	background-color: #3a3a3a;
-	color: var(--text-color);
-	box-sizing: border-box;
-	font-size: 1rem;
-	border-radius: 4px;
-	font-family: inherit;
 }
 
-.sidebar::-webkit-scrollbar {
-	width: 8px;
-}
-.sidebar::-webkit-scrollbar-thumb {
-	background: var(--primary-color);
-	border-radius: 4px;
-}
-
-.options-list,
-.checkbox-container {
-	width: 100%;
-	max-height: 400px;
-	overflow-y: auto;
 .options-list,
 .checkbox-container {
 	width: 100%;
@@ -173,34 +111,14 @@ body {
 	border-radius: 4px;
 	transition: background-color 0.2s;
 	font-size: 14px;
-.options-list label,
-.checkbox-container label {
-	display: flex;
-	align-items: center;
-	padding: 6px 8px;
-	cursor: pointer;
-	font-weight: 400;
-	color: var(--text-color);
-	user-select: none;
-	border-radius: 4px;
-	transition: background-color 0.2s;
-	font-size: 14px;
 }
 
 .options-list label:hover,
 .checkbox-container label:hover {
 	background-color: var(--primary-color);
 	color: #fff;
-.options-list label:hover,
-.checkbox-container label:hover {
-	background-color: var(--primary-color);
-	color: #fff;
 }
 
-.options-list input,
-.checkbox-container input {
-	margin-right: 12px;
-	cursor: pointer;
 .options-list input,
 .checkbox-container input {
 	margin-right: 12px;
@@ -217,7 +135,7 @@ body {
 	gap: 12px;
 	box-sizing: border-box;
 	min-width: 0;
-	justify-content: center;
+	/* justify-content: center; */
 }
 
 .chart-card {
@@ -275,7 +193,7 @@ body {
 #metric-options-list {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	gap: 8px; /* space between columns and rows */
+	gap: 8px;
 }
 
 @media (max-width: 768px) {

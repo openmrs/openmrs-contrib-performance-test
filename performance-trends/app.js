@@ -1,9 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
 	Chart.defaults.color = "#E0E0E0";
 	Chart.defaults.borderColor = "#555555";
-document.addEventListener("DOMContentLoaded", () => {
-	Chart.defaults.color = "#E0E0E0";
-	Chart.defaults.borderColor = "#555555";
 
 	const chartsContainer = document.getElementById("charts-container");
 	const metricOptionsList = document.getElementById("metric-options-list");
@@ -53,8 +50,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		StdDev: "Response time (ms) - Std Dev",
 	};
 
-	let parsedData = [];
-	let chartInstances = [];
 	let parsedData = [];
 	let chartInstances = [];
 
@@ -341,4 +336,3 @@ document.addEventListener("DOMContentLoaded", () => {
 	initialize();
 	updateSelectAllButtonText();
 });
-
