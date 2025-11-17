@@ -3,7 +3,10 @@ set -e
 
 # Delete everything except the target directory
 shopt -s extglob
-rm -rf !(target|performance-trends|response-sizes)
+
+# temporarily disabling response size file, as it exceeds 100mb limit
+# rm -rf !(target|performance-trends|response-sizes)
+rm -rf !(target|performance-trends)
 
 # Identify the directory starting with test-simulation- inside target/gatling/
 report=$(find target/gatling -maxdepth 1 -type d -name "openmrsclinic-*" | head -n 1)
