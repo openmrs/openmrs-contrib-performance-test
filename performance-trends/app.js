@@ -71,38 +71,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			alert("Could not load data. Please check the console for details.");
 		}
 	}
-	async function initialize() {
-		try {
-			populateMetricRadioButtons();
-			const response = await fetch("requests-trend.csv");
-			if (!response.ok)
-				throw new Error(
-					`Failed to load CSV: ${response.status} ${response.statusText}`
-				);
-			const csvText = await response.text();
-			parsedData = parseCSV(csvText);
-			parsedData.sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
-			populateRequestNameCheckboxes();
-			renderDashboard();
-		} catch (error) {
-			console.error(error);
-			alert("Could not load data. Please check the console for details.");
-		}
-	}
 
-	function parseCSV(text) {
-		const lines = text.trim().split("\n");
-		const headers = lines[0].split(",");
-		return lines.slice(1).map((line) => {
-			const values = line.split(",");
-			const obj = {};
-			headers.forEach((header, i) => {
-				const val = values[i].replace(/"/g, "");
-				obj[header] = isNaN(val) || val.trim() === "" ? val : parseFloat(val);
-			});
-			return obj;
-		});
-	}
 	function parseCSV(text) {
 		const lines = text.trim().split("\n");
 		const headers = lines[0].split(",");
@@ -331,8 +300,6 @@ document.addEventListener("DOMContentLoaded", () => {
 		filterRequestNames(e.target.value)
 	);
 
-	initialize();
-	updateSelectAllButtonText();
 	initialize();
 	updateSelectAllButtonText();
 });
