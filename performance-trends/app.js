@@ -185,7 +185,9 @@ document.addEventListener("DOMContentLoaded", () => {
 					plugins: {
 						title: {
 							display: true,
-							text: `${requestName} - ${selectedMetric}`,
+							text: `${requestName} - ${
+								metricYAxisLabelsMap[selectedMetric] || selectedMetric
+							}`,
 							font: {
 								family: "'Figtree', sans-serif",
 								size: 16,
