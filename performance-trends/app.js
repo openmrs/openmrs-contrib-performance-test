@@ -96,6 +96,22 @@ document.addEventListener("DOMContentLoaded", () => {
 			? selectedMetricNode.value
 			: "Total";
 
+		const metricLabels = {
+			Total: "Number of requests",
+			OK: "Number of successful requests",
+			KO: "Number of failed requests",
+			Min: "Response time (ms) - Min",
+			p50: "Response time (ms) - p50",
+			p75: "Response time (ms) - p75",
+			p95: "Response time (ms) - p95",
+			p99: "Response time (ms) - p99",
+			Max: "Response time (ms) - Max",
+			Mean: "Response time (ms) - Mean",
+			StdDev: "Response time (ms) - Std Dev",
+		};
+
+		const yAxisLabel = metricLabels[selectedMetric] || selectedMetric;
+
 		const selectedRequests = [
 			...requestNameContainer.querySelectorAll("input[type=checkbox]:checked"),
 		].map((cb) => cb.value);
@@ -205,7 +221,7 @@ document.addEventListener("DOMContentLoaded", () => {
 						y: {
 							title: {
 								display: true,
-								text: selectedMetric,
+								text: yAxisLabel,
 								font: {
 									family: "'Figtree', sans-serif",
 									size: 14,
