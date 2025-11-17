@@ -22,6 +22,34 @@ document.addEventListener("DOMContentLoaded", () => {
 		"StdDev",
 	];
 
+	const metricLabelsMap = {
+		Total: "Total",
+		OK: "OK",
+		KO: "KO",
+		Min: "Min",
+		p50: "50th pct",
+		p75: "75th pct",
+		p95: "95th pct",
+		p99: "99th pct",
+		Max: "Max",
+		Mean: "Mean",
+		StdDev: "Std Dev",
+	};
+
+	const metricYAxisLabelsMap = {
+		Total: "Number of requests",
+		OK: "Number of successful requests",
+		KO: "Number of failed requests",
+		Min: "Response time (ms) - Min",
+		p50: "Response time (ms) - 50th pct",
+		p75: "Response time (ms) - 75th pct",
+		p95: "Response time (ms) - 95th pct",
+		p99: "Response time (ms) - 99th pct",
+		Max: "Response time (ms) - Max",
+		Mean: "Response time (ms) - Mean",
+		StdDev: "Response time (ms) - Std Dev",
+	};
+
 	let parsedData = [];
 	let chartInstances = [];
 
@@ -60,6 +88,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	function populateMetricRadioButtons() {
 		metricOptionsList.innerHTML = "";
+		metricOptionsList.style.display = "grid";
+		metricOptionsList.style.gridTemplateColumns = "repeat(2, 1fr)";
+		metricOptionsList.style.gap = "8px";
 		metricOptions.forEach((option) => {
 			const label = document.createElement("label");
 			const radio = document.createElement("input");
@@ -68,20 +99,21 @@ document.addEventListener("DOMContentLoaded", () => {
 			radio.value = option;
 			if (option === "Total") radio.checked = true;
 			label.appendChild(radio);
-			label.appendChild(document.createTextNode(option));
+			label.appendChild(
+				document.createTextNode(metricLabelsMap[option] || option)
+			);
 			metricOptionsList.appendChild(label);
 		});
 	}
-
 	function populateRequestNameCheckboxes() {
 		const uniqueRequests = [...new Set(parsedData.map((d) => d.RequestName))];
 		requestNameContainer.innerHTML = "";
-		uniqueRequests.forEach((name) => {
+		uniqueRequests.forEach((name, index) => {
 			const label = document.createElement("label");
 			const checkbox = document.createElement("input");
 			checkbox.type = "checkbox";
 			checkbox.value = name;
-			checkbox.checked = true;
+			checkbox.checked = index < 4;
 			label.appendChild(checkbox);
 			label.appendChild(document.createTextNode(name));
 			requestNameContainer.appendChild(label);
@@ -96,21 +128,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			? selectedMetricNode.value
 			: "Total";
 
-		const metricLabels = {
-			Total: "Number of requests",
-			OK: "Number of successful requests",
-			KO: "Number of failed requests",
-			Min: "Response time (ms) - Min",
-			p50: "Response time (ms) - p50",
-			p75: "Response time (ms) - p75",
-			p95: "Response time (ms) - p95",
-			p99: "Response time (ms) - p99",
-			Max: "Response time (ms) - Max",
-			Mean: "Response time (ms) - Mean",
-			StdDev: "Response time (ms) - Std Dev",
-		};
-
-		const yAxisLabel = metricLabels[selectedMetric] || selectedMetric;
+		const yAxisLabel = metricYAxisLabelsMap[selectedMetric] || selectedMetric;
 
 		const selectedRequests = [
 			...requestNameContainer.querySelectorAll("input[type=checkbox]:checked"),
@@ -137,6 +155,8 @@ document.addEventListener("DOMContentLoaded", () => {
 			const card = document.createElement("div");
 			card.className = "chart-card";
 			const canvas = document.createElement("canvas");
+			canvas.width = 800;
+			canvas.height = 300;
 			card.appendChild(canvas);
 			chartsContainer.appendChild(card);
 
