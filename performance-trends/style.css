@@ -44,7 +44,7 @@ body {
 	background-color: var(--card-bg);
 	margin: 12px;
 	border-radius: 8px;
-	width: 380px;
+	width: 600px;
 	padding: 1rem 1.5rem;
 	overflow: auto;
 	box-sizing: border-box;
@@ -135,6 +135,7 @@ body {
 	gap: 12px;
 	box-sizing: border-box;
 	min-width: 0;
+	/* justify-content: center; */
 }
 
 .chart-card {
@@ -187,6 +188,12 @@ body {
 	background-color: lighten(var(--primary-color), 10%);
 	border: 1px solid var(--primary-color);
 	outline: none;
+}
+
+#metric-options-list {
+	display: grid;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 8px;
 }
 
 @media (max-width: 768px) {
