@@ -48,7 +48,7 @@ export function computeSelectedRange() {
 		const start = startOfDay(
 			new Date(today.getFullYear(), today.getMonth() - 1, 1)
 		);
-		const end = endOfDay(new Date(today.getFullYear(), today.getMonth(), 0)); // last day of previous month
+		const end = endOfDay(new Date(today.getFullYear(), today.getMonth(), 0));
 		return { start, end };
 	}
 
@@ -66,7 +66,6 @@ export function computeSelectedRange() {
 		const s = parseDateInput(sVal);
 		const e = parseDateInput(eVal);
 		if (s && e) return { start: startOfDay(s), end: endOfDay(e) };
-		// if invalid custom, return null so no filtering
 		return null;
 	}
 

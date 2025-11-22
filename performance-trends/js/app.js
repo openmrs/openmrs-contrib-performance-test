@@ -334,7 +334,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			const start = startOfDay(
 				new Date(today.getFullYear(), today.getMonth() - 1, 1)
 			);
-			const end = endOfDay(new Date(today.getFullYear(), today.getMonth(), 0)); // last day of previous month
+			const end = endOfDay(new Date(today.getFullYear(), today.getMonth(), 0));
 			return { start, end };
 		}
 
