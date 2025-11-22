@@ -22,6 +22,24 @@
             </section>
 
             <section class="control-group">
+                <h2>Date Range</h2>
+                <select id="date-range-select" aria-label="Date Range">
+                    <option value="last_6_months">Last 6 months</option>
+                    <option value="ytd">Year To Date (YTD)</option>
+                    <option value="last_month">Last month</option>
+                    <option value="last_week">Last week</option>
+                    <option value="all_time">All time</option>
+                    <option value="custom">Custom range</option>
+                </select>
+
+                <div id="custom-date-range" style="display:none; gap:6px; margin-top:8px;">
+                    <input type="date" id="custom-start" aria-label="Custom start date" />
+                    <input type="date" id="custom-end" aria-label="Custom end date" />
+                    <button id="apply-custom-range" type="button">Apply</button>
+                </div>
+            </section>
+
+            <section class="control-group">
                 <div class="select-req-header">
                 <h2>Select Requests</h2>
                 <button id="select-all-button" type="button" aria-label="Select All Requests">
@@ -40,7 +58,7 @@
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 
-    <script src="app.js"></script>
+    <script type="module" src="js/main.js"></script>
 </body>
 
 </html>

@@ -71,6 +71,39 @@ body {
 	color: var(--primary-color);
 }
 
+#date-range-select {
+	width: 100%;
+	padding: 8px;
+	border-radius: 4px;
+	border: none;
+	background-color: #32363b;
+	color: var(--text-color);
+	font-family: inherit;
+}
+
+#custom-date-range {
+	display: none;
+	align-items: center;
+}
+
+#custom-date-range input[type="date"] {
+	background: #3a3a3a;
+	border: none;
+	padding: 6px 8px;
+	color: var(--text-color);
+	border-radius: 4px;
+}
+
+#apply-custom-range {
+	background-color: var(--primary-color);
+	color: var(--text-color);
+	border: 1px solid var(--primary-color);
+	padding: 6px 8px;
+	margin-left: 6px;
+	border-radius: 4px;
+	cursor: pointer;
+}
+
 #search-input {
 	width: 100%;
 	padding: 8px;
