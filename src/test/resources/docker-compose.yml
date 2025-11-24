@@ -32,7 +32,7 @@ services:
 
   # MariaDB
   db:
-    image: openmrs/openmrs-reference-application-3-db:nightly-with-data
+    image: mariadb:10.11.7
     ports:
       - "3306:3306"
 #    image: mariadb:10.11.7
