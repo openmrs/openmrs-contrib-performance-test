@@ -33,7 +33,6 @@ services:
   # MariaDB
   db:
     image: mariadb:10.11.7
-    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci"
     ports:
       - "3306:3306"
 #    image: mariadb:10.11.7
@@ -43,12 +42,12 @@ services:
 #      interval: 3s
 #      timeout: 1s
 #      retries: 5
-#    environment:
-#      MYSQL_DATABASE: openmrs
-#      MYSQL_USER: ${OMRS_DB_USER:-openmrs}
-#      MYSQL_PASSWORD: ${OMRS_DB_PASSWORD:-openmrs}
-#      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-openmrs}
-#    volumes:
-#      - ./dump:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: openmrs
+      MYSQL_USER: ${OMRS_DB_USER:-openmrs}
+      MYSQL_PASSWORD: ${OMRS_DB_PASSWORD:-openmrs}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-openmrs}
+    volumes:
+      - ./dump:/docker-entrypoint-initdb.d
 #    ports:
 #      - "3306:3306"
