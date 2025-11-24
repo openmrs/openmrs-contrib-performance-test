@@ -57,7 +57,6 @@ services:
       MYSQL_PASSWORD: ${OMRS_DB_PASSWORD:-openmrs}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-openmrs}
     volumes:
-      - db-data:/var/lib/mysql
       - ./dump:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
