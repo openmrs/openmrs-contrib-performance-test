@@ -23,7 +23,7 @@ jobs:
           rm dump/dump.sql
 
       - name: Start an OpenMRS instance
-        run: docker compose -f src/test/resources/docker-compose.yml -f src/test/resources/docker-compose-no-dump.yml up -d
+        run: docker compose -f src/test/resources/docker-compose.yml up -d
 
       - name: Wait for the OpenMRS instance to start
         run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/login.htm))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/login.htm)"; sleep 10; done
