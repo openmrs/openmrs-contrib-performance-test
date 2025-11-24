@@ -33,6 +33,8 @@ services:
   # MariaDB
   db:
     image: openmrs/openmrs-reference-application-3-db:nightly-with-data
+    ports:
+      - "3306:3306"
 #    image: mariadb:10.11.7
 #    restart: "unless-stopped"
 #    command: "mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_general_ci"
