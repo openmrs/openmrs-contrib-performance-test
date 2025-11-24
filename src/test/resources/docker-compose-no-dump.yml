@@ -7,4 +7,3 @@ version: "3.7"
 services:
   db:
     image: openmrs/openmrs-reference-application-3-db:nightly-with-data
-    volumes: []

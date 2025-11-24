@@ -25,7 +25,7 @@ services:
       - backend
 
   backend:
-    image: openmrs/openmrs-reference-application-3-backend:${TAG:-nightly}
+    image: openmrs/openmrs-reference-application-3-backend:${TAG:-nightly-with-data}
     restart: "unless-stopped"
     depends_on:
       - db
@@ -40,8 +40,6 @@ services:
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/openmrs" ]
       timeout: 5s
-    volumes:
-      - openmrs-data:/openmrs/data
 
   # MariaDB
   db:
@@ -63,7 +61,3 @@ services:
       - ./dump:/docker-entrypoint-initdb.d
     ports:
       - "3306:3306"
-
-volumes:
-  openmrs-data: ~
-  db-data: ~
