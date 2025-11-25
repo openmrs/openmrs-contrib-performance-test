@@ -6,7 +6,7 @@ DB_PASS="openmrs"
 DB_NAME="openmrs"
 DB_PORT="3306"
 DB_HOST="127.0.0.1"
-PATIENT_COUNT=2
+PATIENT_COUNT=200
 
 # Query to be executed
 QUERY="UPDATE global_property SET property_value=$PATIENT_COUNT WHERE property='referencedemodata.createDemoPatientsOnNextStartup';"
