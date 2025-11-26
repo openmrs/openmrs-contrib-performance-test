@@ -17,6 +17,7 @@ export function computeSelectedRange() {
 		e.setHours(23, 59, 59, 999);
 		return e;
 	}
+
 	function startOfDay(d) {
 		const s = new Date(d);
 		s.setHours(0, 0, 0, 0);
