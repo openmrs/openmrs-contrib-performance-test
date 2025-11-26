@@ -12,6 +12,7 @@ export function computeSelectedRange() {
 	if (!sel) return null;
 	const val = sel.value;
 	const today = new Date();
+
 	function endOfDay(d) {
 		const e = new Date(d);
 		e.setHours(23, 59, 59, 999);
