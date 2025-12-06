@@ -67,6 +67,7 @@ jobs:
         run: ./mvnw install -DskipTests
 
       - name: Wait for the OpenMRS instance to start
+        id: wait-for-omrs-instance
         run: while [[ "$(echo $(curl -s -o /dev/null -w '%{http_code}' http://localhost/openmrs/health/started))" != "200" ]]; do echo "$(curl -i http://localhost/openmrs/health/started)"; sleep 10; done
 
       - name: Get System Information
@@ -78,6 +79,7 @@ jobs:
           echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
 
       - name: Run performance tests
+        if: always() && (steps.wait-for-omrs-instance == 'success')
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 
       - name: Stop the OpenMRS instance
@@ -85,14 +87,14 @@ jobs:
         run: docker stop $(docker ps -a -q)
 
       - name: Checkout report branch for trend data
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         uses: actions/checkout@v4
         with:
           ref: report
           path: ./report-data
 
       - name: Prepare trend data file
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         run: |
           TREND_FILE_SOURCE=./report-data/performance-trends/requests-trend.csv
           TREND_FILE_DEST=./performance-trends/requests-trend.csv
@@ -102,29 +104,29 @@ jobs:
           fi
 
       - name: Parse Report and Update Trends
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         run: ./mvnw exec:java -Dexec.mainClass=org.performance.parser.TrendDataParser
 
       - name: Modify the Generated Report
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         run: |
           chmod +x report-mod.sh
           ./report-mod.sh
 
       - name: Set up Git
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Commit the report to the report branch
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         run: |
           chmod +x commit-report.sh
           ./commit-report.sh
 
       - name: Push changes
-        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch')
+        if: always() && (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && (steps.wait-for-omrs-instance == 'success')
         run: git push origin HEAD:report -f
 
       - name: Upload test results
