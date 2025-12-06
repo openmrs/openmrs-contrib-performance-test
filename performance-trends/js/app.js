@@ -52,6 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 	let parsedData = [];
 	let chartInstances = [];
+	let currentDateRange = "last_6_months";
 
 	async function initialize() {
 		try {
@@ -66,6 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
 			parsedData.sort((a, b) => new Date(a.Timestamp) - new Date(b.Timestamp));
 			populateRequestNameCheckboxes();
 			renderDashboard();
+			wireDateRangeControls();
 		} catch (error) {
 			console.error(error);
 			alert("Could not load data. Please check the console for details.");
@@ -134,6 +136,15 @@ document.addEventListener("DOMContentLoaded", () => {
 			...requestNameContainer.querySelectorAll("input[type=checkbox]:checked"),
 		].map((cb) => cb.value);
 
+		const range = computeSelectedRange();
+
+		const dataInRange = parsedData.filter((d) => {
+			const t = new Date(d.Timestamp);
+			if (isNaN(t)) return false;
+			if (!range) return true;
+			return t >= range.start && t <= range.end;
+		});
+
 		chartInstances.forEach((c) => c.destroy());
 		chartInstances = [];
 		chartsContainer.innerHTML = "";
@@ -145,7 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		}
 
 		selectedRequests.forEach((requestName) => {
-			const dataPoints = parsedData
+			const dataPoints = dataInRange
 				.filter((d) => d.RequestName === requestName)
 				.map((d) => ({
 					x: d.Timestamp,
@@ -272,6 +283,102 @@ document.addEventListener("DOMContentLoaded", () => {
 			const text = label.textContent.toLowerCase();
 			label.style.display = text.includes(term.toLowerCase()) ? "flex" : "none";
 		});
+	}
+
+	function parseDateInput(value) {
+		if (!value) return null;
+		const d = new Date(value);
+		return isNaN(d) ? null : d;
+	}
+
+	function computeSelectedRange() {
+		const sel = document.getElementById("date-range-select");
+		if (!sel) return null;
+		const val = sel.value;
+		const today = new Date();
+		function endOfDay(d) {
+			const e = new Date(d);
+			e.setHours(23, 59, 59, 999);
+			return e;
+		}
+		function startOfDay(d) {
+			const s = new Date(d);
+			s.setHours(0, 0, 0, 0);
+			return s;
+		}
+
+		if (val === "all_time") {
+			if (parsedData.length === 0) return null;
+			const start = startOfDay(new Date(parsedData[0].Timestamp));
+			const end = endOfDay(
+				new Date(parsedData[parsedData.length - 1].Timestamp)
+			);
+			return { start, end };
+		}
+
+		if (val === "last_6_months") {
+			const end = endOfDay(today);
+			const start = startOfDay(
+				new Date(today.getFullYear(), today.getMonth() - 6, today.getDate())
+			);
+			return { start, end };
+		}
+
+		if (val === "ytd") {
+			const start = startOfDay(new Date(today.getFullYear(), 0, 1));
+			const end = endOfDay(today);
+			return { start, end };
+		}
+
+		if (val === "last_month") {
+			const start = startOfDay(
+				new Date(today.getFullYear(), today.getMonth() - 1, 1)
+			);
+			const end = endOfDay(new Date(today.getFullYear(), today.getMonth(), 0));
+			return { start, end };
+		}
+
+		if (val === "last_week") {
+			const end = endOfDay(today);
+			const start = startOfDay(
+				new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7)
+			);
+			return { start, end };
+		}
+
+		if (val === "custom") {
+			const sVal = document.getElementById("custom-start").value;
+			const eVal = document.getElementById("custom-end").value;
+			const s = parseDateInput(sVal);
+			const e = parseDateInput(eVal);
+			if (s && e) return { start: startOfDay(s), end: endOfDay(e) };
+			return null;
+		}
+
+		return null;
+	}
+
+	function wireDateRangeControls() {
+		const sel = document.getElementById("date-range-select");
+		const customDiv = document.getElementById("custom-date-range");
+		const applyBtn = document.getElementById("apply-custom-range");
+
+		if (!sel) return;
+
+		sel.addEventListener("change", (e) => {
+			if (e.target.value === "custom") {
+				customDiv.style.display = "flex";
+			} else {
+				customDiv.style.display = "none";
+				renderDashboard();
+			}
+		});
+
+		if (applyBtn) {
+			applyBtn.addEventListener("click", () => {
+				renderDashboard();
+			});
+		}
 	}
 
 	function updateSelectAllButtonText() {
