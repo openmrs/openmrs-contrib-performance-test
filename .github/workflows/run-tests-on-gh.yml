@@ -79,7 +79,7 @@ jobs:
           echo "GATLING_RUN_DESCRIPTION=${description}" >> $GITHUB_ENV
 
       - name: Run performance tests
-        if: always() && (steps.wait-for-omrs-instance == 'success')
+        if: always() && (steps.wait-for-omrs-instance.outcome == 'success')
         run: ./mvnw gatling:test -Dgatling.runDescription="${{ env.GATLING_RUN_DESCRIPTION }}"
 
       - name: Stop the OpenMRS instance
