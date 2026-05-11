@@ -7,6 +7,9 @@ This repository contains performance testing scripts and configurations for Open
 The latest report can be found
 at [here](https://o3-performance.openmrs.org/)
 
+## Troubleshooting
+If you encounter setup or execution issues, see [TROUBLESHOOTING.md](TROUBLESHOOTING.md).
+
 ## Table of Contents
 
 - [Introduction](#introduction)
