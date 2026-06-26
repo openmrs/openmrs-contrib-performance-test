@@ -40,7 +40,7 @@ public class DoctorHttpService extends HttpService {
 
 	public HttpRequestActionBuilder getVisitWithDiagnosesAndNotes(String patientUuid) {
 		return http("Get Visits With Diagnoses and Notes (new endpoint)")
-		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visitWithDiagnosesAndNotes?limit=5");
+		        .get("/openmrs/ws/rest/v1/emrapi/patient/" + patientUuid + "/visit?limit=5");
 	}
 
 	public HttpRequestActionBuilder getDrugOrdersExceptCancelledAndExpired(String patientUuid) {
@@ -341,7 +341,7 @@ public class DoctorHttpService extends HttpService {
 		return http("Get Latest FHIR Encounter")
 		        .get("/openmrs/ws/fhir2/R4/Encounter?patient=" + patientUuid + "&_sort=-date&_count=1&type="
 		                + VISIT_NOTE_ENCOUNTER_TYPE_UUID + "&_summary=data")
-		        .check(jsonPath("$.entry[0].resource.id").saveAs("clinicalEncounterUuid"));
+		        .check(jsonPath("$.entry[0].resource.id").optional().saveAs("clinicalEncounterUuid"));
 	}
 
 	public HttpRequestActionBuilder getConcepts(String references) {
