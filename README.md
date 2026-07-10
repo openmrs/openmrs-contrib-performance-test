@@ -14,6 +14,7 @@ at [here](https://o3-performance.openmrs.org/)
     - [Prerequisites](#prerequisites)
     - [Running the Tests Locally](#running-the-tests-locally)
 - [Debugging](#debugging)
+- - [Troubleshooting](#troubleshooting)
 - [Additional Resources](#additional-resources)
 
 ## Introduction
@@ -263,6 +264,18 @@ The process is automated with the following workflow:
 This process may take approximately 4 hours to complete and will automatically commit the database dump and patient UUIDs to the repository.
 
 
+
+
+## Troubleshooting
+
+If you encounter issues while setting up or running the performance tests, please refer to our comprehensive [TROUBLESHOOTING.md](TROUBLESHOOTING.md) guide.
+
+The troubleshooting guide covers:
+- OpenMRS connection issues and port accessibility
+- Docker setup problems and resource constraints
+- Gatling test failures and simulation configuration
+- Maven build errors and dependency resolution
+- Performance test result interpretation
 
 ## Additional Resources
 
