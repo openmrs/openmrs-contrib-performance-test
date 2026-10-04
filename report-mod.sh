@@ -8,6 +8,8 @@ REPORT_PATTERN="openmrsclinic-*"
 
 CUSTOM_JS="CustomReportMod/CustomiseReport.js"
 CUSTOM_CSS="CustomReportMod/style.css"
+LOGO_LIGHT="docs/images/openmrs_light.webp"
+LOGO_DARK="docs/images/openmrs_dark.webp"
 
 REPORT_DIR=$(find "$BASE_GATLING_DIR" -maxdepth 1 -type d -name "$REPORT_PATTERN" | head -n 1)
 
@@ -45,3 +47,13 @@ else
     cat "$CUSTOM_CSS" >> "$TARGET_CSS"
     echo "✔️ Successfully modified CSS."
 fi
+
+# Copy the OpenMRS logos into the report so the injected JS can reference them.
+for logo in "$LOGO_LIGHT" "$LOGO_DARK"; do
+    if [ ! -f "$logo" ]; then
+        echo "❌ Error: Logo file not found: $logo"
+        exit 1
+    fi
+    cp "$logo" "$REPORT_DIR/style/"
+done
+echo "✔️ Successfully copied OpenMRS logos."

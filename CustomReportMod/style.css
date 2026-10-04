@@ -1,3 +1,11 @@
+/* GATLING-REPORT-MOD-CSS-START */
+
+/* Fit the OpenMRS wordmark (wider than the Gatling logo) into the header. */
+a.gatling-logo img {
+    height: 36px;
+    width: auto;
+}
+
 .assertions-wrapper .title {
     cursor: pointer;
     position: relative;
