@@ -269,4 +269,22 @@ This process may take approximately 4 hours to complete and will automatically c
 - For more detailed information on using Gatling, refer to the [Gatling documentation](https://gatling.io/docs/).
 - View a demo report of the performance tests [here](https://omrs-performance-report.surge.sh/).
 
+
+## Troubleshooting Guide
+
+### Issue: Cannot connect to OpenMRS on port 80
+Solution:
+- Check if Docker container is running
+- Verify port mapping
+
+### Issue: Docker container not starting
+Solution:
+- Run `docker ps` to check status
+- Restart using `docker-compose up`
+
+### Issue: Database connection error
+Solution:
+- Check database credentials
+- Ensure MySQL is running
+
 Feel free to contribute to this project by submitting issues or pull requests. Happy testing!
