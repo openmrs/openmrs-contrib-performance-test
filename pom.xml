@@ -83,11 +83,6 @@
         <groupId>io.gatling</groupId>
         <artifactId>gatling-maven-plugin</artifactId>
         <version>${gatling-maven-plugin.version}</version>
-        <configuration>
-          <jvmArgs>
-            <jvmArg>-Xmx6g</jvmArg>
-          </jvmArgs>
-        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
@@ -148,4 +143,29 @@
             <url>https://repo.maven.apache.org/maven2</url>
         </pluginRepository>
 	</pluginRepositories>
+  <profiles>
+    <!-- Use a 6 GB Gatling heap on CI to avoid out-of-memory during report generation. -->
+    <profile>
+      <id>ci</id>
+      <activation>
+        <property>
+          <name>env.CI</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>io.gatling</groupId>
+            <artifactId>gatling-maven-plugin</artifactId>
+            <configuration>
+              <jvmArgs>
+                <jvmArg>-Xmx6g</jvmArg>
+              </jvmArgs>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
 </project>
