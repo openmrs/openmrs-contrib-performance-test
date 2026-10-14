@@ -12,6 +12,13 @@ rm -rf !(target|performance-trends)
 report=$(find target/gatling -maxdepth 1 -type d -name "openmrsclinic-*" | head -n 1)
 
 echo $report
+
+# Guard: fail early if the report wasn't generated
+if [ ! -f "$report/index.html" ]; then
+  echo "❌ No HTML report found in '$report' (report generation failed?). Skipping deploy."
+  exit 1
+fi
+
 # Check if the report directory exists
 if [ -d "$report" ]; then
   # Copy the directory to the root
